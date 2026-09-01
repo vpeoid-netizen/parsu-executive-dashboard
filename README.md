@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Partido State University Executive Dashboard
 
-## Getting Started
+Official public analytics platform for Partido State University. Anyone with the URL can view published information. There is no public registration. Administrators sign in at `/admin/login`.
 
-First, run the development server:
+## Technology stack
+
+- Next.js 16 App Router, TypeScript, Tailwind CSS
+- Prisma ORM with PostgreSQL (Docker Compose locally; Neon or Vercel Postgres in production)
+- ExcelJS for workbook import
+- Recharts for visualizations
+- bcrypt + httpOnly session cookies for administrator authentication
+
+## Local setup
+
+1. Copy environment variables:
+
+```bash
+cp .env.example .env
+```
+
+2. Start PostgreSQL and create the database:
+
+```bash
+docker compose up -d
+npx prisma generate
+npx prisma migrate deploy
+```
+
+3. Import `Executive-Dashboard.xlsx` and create the first administrator:
+
+```bash
+npm run db:seed
+```
+
+4. Start the app:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) for the public dashboard.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Default local administrator (change immediately):
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Email: value of `ADMIN_EMAIL`
+- Password: value of `ADMIN_PASSWORD`
 
-## Learn More
+## Environment variables
 
-To learn more about Next.js, take a look at the following resources:
+| Variable | Purpose |
+| --- | --- |
+| `DATABASE_URL` | PostgreSQL connection string. Local Docker default is in `.env.example`. |
+| `AUTH_SECRET` | Session signing secret. |
+| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Bootstrap administrator. |
+| `AUTH_COOKIE_SECURE` | Set `true` behind HTTPS. |
+| `EXCEL_SOURCE_PATH` | Workbook used by the seed importer. |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Database
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Local: PostgreSQL via `docker compose` on port 5433
+- Production: Neon or Vercel Postgres. See `DEPLOYMENT.md`.
 
-## Deploy on Vercel
+## Initial Excel import
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The seed command parses `Executive-Dashboard.xlsx`, stores normalized records, records validation warnings (including cross-sheet conflicts), and publishes the first dataset versions. KPI values are calculated from those records and are not hard-coded in the UI.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Tests
+
+```bash
+npm test
+```
+
+## Production
+
+See `DEPLOYMENT.md`, `ADMIN_GUIDE.md`, `IMPORT_GUIDE.md` and `DATA_MODEL.md`.

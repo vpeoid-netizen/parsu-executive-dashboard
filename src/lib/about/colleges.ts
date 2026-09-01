@@ -1,0 +1,95 @@
+export const COLLEGES_SOURCE_URL = "https://www.parsu.edu.ph/academics/colleges";
+
+export const COLLEGES_INTRO =
+  "With eleven (11) diverse colleges spread across seven (7) vibrant campuses, we offer a wide range of academic programs designed to equip students with the knowledge and skills needed for success in their chosen fields.";
+
+export const COLLEGES_DIRECTORY = [
+  {
+    code: "CAH",
+    name: "College of Arts and Humanities",
+    campus: "Goa Campus",
+    href: "https://www.parsu.edu.ph/college-of-arts-and-humanities",
+    image: { src: "/about/colleges/cah.png", alt: "College of Arts and Humanities mark" },
+    body: "The College of Arts and Humanities is committed to the pursuit of academic excellence, cultural preservation, and professional development through its diverse programs and disciplines. The College offers the Master of Public Administration and the Bachelor of Arts in Communication, and is organized into Public Administration; Linguistics and Literature; Archeology, History and Culture; and Human Kinetics.",
+  },
+  {
+    code: "CBM",
+    name: "College of Business and Management",
+    campus: "Goa Campus",
+    href: "https://www.parsu.edu.ph/college-of-business-and-management",
+    image: { src: "/about/colleges/cbm.png", alt: "College of Business and Management mark" },
+    body: "Established in 2010, the College of Business and Management develops competent, ethical, and globally competitive professionals. It offers the Master in Business Administration and undergraduate programs in Accountancy, Business Administration (Financial Management), Economics, Entrepreneurship, and Office Administration.",
+  },
+  {
+    code: "CED",
+    name: "College of Education",
+    campus: "Goa Campus",
+    href: "https://www.parsu.edu.ph/college-of-education",
+    image: { src: "/about/colleges/ced.png", alt: "College of Education mark" },
+    body: "The College of Education is the University’s center in teacher education. It offers the Doctor of Philosophy and Master of Arts in Education, together with undergraduate teacher-education programs that prepare educators, researchers, and academic leaders.",
+  },
+  {
+    code: "CEC",
+    name: "College of Engineering and Computational Science",
+    campus: "Goa Campus",
+    href: "https://www.parsu.edu.ph/college-of-engineering-and-computational-science",
+    image: { src: "/about/colleges/cec.png", alt: "College of Engineering and Computational Science mark" },
+    body: "The College of Engineering and Computational Sciences was created under Board of Regents Resolution No. 72, Series of 2023, by integrating engineering programs with Information Technology, Computer Science, and Mathematics. It aims to produce globally competitive graduates committed to research-driven solutions, environmental sustainability, and resilient infrastructure.",
+  },
+  {
+    code: "COS",
+    name: "College of Science",
+    campus: "Goa Campus",
+    href: "https://www.parsu.edu.ph/college-of-science",
+    image: { src: "/about/colleges/cos.png", alt: "College of Science mark" },
+    body: "The College of Science advances scientific knowledge, research, and innovation in the natural sciences. It offers Bachelor of Science in Biology and Bachelor of Science in Geology, preparing graduates to address environmental, biological, and geological challenges.",
+  },
+  {
+    code: "CSCE",
+    name: "College of Sustainable Communities and Ecosystems",
+    campus: "Caramoan Campus",
+    href: "https://www.parsu.edu.ph/caramoan-campus",
+    image: { src: "/about/colleges/csce.png", alt: "College of Sustainable Communities and Ecosystems mark" },
+    body: "Based at Caramoan Campus, this college serves the eastern Partido peninsula with programs and community work in sustainable communities, ecosystems, biodiversity, and tourism.",
+  },
+  {
+    code: "LAG",
+    name: "College of Public Safety and Community Health",
+    campus: "Lagonoy Campus",
+    href: "https://www.parsu.edu.ph/lagonoy-campus",
+    image: { src: "/about/colleges/cpsch.png", alt: "College of Public Safety and Community Health mark" },
+    body: "Based at Lagonoy Campus, this college prepares students for public safety, criminology, and community-health service, including partnerships that support survivors and strengthen local justice and health systems.",
+  },
+  {
+    code: "CFMS",
+    name: "College of Fisheries and Marine Science",
+    campus: "Sagñay Campus",
+    href: "https://www.parsu.edu.ph/sagnay-campus",
+    image: { src: "/about/colleges/cfms.png", alt: "College of Fisheries and Marine Science mark" },
+    body: "Based at Sagñay Campus, this college produces graduates who contribute to sustainable fisheries, marine science, and environmental stewardship along the Partido coastline.",
+  },
+  {
+    code: "CACD",
+    name: "College of Agribusiness and Community Development",
+    campus: "Salogon Campus",
+    href: "https://www.parsu.edu.ph/salogon-campus",
+    image: { src: "/about/colleges/cacd.png", alt: "College of Agribusiness and Community Development mark" },
+    body: "Based at Salogon Campus, this college focuses on agribusiness, production, and community development, including work on crops such as abaca and support for rural enterprise.",
+  },
+  {
+    code: "CHTM",
+    name: "College of Hospitality and Tourism Management",
+    campus: "San Jose Campus",
+    href: "https://www.parsu.edu.ph/san-jose-campus",
+    image: { src: "/about/colleges/chtm.png", alt: "College of Hospitality and Tourism Management mark" },
+    body: "Based at San Jose Campus, this college develops hospitality and tourism professionals and works with partners on sustainable coastal tourism and quality assurance.",
+  },
+  {
+    code: "CESD",
+    name: "College of Environmental Science and Design",
+    campus: "Tinambac Campus",
+    href: "https://www.parsu.edu.ph/tinambac-campus",
+    image: { src: "/about/colleges/cesd.png", alt: "College of Environmental Science and Design mark" },
+    body: "Based at Tinambac Campus, this college advances environmental science, design, and community-centered environmental leadership for northern Partido.",
+  },
+] as const;

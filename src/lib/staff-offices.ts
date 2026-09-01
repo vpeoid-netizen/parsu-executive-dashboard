@@ -1,0 +1,139 @@
+export const VP_OFFICE_ORDER = [
+  "Academic Affairs",
+  "Administration and Finance",
+  "Research & Extension",
+  "Executive Operations",
+] as const;
+
+export const STAFF_DEPARTMENT_ORDER = [
+  "Support to Presidential Operation",
+  "Executive Operations",
+  "Support to Academic Operation (STO)",
+  "General Administration and Support Services (GASS)",
+  "Research and Extension Operations",
+  "Academic Delivery Units",
+  "Commission on Audit",
+] as const;
+
+export type StaffOfficeRow = {
+  department: string | null;
+  office: string | null;
+  unit: string | null;
+  campus: string;
+  total: number | null;
+  counts: { appointment?: Record<string, number> };
+};
+
+export type StaffOfficeGroup = {
+  key: string;
+  title: string;
+  campus: string;
+  department: string | null;
+  total: number;
+  counts: { appointment?: Record<string, number> };
+  units: StaffOfficeRow[];
+};
+
+export function isVicePresidentOffice(office: string | null | undefined) {
+  if (!office) return false;
+  const text = office.trim();
+  return /^VP for /i.test(text) || /vice president/i.test(text);
+}
+
+export function staffOfficeTitle(row: StaffOfficeRow) {
+  if (row.office) return row.office;
+  if (row.unit) return row.unit;
+  if (row.department && row.campus && row.campus !== "Central / unspecified") {
+    return `${row.department} — ${row.campus}`;
+  }
+  return row.department ?? "Unspecified office";
+}
+
+export function appointmentMixNote(counts: { appointment?: Record<string, number> } | null | undefined) {
+  const appointment = counts?.appointment ?? {};
+  const parts = (["Permanent", "Casual", "Job Order"] as const)
+    .filter((key) => (appointment[key] ?? 0) > 0)
+    .map((key) => `${appointment[key]} ${key}`);
+  return parts.length ? parts.join(", ") : "No assigned personnel";
+}
+
+function vpOrderIndex(office: string | null) {
+  if (!office) return VP_OFFICE_ORDER.length;
+  const lower = office.toLowerCase();
+  const index = VP_OFFICE_ORDER.findIndex((label) => {
+    if (label === "Research & Extension") {
+      return lower.includes("research") && lower.includes("extension");
+    }
+    if (label === "Executive Operations") {
+      return lower.includes("executive operations");
+    }
+    return lower.includes(label.toLowerCase());
+  });
+  return index === -1 ? VP_OFFICE_ORDER.length : index;
+}
+
+function departmentOrderIndex(department: string) {
+  const index = STAFF_DEPARTMENT_ORDER.indexOf(department as (typeof STAFF_DEPARTMENT_ORDER)[number]);
+  return index === -1 ? STAFF_DEPARTMENT_ORDER.length : index;
+}
+
+function groupKey(row: StaffOfficeRow) {
+  if (isVicePresidentOffice(row.office)) return `vp::${row.office}`;
+  return `${row.department ?? ""}::${row.office ?? ""}::${row.campus}`;
+}
+
+function toOfficeGroups(rows: StaffOfficeRow[]): StaffOfficeGroup[] {
+  const buckets = new Map<string, StaffOfficeRow[]>();
+  for (const row of rows) {
+    const key = groupKey(row);
+    const current = buckets.get(key) ?? [];
+    current.push(row);
+    buckets.set(key, current);
+  }
+  return [...buckets.entries()].map(([key, items]) => {
+    const officeLevel = items.find((item) => !item.unit) ?? null;
+    const units = items
+      .filter((item) => item.unit)
+      .sort((a, b) => (a.unit ?? "").localeCompare(b.unit ?? "", "en"));
+    const representative = officeLevel ?? items[0]!;
+    return {
+      key,
+      title: officeLevel ? staffOfficeTitle(officeLevel) : (representative.office ?? staffOfficeTitle(representative)),
+      campus: representative.campus,
+      department: representative.department,
+      total: officeLevel?.total ?? 0,
+      counts: officeLevel?.counts ?? { appointment: { Permanent: 0, Casual: 0, "Job Order": 0 } },
+      units,
+    };
+  });
+}
+
+export function groupStaffOffices(rows: StaffOfficeRow[]) {
+  const vicePresidentRows: StaffOfficeRow[] = [];
+  const rest: StaffOfficeRow[] = [];
+  for (const row of rows) {
+    if (isVicePresidentOffice(row.office)) vicePresidentRows.push(row);
+    else rest.push(row);
+  }
+
+  const vicePresidents = toOfficeGroups(vicePresidentRows).sort(
+    (a, b) => vpOrderIndex(a.title) - vpOrderIndex(b.title) || a.title.localeCompare(b.title, "en"),
+  );
+
+  const byDepartment = new Map<string, StaffOfficeRow[]>();
+  for (const row of rest) {
+    const key = row.department?.trim() || "Other units";
+    const current = byDepartment.get(key) ?? [];
+    current.push(row);
+    byDepartment.set(key, current);
+  }
+
+  const departments = [...byDepartment.entries()]
+    .sort((a, b) => departmentOrderIndex(a[0]) - departmentOrderIndex(b[0]) || a[0].localeCompare(b[0]))
+    .map(([title, offices]) => ({
+      title,
+      offices: toOfficeGroups(offices).sort((a, b) => a.title.localeCompare(b.title, "en")),
+    }));
+
+  return { vicePresidents, departments };
+}

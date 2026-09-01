@@ -1,0 +1,83 @@
+export const CAMPUSES_SOURCE_URL = "https://www.parsu.edu.ph/academics/campuses";
+
+export const CAMPUSES_INTRO =
+  "Our university proudly encompasses 7 dynamic campuses, each offering a unique blend of academic opportunities and community engagement. From cutting-edge facilities to vibrant student life, each campus is designed to foster learning, growth, and collaboration.";
+
+export const CAMPUSES_DIRECTORY = [
+  {
+    slug: "goa",
+    name: "Goa Campus",
+    town: "Goa, Camarines Sur",
+    href: "https://www.parsu.edu.ph/goa-campus",
+    image: { src: "/about/campuses/goa.jpg", alt: "Partido State University Goa Campus" },
+    address: "San Juan Bautista St., Goa, Camarines Sur 4422",
+    colleges: [
+      "College of Arts and Humanities",
+      "College of Business and Management",
+      "College of Education",
+      "College of Engineering and Computational Science",
+      "College of Science",
+    ],
+    body: "Goa is the main campus of Partido State University and the seat of university administration. It hosts five colleges and serves as the university’s center for instruction, research, and institutional services in San Juan Bautista, Goa.",
+  },
+  {
+    slug: "caramoan",
+    name: "Caramoan Campus",
+    town: "Caramoan, Camarines Sur",
+    href: "https://www.parsu.edu.ph/caramoan-campus",
+    image: { src: "/about/campuses/caramoan.jpg", alt: "Partido State University Caramoan Campus" },
+    address: "Caramoan, Camarines Sur",
+    colleges: ["College of Sustainable Communities and Ecosystems"],
+    body: "Caramoan Campus serves the eastern Partido peninsula. It is home to the College of Sustainable Communities and Ecosystems and supports programs and research connected to biodiversity, tourism, and community resilience.",
+  },
+  {
+    slug: "lagonoy",
+    name: "Lagonoy Campus",
+    town: "Lagonoy, Camarines Sur",
+    href: "https://www.parsu.edu.ph/lagonoy-campus",
+    image: { src: "/about/campuses/lagonoy.jpg", alt: "Partido State University Lagonoy Campus" },
+    address: "Lagonoy, Camarines Sur",
+    colleges: ["College of Public Safety and Community Health"],
+    body: "Lagonoy Campus hosts the College of Public Safety and Community Health. It prepares students for public safety, criminology, and community-health service in northern Partido.",
+  },
+  {
+    slug: "sagnay",
+    name: "Sagnay Campus",
+    town: "Sagñay, Camarines Sur",
+    href: "https://www.parsu.edu.ph/sagnay-campus",
+    image: { src: "/about/campuses/sagnay.jpg", alt: "Partido State University Sagnay Campus" },
+    address: "Nato, Sagñay, Camarines Sur",
+    colleges: ["College of Fisheries and Marine Science"],
+    body: "Sagnay Campus, formerly the Governor Mariano Fuentebella Memorial College of Fisheries, is the university’s fisheries and marine-science campus. It offers instruction and field training along the Sagñay coastline.",
+  },
+  {
+    slug: "salogon",
+    name: "Salogon Campus",
+    town: "San Jose, Camarines Sur",
+    href: "https://www.parsu.edu.ph/salogon-campus",
+    image: { src: "/about/campuses/salogon.jpg", alt: "Partido State University Salogon Campus" },
+    address: "Salogon, San Jose, Camarines Sur",
+    colleges: ["College of Agribusiness and Community Development"],
+    body: "Salogon Campus hosts the College of Agribusiness and Community Development. It focuses on agribusiness, production, and community-based programs that support rural livelihoods in San Jose.",
+  },
+  {
+    slug: "san-jose",
+    name: "San Jose Campus",
+    town: "San Jose, Camarines Sur",
+    href: "https://www.parsu.edu.ph/san-jose-campus",
+    image: { src: "/about/campuses/san-jose.jpg", alt: "Partido State University San Jose Campus" },
+    address: "San Jose, Camarines Sur",
+    colleges: ["College of Hospitality and Tourism Management"],
+    body: "San Jose Campus is home to the College of Hospitality and Tourism Management. It develops professionals for hospitality, tourism, and related service industries in Partido.",
+  },
+  {
+    slug: "tinambac",
+    name: "Tinambac Campus",
+    town: "Tinambac, Camarines Sur",
+    href: "https://www.parsu.edu.ph/tinambac-campus",
+    image: { src: "/about/campuses/tinambac.jpg", alt: "Partido State University Tinambac Campus" },
+    address: "Tinambac, Camarines Sur",
+    colleges: ["College of Environmental Science and Design"],
+    body: "Tinambac Campus hosts the College of Environmental Science and Design. It supports environmental science, design, and community-development instruction for the northern Partido area.",
+  },
+] as const;

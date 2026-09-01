@@ -1,0 +1,464 @@
+[
+  {
+    "section": "The University Officials",
+    "name": "DR. ARNEL B. ZARCEDO",
+    "position": "SUC President III",
+    "email": "op@parsu.edu.ph",
+    "photoPath": "/officials/ArnelZarcedo2.jpg"
+  },
+  {
+    "section": "The University Officials",
+    "name": "Dr. Michael A. Clores",
+    "position": "Vice President for Academic Affairs",
+    "email": "ovpaa@parsu.edu.ph",
+    "photoPath": "/officials/MichaelClores.jpg"
+  },
+  {
+    "section": "The University Officials",
+    "name": "Prof. Charlie V. Balagtas",
+    "position": "Vice President for Administration and Finance",
+    "email": "ovpaf@parsu.edu.ph",
+    "photoPath": "/officials/CharlieBalagtas.jpg"
+  },
+  {
+    "section": "The University Officials",
+    "name": "Dr. Raul G. Bradecina",
+    "position": "Vice President for Research, Extension and Knowledge Management",
+    "email": "vpreea@parsu.edu.ph",
+    "photoPath": "/officials/RaulBradecina.jpg"
+  },
+  {
+    "section": "The University Officials",
+    "name": "Engr. Kier P. Gasga",
+    "position": "OIC Vice President for Executive Operations and Institutional Development",
+    "email": "vpeoid@parsu.edu.ph",
+    "photoPath": "/officials/KierGasga.jpg"
+  },
+  {
+    "section": "Support to Presidential Operations",
+    "name": "Ms. Leih Anne R. Odoño",
+    "position": "Director / Board Secretary V, Office of the Board Secretary",
+    "email": "boardsec@parsu.edu.ph",
+    "photoPath": "/officials/LeihAnneOdono.jpg"
+  },
+  {
+    "section": "Support to Presidential Operations",
+    "name": "Ms. Cherrylyn R. Castro",
+    "position": "Director / Executive Assitant III, Presidential Management Staff Office",
+    "email": "pmso@parsu.edu.ph",
+    "photoPath": "/officials/CherrylynCastro.jpg"
+  },
+  {
+    "section": "Executive Operations",
+    "name": "Engr. Kier P. Gasga",
+    "position": "Concurrent Director, Institutional Planning and Development Office",
+    "email": "planning@parsu.edu.ph",
+      "photoPath": "/officials/KierGasga.jpg"
+  },
+  {
+    "section": "Executive Operations",
+    "name": "Atty. Angeli Lou J. Villanueva",
+    "position": "Director, Legal Services Office",
+    "email": "legal@parsu.edu.ph",
+    "photoPath": "/officials/AngeliLouVillanueva.jpg"
+  },
+  {
+    "section": "Executive Operations",
+    "name": "Ms. Janeth A. Cledera",
+    "position": "Director, Quality Assurance Office",
+    "email": "qao@parsu.edu.ph",
+    "photoPath": "/officials/JanethCledera.jpg"
+  },
+  {
+    "section": "Executive Operations",
+    "name": "Ms. Ma. Noreen Salvacion M. Evalla",
+    "position": "Director, Communications & Public Relations Office",
+    "email": "cpro@parsu.edu.ph",
+    "photoPath": "/officials/MaNoreenEvalla.jpg"
+  },
+  {
+    "section": "Executive Operations",
+    "name": "Engr. Felipe B. Primavera",
+    "position": "Director, Project Management Office",
+    "email": "pmu@parsu.edu.ph",
+    "photoPath": "/officials/FelipePrimavera.jpg"
+  },
+  {
+    "section": "Executive Operations",
+    "name": "Atty. Ronnel R. Atole, PhD",
+    "position": "Director, Information & Communication Technology Office",
+    "email": "ictmo@parsu.edu.ph",
+    "photoPath": "/officials/atole.jpg"
+  },
+  {
+    "section": "Executive Operations",
+    "name": "Ms. Nympha L. Go",
+    "position": "Acting Director, Internal Audit Office",
+    "email": "iau@parsu.edu.ph",
+    "photoPath": "/officials/nymphago.jpg"
+  },
+  {
+    "section": "Executive Operations",
+    "name": "Mr. Jesus C. Ortinero",
+    "position": "Director, Alumni Affairs Office",
+    "email": "alumni@parsu.edu.ph",
+    "photoPath": "/officials/JesusOrtinero.jpg"
+  },
+  {
+    "section": "Executive Operations",
+    "name": "Ms. Leih Anne R. Odoño",
+    "position": "Director, International Affairs Office",
+    "email": "internationalaffairs@parsu.edu.ph",
+      "photoPath": "/officials/LeihAnneOdono.jpg"
+  },
+  {
+    "section": "Executive Operations",
+    "name": "Dr. Hazel Jean C. Pesino",
+    "position": "Director, Gender and Development Office",
+    "email": "gad@parsu.edu.ph",
+    "photoPath": "/officials/Pesino.jpg"
+  },
+  {
+    "section": "Academic Delivery Units",
+    "name": "Dr. Mariel R. Estrella",
+    "position": "Dean, College of Arts and Humanities",
+    "email": "cah@parsu.edu.ph",
+    "photoPath": "/officials/MarielEstrella.jpg"
+  },
+  {
+    "section": "Academic Delivery Units",
+    "name": "Dr. Jossie B. Romero",
+    "position": "Dean, College of Business and Management",
+    "email": "cbm@parsu.edu.ph",
+    "photoPath": "/officials/romero.jpg"
+  },
+  {
+    "section": "Academic Delivery Units",
+    "name": "Dr. Joan D. Monforte-Bedes",
+    "position": "Dean, College of Education",
+    "email": "coed@parsu.edu.ph",
+    "photoPath": "/officials/monforte-bedes.jpg"
+  },
+  {
+    "section": "Academic Delivery Units",
+    "name": "Ms. Leah Erica B. Ignao",
+    "position": "Officer-in-Charge, College of Science",
+    "email": "cos@parsu.edu.ph",
+    "photoPath": "/officials/leahignao.jpg"
+  },
+  {
+    "section": "Academic Delivery Units",
+    "name": "Engr. Emelina R. Padayao",
+    "position": "Dean, College of Engineering and Computational Sciences",
+    "email": "cec@parsu.edu.ph",
+    "photoPath": "/officials/EmelinaPadayao.jpg"
+  },
+  {
+    "section": "Academic Delivery Units",
+    "name": "Dr. Niño R. Rebuya",
+    "position": "Dean, College of Hospitality and Tourism Management (San Jose Campus)",
+    "email": "sanjose.campus@parsu.edu.ph",
+    "photoPath": "/officials/Rebuya.png"
+  },
+  {
+    "section": "Academic Delivery Units",
+    "name": "Dr. Shirlene S. Esplana",
+    "position": "Dean, College of Public Safety and Community Health (Lagonoy Campus)",
+    "email": "lagonoy.campus@parsu.edu.ph",
+    "photoPath": "/officials/esplana.jpg"
+  },
+  {
+    "section": "Academic Delivery Units",
+    "name": "Dr. Michael A. Clores",
+    "position": "Concurrent Dean, College of Sustainable Communities and Ecosystems (Caramoan Campus)",
+    "email": "caramoan.campus@parsu.edu.ph",
+      "photoPath": "/officials/MichaelClores.jpg"
+  },
+  {
+    "section": "Academic Delivery Units",
+    "name": "Ms. Yolda T. Abante",
+    "position": "Officer-in-Charge, College of Environmental Science and Design (Tinambac Campus)",
+    "email": "tinambac.campus@parsu.edu.ph",
+    "photoPath": "/officials/YoldaAbante.jpg"
+  },
+  {
+    "section": "Academic Delivery Units",
+    "name": "Dr. Jonel M. Corral",
+    "position": "Dean, College of Fisheries and Marine Science (Sagñay Campus)",
+    "email": "sagnay.campus@parsu.edu.ph",
+    "photoPath": "/officials/corral.jpg"
+  },
+  {
+    "section": "Academic Delivery Units",
+    "name": "Dr. Jenny P. Lorio",
+    "position": "Dean, College of Agribusiness and Community Development (Salogon Campus)",
+    "email": "salogon.campus@parsu.edu.ph",
+    "photoPath": "/officials/JennyLorio.jpg"
+  },
+  {
+    "section": "Support to Academic Operations",
+    "name": "Ms. Ann Charmaine B. Visitacion",
+    "position": "Director/ University Librarian, Library Services Office",
+    "email": "library@parsu.edu.ph",
+    "photoPath": "/officials/AnnCharmaineVisitacion.jpg"
+  },
+  {
+    "section": "Support to Academic Operations",
+    "name": "Dr. Joji B. Miraña",
+    "position": "Director/ University Registrar, University Registrar's Office",
+    "email": "registrar@parsu.edu.ph",
+    "photoPath": "/officials/JojiMirana.jpg"
+  },
+  {
+    "section": "Support to Academic Operations",
+    "name": "Dr. Maria Aurora G. Caballero",
+    "position": "Director, National Service Training Program Office",
+    "email": "nstp@parsu.edu.ph",
+    "photoPath": "/officials/MariaAuroraCaballero.jpg"
+  },
+  {
+    "section": "Support to Academic Operations",
+    "name": "Ms. Marieta P. Palmes",
+    "position": "Director, Office of Student Affairs and Services",
+    "email": "osas@parsu.edu.ph",
+    "photoPath": "/officials/palmes.jpg"
+  },
+  {
+    "section": "Support to Academic Operations",
+    "name": "Ms. Maria Korina P. Enriquez",
+    "position": "Head, Guidance & Councelling Unit | Concurrent Head, Admission Unit",
+    "email": "guidance@parsu.edu.ph, admissions@parsu.edu.ph",
+    "photoPath": "/officials/MaKorinaEnriquez.jpg"
+  },
+  {
+    "section": "Support to Academic Operations",
+    "name": "Dr. Jose Seth B. Cledera, Jr.",
+    "position": "Medical Officer III, Health Service Unit",
+    "email": "clinic@parsu.edu.ph",
+    "photoPath": "/officials/josesethcledera.jpg"
+  },
+  {
+    "section": "Support to Academic Operations",
+    "name": "Ms. Mary Jean C. Almarvez",
+    "position": "Head, Placement Unit",
+    "email": "placement@parsu.edu.ph",
+    "photoPath": "/officials/JeanAlmarvez.png"
+  },
+  {
+    "section": "Support to Academic Operations",
+    "name": "Ms. Lani C. Peteza",
+    "position": "Director, Culture and Arts Unit",
+    "email": "caa@parsu.edu.ph",
+    "photoPath": "/officials/LaniPeteza.jpg"
+  },
+  {
+    "section": "Support to Academic Operations",
+    "name": "Mr. Percival O. Ebron",
+    "position": "Director, Sports and Athletics Unit",
+    "email": "saa@parsu.edu.ph",
+    "photoPath": "/officials/PercivalEbron.jpg"
+  },
+  {
+    "section": "Support to Academic Operations",
+    "name": "Ms. Jenievi S. Asia",
+    "position": "Head, Student and Needs Services Unit",
+    "email": "snsu@parsu.edu.ph",
+    "photoPath": "/officials/JenieviAsia.jpg"
+  },
+  {
+    "section": "Support to Academic Operations",
+    "name": "Ms. Angelyn P. Benitez",
+    "position": "Head, Student Scholarships Unit",
+    "email": "scholarships@parsu.edu.ph",
+    "photoPath": "/officials/benitez.jpg"
+  },
+  {
+    "section": "Administrative Services Division",
+    "name": "Ms. Leih Anne R. Odoño",
+    "position": "Acting Chief Administrative Officer",
+    "email": null,
+      "photoPath": "/officials/LeihAnneOdono.jpg"
+  },
+  {
+    "section": "Administrative Services Division",
+    "name": "Ms. Nympha L. Go",
+    "position": "Supervising Administrative Officer",
+    "email": "sao@parsu.edu.ph",
+      "photoPath": "/officials/nymphago.jpg"
+  },
+  {
+    "section": "Administrative Services Division",
+    "name": "Ms. Margarita M. Lanciso",
+    "position": "Acting Head, Human Resource Management Unit",
+    "email": "hrmo@parsu.edu.ph",
+    "photoPath": "/officials/margaritalanciso.jpg"
+  },
+  {
+    "section": "Administrative Services Division",
+    "name": "Ms. Maricris L. Magat",
+    "position": "Head, Supply and Property Management Unit",
+    "email": "supply@parsu.edu.ph",
+    "photoPath": "/officials/MaricrisMagat.jpg"
+  },
+  {
+    "section": "Administrative Services Division",
+    "name": "Mr. Jefferson O. Coruno",
+    "position": "Head, Procurement Unit",
+    "email": "procurement@parsu.edu.ph",
+    "photoPath": "/officials/jeffersoncoruno.jpg"
+  },
+  {
+    "section": "Administrative Services Division",
+    "name": "Dr. Tomas C. Sales, Jr.",
+    "position": "Head, Cashiering Unit",
+    "email": "cashier@parsu.edu.ph",
+    "photoPath": "/officials/sales.jpg"
+  },
+  {
+    "section": "Administrative Services Division",
+    "name": "Ms. Cherrylyn R. Castro",
+    "position": "Head, Records Management Unit",
+    "email": "rmo@parsu.edu.ph",
+      "photoPath": "/officials/CherrylynCastro.jpg"
+  },
+  {
+    "section": "Administrative Services Division",
+    "name": "Ar. Pacian Francis P. Formalejo",
+    "position": "Head, General Services Unit",
+    "email": "gsu@parsu.edu.ph",
+    "photoPath": "/officials/PacianFormalejo.jpg"
+  },
+  {
+    "section": "Finance Services Division",
+    "name": "Ms. Perlita D. Mañago",
+    "position": "Chief Administrative Officer",
+    "email": "finance@parsu.edu.ph",
+    "photoPath": "/officials/PerlitaManago.jpg"
+  },
+  {
+    "section": "Finance Services Division",
+    "name": "Ms. Amalia O. Ocampo",
+    "position": "Supervising Administrative Officer/ Acting Head, Budget Unit",
+    "email": "budget@parsu.edu.ph",
+    "photoPath": "/officials/Ocampo.jpg"
+  },
+  {
+    "section": "Finance Services Division",
+    "name": "Ms. Elaine Grace L. Bombase",
+    "position": "Acting Head, Accounting Unit",
+    "email": "accounting@parsu.edu.ph",
+    "photoPath": "/officials/Bombase.png"
+  },
+  {
+    "section": "Business Affairs Division",
+    "name": "Mr. Karlo Pedro L. Medroso",
+    "position": "Director, Auxillary Services Division",
+    "email": "ba@parsu.edu.ph",
+    "photoPath": "/officials/karlomedroso.jpg"
+  },
+  {
+    "section": "Institutional Resilience Division",
+    "name": "Dr. Ariel B. Barreda",
+    "position": "Director, Institutional Resilience Division | Concurrent Head, Safety and Security Services Unit",
+    "email": "ird@parsu.edu.ph, security@parsu.edu.ph",
+    "photoPath": "/officials/Bareda.jpg"
+  },
+  {
+    "section": "Institutional Resilience Division",
+    "name": "Mr. Remy Roel G. Miradora",
+    "position": "Head, Disaster Risk Reduction Management Unit",
+    "email": "drrm@parsu.edu.ph",
+    "photoPath": "/officials/RemyRoelMiradora.jpg"
+  },
+  {
+    "section": "Research & Extension Operations",
+    "name": "Prof. Patricia M. Candelaria",
+    "position": "Acting Director, Research and Publication Services Division",
+    "email": "rnd@parsu.edu.ph",
+    "photoPath": "/officials/PatriciaCandelaria.jpg"
+  },
+  {
+    "section": "Research & Extension Operations",
+    "name": "Ms. Sherry A. Combis",
+    "position": "Acting Head, Research and Creative Works Unit",
+    "email": null,
+    "photoPath": "/officials/sherrycombis.jpg"
+  },
+  {
+    "section": "Research & Extension Operations",
+    "name": "Dr. Joela Mizchelle D. Dacillo",
+    "position": "Acting Head, Publication and Printing Unit",
+    "email": null,
+    "photoPath": "/officials/dacillo.jpg"
+  },
+  {
+    "section": "Research & Extension Operations",
+    "name": "Mr. Arjay F. Abio",
+    "position": "Acting Head, Technology Transfer and Patent Unit",
+    "email": "ipu@parsu.edu.ph",
+    "photoPath": "/officials/Abio.jpg"
+  },
+  {
+    "section": "Research & Extension Operations",
+    "name": "Ms. Luisa M. Lanciso",
+    "position": "Acting Director, Extension Services Division",
+    "email": "extension@parsu.edu.ph",
+    "photoPath": "/officials/luisalanciso.jpg"
+  },
+  {
+    "section": "Research & Extension Operations",
+    "name": "Mr. Aldrin B. Rodriguez",
+    "position": "Director, Center for Partido Studies",
+    "email": "partido.studies@parsu.edu.ph",
+    "photoPath": "/officials/rodriguez.jpg"
+  },
+  {
+    "section": "Research & Extension Operations",
+    "name": "Mr. Tom Arkhel D. Palma",
+    "position": "Director, Center for Statistics",
+    "email": "statistics@parsu.edu.ph",
+    "photoPath": "/officials/palma.jpg"
+  },
+  {
+    "section": "Research & Extension Operations",
+    "name": "Dr. Joela Mizchelle D. Dacillo",
+    "position": "Director, Center for Sustainable Communities",
+    "email": "csc@parsu.edu.ph",
+      "photoPath": "/officials/dacillo.jpg"
+  },
+  {
+    "section": "Research & Extension Operations",
+    "name": "Engr. Annabella C. Vilando",
+    "position": "Director, Center for Water Resource Research",
+    "email": "waterrrc@parsu.edu.ph",
+    "photoPath": "/officials/villando.jpg"
+  },
+  {
+    "section": "Research & Extension Operations",
+    "name": "Mr. Raul B. Burce",
+    "position": "Director, Center for Coastal and Wetland Ecosystems",
+    "email": null,
+    "photoPath": "/officials/burce.jpg"
+  },
+  {
+    "section": "Research & Extension Operations",
+    "name": "Engr. Kier P. Gasga",
+    "position": "Director, Natural Product Research Center",
+    "email": "nprc@parsu.edu.ph",
+    "photoPath": "/officials/gasga.jpg"
+  },
+  {
+    "section": "Research & Extension Operations",
+    "name": "Ms. Rhesty R. Biares",
+    "position": "Director, Center for Bioresource Based Enterprise Development",
+    "email": "cbed@parsu.edu.ph",
+    "photoPath": "/officials/biares.jpg"
+  },
+  {
+    "section": "Research & Extension Operations",
+    "name": "Ms. Liezel DC. Atole-Nieva",
+    "position": "Director, Center for Food Safety Research and Extension",
+    "email": "cfsre@parsu.edu.ph",
+    "photoPath": "/officials/atole-nieva.jpg"
+  }
+]

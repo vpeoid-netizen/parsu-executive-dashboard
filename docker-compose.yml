@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: parsu-dashboard-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: parsu
+      POSTGRES_PASSWORD: parsu_local_dev
+      POSTGRES_DB: parsu_dashboard
+    ports:
+      - "5433:5432"
+    volumes:
+      - parsu_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U parsu -d parsu_dashboard"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  parsu_pgdata:

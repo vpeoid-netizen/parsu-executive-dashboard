@@ -1,0 +1,744 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DatasetStatus {
+  DRAFT
+  VALIDATED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum PeriodType {
+  FISCAL_YEAR
+  CALENDAR_YEAR
+  ACADEMIC_YEAR
+  SEMESTER
+  QUARTER
+  MONTH
+  AS_OF_DATE
+  DATE_RANGE
+}
+
+enum ImportMode {
+  REPLACE_DATASET
+  APPEND
+}
+
+enum ValidationSeverity {
+  INFO
+  WARNING
+  ERROR
+  CONFLICT
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  IMPORT
+  VALIDATE
+  PUBLISH
+  UNPUBLISH
+  ARCHIVE
+  RESTORE
+  LOGIN
+  LOGIN_FAILED
+  LOGOUT
+}
+
+enum MediaKind {
+  IMAGE
+  DOCUMENT
+  SPREADSHEET
+  OTHER
+}
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  role         String    @default("ADMIN")
+  passwordHash String
+  active       Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  lastLoginAt  DateTime?
+  sessions     AdminSession[]
+  auditLogs    AuditLog[]
+  importJobs   ImportJob[]
+  datasets     Dataset[] @relation("DatasetOwner")
+}
+
+model AdminSession {
+  id         String    @id @default(cuid())
+  userId     String
+  user       AdminUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  createdAt  DateTime  @default(now())
+  ipAddress  String?
+  userAgent  String?
+}
+
+model LoginAttempt {
+  id         String   @id @default(cuid())
+  email      String
+  ipAddress  String
+  success    Boolean
+  createdAt  DateTime @default(now())
+
+  @@index([email, createdAt])
+  @@index([ipAddress, createdAt])
+}
+
+model AuditLog {
+  id          String      @id @default(cuid())
+  userId      String?
+  user        AdminUser?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action      AuditAction
+  entityType  String
+  entityId    String?
+  summary     String
+  previousJson String?
+  nextJson    String?
+  ipAddress   String?
+  createdAt   DateTime    @default(now())
+
+  @@index([createdAt])
+  @@index([entityType, entityId])
+}
+
+model Campus {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  name      String
+  shortName String?
+  active    Boolean  @default(true)
+  colleges  College[]
+  programs  AcademicProgram[]
+}
+
+model College {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  name      String
+  campusId  String?
+  campus    Campus?  @relation(fields: [campusId], references: [id], onDelete: SetNull)
+  active    Boolean  @default(true)
+  aliases   CollegeAlias[]
+  programs  AcademicProgram[]
+}
+
+model CollegeAlias {
+  id        String  @id @default(cuid())
+  alias     String  @unique
+  collegeId String
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+}
+
+model Office {
+  id       String  @id @default(cuid())
+  name     String
+  campusId String?
+  code     String?
+  active   Boolean @default(true)
+}
+
+model CategoryDefinition {
+  id           String  @id @default(cuid())
+  type         String
+  code         String
+  name         String
+  displayOrder Int     @default(0)
+  active       Boolean @default(true)
+
+  @@unique([type, code])
+}
+
+model ReportingPeriod {
+  id          String     @id @default(cuid())
+  type        PeriodType
+  label       String
+  fiscalYear  Int?
+  calendarYear Int?
+  academicYearStart Int?
+  academicYearEnd   Int?
+  semester    Int?
+  quarter     Int?
+  month       Int?
+  asOfDate    DateTime?
+  startDate   DateTime?
+  endDate     DateTime?
+  isPartial   Boolean    @default(false)
+  notes       String?
+  metricObservations      MetricObservation[]
+  enrollmentObservations  EnrollmentObservation[]
+
+  @@index([type, fiscalYear])
+  @@index([type, academicYearStart, semester])
+}
+
+model Dataset {
+  id          String          @id @default(cuid())
+  code        String          @unique
+  title       String
+  description String?
+  ownerId     String?
+  owner       AdminUser?      @relation("DatasetOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  versions    DatasetVersion[]
+}
+
+model DatasetVersion {
+  id            String        @id @default(cuid())
+  datasetId     String
+  dataset       Dataset       @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  versionNumber Int
+  status        DatasetStatus @default(DRAFT)
+  sourceFile    String?
+  worksheet     String?
+  importedAt    DateTime?
+  publishedAt   DateTime?
+  publishedById String?
+  periodLabel   String?
+  asOfDate      DateTime?
+  notes         String?
+  createdAt     DateTime      @default(now())
+  importJobs    ImportJob[]
+  issues        ValidationIssue[]
+  observations  MetricObservation[]
+
+  @@unique([datasetId, versionNumber])
+}
+
+model ImportJob {
+  id               String        @id @default(cuid())
+  datasetVersionId String?
+  datasetVersion   DatasetVersion? @relation(fields: [datasetVersionId], references: [id], onDelete: SetNull)
+  adminId          String?
+  admin            AdminUser?    @relation(fields: [adminId], references: [id], onDelete: SetNull)
+  fileName         String
+  filePath         String
+  mimeType         String?
+  mode             ImportMode    @default(REPLACE_DATASET)
+  status           String        @default("UPLOADED")
+  summaryJson      String?
+  createdAt        DateTime      @default(now())
+  completedAt      DateTime?
+}
+
+model ValidationIssue {
+  id               String              @id @default(cuid())
+  datasetVersionId String
+  datasetVersion   DatasetVersion      @relation(fields: [datasetVersionId], references: [id], onDelete: Cascade)
+  severity         ValidationSeverity
+  code             String
+  message          String
+  sourceRef        String?
+  resolved         Boolean             @default(false)
+  resolution       String?
+  createdAt        DateTime            @default(now())
+}
+
+model MetricDefinition {
+  id              String   @id @default(cuid())
+  code            String   @unique
+  title           String
+  shortTitle      String
+  description     String?
+  unit            String
+  format          String
+  higherIsBetter  Boolean  @default(true)
+  sourceDataset   String?
+  periodType      PeriodType?
+  displayOrder    Int      @default(0)
+  homepageVisible Boolean  @default(false)
+  detailsHref     String?
+  groupName       String?
+  observations    MetricObservation[]
+}
+
+model MetricObservation {
+  id               String           @id @default(cuid())
+  metricId         String
+  metric           MetricDefinition @relation(fields: [metricId], references: [id], onDelete: Cascade)
+  datasetVersionId String?
+  datasetVersion   DatasetVersion?  @relation(fields: [datasetVersionId], references: [id], onDelete: SetNull)
+  status           DatasetStatus    @default(DRAFT)
+  value            Float?
+  numerator        Float?
+  denominator      Float?
+  rawValue         String?
+  periodId         String?
+  period           ReportingPeriod? @relation(fields: [periodId], references: [id], onDelete: SetNull)
+  campusId         String?
+  collegeId        String?
+  asOfDate         DateTime?
+  sourceNote       String?
+  createdAt        DateTime         @default(now())
+
+  @@index([metricId, status])
+  @@index([status, campusId])
+}
+
+model AcademicProgram {
+  id                 String           @id @default(cuid())
+  datasetVersionId   String
+  status             DatasetStatus    @default(DRAFT)
+  campusId           String?
+  campus             Campus?          @relation(fields: [campusId], references: [id], onDelete: SetNull)
+  collegeId          String?
+  college            College?         @relation(fields: [collegeId], references: [id], onDelete: SetNull)
+  name               String
+  programType        String?
+  specializedMajor   String?
+  copcNumber         String?
+  copcIssuanceDate   DateTime?
+  copcRaw            String?
+  accreditationLevel String?
+  accreditationRaw   String?
+  validityStart      DateTime?
+  validityEnd        DateTime?
+  validityRaw        String?
+  accreditable       Boolean?
+  accredited         Boolean?
+  programStatus      String?
+  phaseOut           Boolean          @default(false)
+  remarks            String?
+  sourceRow          Int?
+}
+
+model FacultySnapshot {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  campusId         String?
+  collegeId        String?
+  asOfDate         DateTime?
+  total            Int?
+  countsJson       String
+  sourceRow        Int?
+}
+
+model StaffSnapshot {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  campusId         String?
+  department       String?
+  office           String?
+  unit             String?
+  asOfDate         DateTime?
+  total            Int?
+  countsJson       String
+  sourceRow        Int?
+}
+
+model EnrollmentObservation {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  campusId         String?
+  collegeId        String?
+  programName      String
+  periodId         String?
+  period           ReportingPeriod? @relation(fields: [periodId], references: [id], onDelete: SetNull)
+  headcount        Int?
+  sourceRow        Int?
+
+  @@index([status, periodId])
+}
+
+model LicensureObservation {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  campusId         String?
+  programName      String
+  examination      String?
+  examMonth        String?
+  fiscalYear       Int
+  firstTimeTakers  Int?
+  firstTimePassers Int?
+  passingRate      Float?
+  rawPercentage    String?
+  sourceRow        Int?
+  isTotalRow       Boolean       @default(false)
+
+  @@index([status, fiscalYear])
+}
+
+model StudentAward {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  recipient        String
+  programName      String?
+  eventName        String?
+  awardRank        String?
+  occurredOn       DateTime?
+  occurredRaw      String?
+  venue            String?
+  level            String?
+  photoPath        String?
+  description      String?
+  sourceRow        Int?
+}
+
+model EmployabilityObservation {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  cohortLabel      String
+  collegeId        String?
+  collegeName      String
+  graduates        Int?
+  employed         Int?
+  rate             Float?
+  rawValue         String?
+  source           String?
+  reportingYear    Int?
+  sourceRow        Int?
+}
+
+model PerformanceIndicator {
+  id           String  @id @default(cuid())
+  code         String  @unique
+  programMfo   String
+  indicatorType String
+  title        String
+  unit         String?
+  displayOrder Int     @default(0)
+  observations PerformanceObservation[]
+}
+
+model PerformanceObservation {
+  id               String               @id @default(cuid())
+  indicatorId      String
+  indicator        PerformanceIndicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
+  datasetVersionId String
+  status           DatasetStatus        @default(DRAFT)
+  fiscalYear       Int
+  periodId         String?
+  targetRaw        String?
+  targetValue      Float?
+  accomplishmentRaw String?
+  accomplishmentValue Float?
+  numerator        Float?
+  denominator      Float?
+  unit             String?
+  asOfDate         DateTime?
+  isPartial        Boolean              @default(false)
+  remarks          String?
+  sourceRow        Int?
+}
+
+model ResearchCompletion {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  fiscalYear       Int
+  quarter          Int?
+  title            String
+  authorsJson      String
+  completionDate   DateTime?
+  collegeId        String?
+  campusId         String?
+  sourceRow        Int?
+}
+
+model ResearchPublication {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  fiscalYear       Int
+  originalTitle    String?
+  publishedTitle   String
+  authorsJson      String
+  journal          String?
+  indexing         String?
+  doi              String?
+  publishedAt      DateTime?
+  sourceRow        Int?
+}
+
+model ResearchUtilization {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  fiscalYear       Int
+  campusId         String?
+  collegeCode      String?
+  productName      String?
+  researchTitle    String?
+  startedAt        DateTime?
+  completedAt      DateTime?
+  authorsJson      String
+  beneficiary      String?
+  patentOrDescription String?
+  sourceRow        Int?
+}
+
+model ResearchGrant {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  title            String
+  principalInvestigator String?
+  fundingAgency    String?
+  amount           Decimal?
+  duration         String?
+  approvedAt       DateTime?
+  grantStatus      String?
+  collegeId        String?
+  fundingType      String?
+}
+
+model ExtensionProgram {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  title            String
+  borReference     String?
+  approvedAt       DateTime?
+  campusId         String?
+  collegeId        String?
+  office           String?
+  projectLeader    String?
+  programStatus    String?
+  beneficiaries    String?
+  location         String?
+}
+
+model ExtensionPartner {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  organization     String
+  organizationType String?
+  location         String?
+  startedAt        DateTime?
+  endedAt          DateTime?
+  agreement        String?
+  programId        String?
+  partnerStatus    String?
+}
+
+model LandAsset {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  campusId         String?
+  landArea         String?
+  titleReference   String?
+  location         String?
+  remarks          String?
+}
+
+model BuildingAsset {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  name             String
+  campusId         String?
+  buildingType     String?
+  floorArea        String?
+  yearCompleted    Int?
+  buildingStatus   String?
+}
+
+model LaboratoryAsset {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  name             String
+  campusId         String?
+  collegeId        String?
+  office           String?
+  labType          String?
+  capabilitySummary String?
+}
+
+model AccommodationAsset {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  name             String
+  kind             String
+  campusId         String?
+  capacity         String?
+  accommodationStatus String?
+}
+
+model VehicleAsset {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  name             String
+  vehicleType      String?
+  plateOrPropertyNo String?
+  campusId         String?
+  office           String?
+  yearModel        String?
+  operationalStatus String?
+}
+
+model InfrastructureProject {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  classification   String
+  name             String
+  campusId         String?
+  contractor       String?
+  projectCost      Decimal?
+  sourceOfFund     String?
+  startDate        DateTime?
+  targetCompletion DateTime?
+  physicalAccomplishment Float?
+  financialAccomplishment Float?
+  projectStatus    String?
+  delayNotes       String?
+  manager          String?
+  priorityLevel    String?
+  estimatedCost    Decimal?
+  justification    String?
+  targetYear       Int?
+  reports          InfrastructureProgressReport[]
+}
+
+model InfrastructureProgressReport {
+  id          String                @id @default(cuid())
+  projectId   String
+  project     InfrastructureProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  status      DatasetStatus         @default(DRAFT)
+  reportingMonth DateTime
+  physicalAccomplishment Float?
+  financialAccomplishment Float?
+  narrative   String?
+  issues      String?
+  correctiveAction String?
+  photosJson  String?
+}
+
+model BudgetRecord {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  fiscalYear       Int
+  fundingSource    String?
+  programPap       String?
+  category         String?
+  budget           Decimal?
+  allotment        Decimal?
+  obligation       Decimal?
+  disbursement     Decimal?
+  balance          Decimal?
+  publiclyPublishable Boolean    @default(true)
+}
+
+model InternationalPartner {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  institution      String
+  country          String?
+  countryCode      String?
+  agreementType    String?
+  startDate        DateTime?
+  expiration       DateTime?
+  activities       String?
+  responsibleOffice String?
+  partnerStatus    String?
+}
+
+model InternationalMembership {
+  id               String        @id @default(cuid())
+  datasetVersionId String
+  status           DatasetStatus @default(DRAFT)
+  organization     String
+  countryOrRegion  String?
+  membershipType   String?
+  startYear        Int?
+  validity         String?
+  membershipStatus String?
+}
+
+model Official {
+  id           String   @id @default(cuid())
+  name         String
+  position     String
+  office       String?
+  email        String?
+  section      String?
+  photoPath    String?
+  displayOrder Int      @default(0)
+  effectiveFrom DateTime?
+  effectiveTo  DateTime?
+  published    Boolean  @default(false)
+}
+
+model InstitutionalPage {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  body      String
+  published Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+}
+
+model FlagshipProgram {
+  id              String   @id @default(cuid())
+  title           String
+  shortDescription String?
+  fullDescription String?
+  office          String?
+  programLead     String?
+  startDate       DateTime?
+  programStatus   String?
+  bannerPath      String?
+  galleryJson     String?
+  kpiJson         String?
+  linksJson       String?
+  showOnHomepage  Boolean  @default(false)
+  published       Boolean  @default(false)
+  displayOrder    Int      @default(0)
+}
+
+model DocumentRecord {
+  id          String   @id @default(cuid())
+  title       String
+  category    String
+  description String?
+  effectiveYear Int?
+  filePath    String?
+  externalUrl String?
+  publishedAt DateTime?
+  version     String?
+  visibility  String   @default("PUBLIC")
+  published   Boolean  @default(false)
+}
+
+model MediaAsset {
+  id        String    @id @default(cuid())
+  kind      MediaKind
+  fileName  String
+  storedPath String
+  mimeType  String
+  sizeBytes Int
+  altText   String?
+  createdAt DateTime  @default(now())
+}
+
+model SystemSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+}
