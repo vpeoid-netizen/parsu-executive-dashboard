@@ -13,7 +13,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-transparent bg-white/90 backdrop-blur-sm transition-all duration-200">
+    <header className="sticky top-0 z-50 border-b border-border bg-white">
       <div className="mx-auto flex max-w-7xl items-center gap-2 px-3 py-3 sm:gap-3 sm:px-6 lg:px-8">
         <Link href="/" className="flex min-w-0 flex-1 items-center gap-2 rounded-xl sm:gap-3 xl:flex-none xl:shrink-0">
           <Image
@@ -21,6 +21,7 @@ export function SiteHeader() {
             alt="Partido State University official seal"
             width={40}
             height={40}
+            sizes="40px"
             className="h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10"
             priority
           />

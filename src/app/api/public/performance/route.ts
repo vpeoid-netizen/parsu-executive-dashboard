@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { classifyAchievement } from "@/lib/metrics";
 import { getPerformanceByIndicator, getPerformanceByYear } from "@/lib/queries";
 
+export const revalidate = 300;
+
 export async function GET(request: Request) {
   const year = new URL(request.url).searchParams.get("year");
   if (year) {

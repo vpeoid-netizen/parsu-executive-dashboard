@@ -1,4 +1,5 @@
-import { ChartPanel, TrendChart } from "@/components/charts/charts";
+import { ChartPanel } from "@/components/charts/chart-panel";
+import { LazyTrendChart } from "@/components/charts/lazy-charts";
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { KpiCard } from "@/components/ui/primitives";
 
@@ -20,7 +21,7 @@ export function ResearchYearTrend({
   const chronological = [...years].sort((a, b) => a - b);
   return (
     <ChartPanel title={title} period={period}>
-      <TrendChart
+      <LazyTrendChart
         data={chronological.map((year) => ({
           year: `FY ${year}`,
           [seriesKey]: values[year] ?? 0,

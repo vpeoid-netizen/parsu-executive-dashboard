@@ -1,5 +1,6 @@
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { ChartPanel, ComparisonBars, TrendChart } from "@/components/charts/charts";
+import { ChartPanel } from "@/components/charts/chart-panel";
+import { LazyComparisonBars, LazyTrendChart } from "@/components/charts/lazy-charts";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState, KpiCard, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
@@ -51,7 +52,7 @@ export default async function LicensurePage() {
         <>
           <div className="mb-8 grid gap-6 xl:grid-cols-2">
             <ChartPanel title="Historical first-time passing rate">
-              <TrendChart
+              <LazyTrendChart
                 data={totals.map((row) => ({
                   year: `FY ${row.fiscalYear}`,
                   Rate: Number(((row.passingRate ?? 0) * 100).toFixed(2)),
@@ -61,7 +62,7 @@ export default async function LicensurePage() {
               />
             </ChartPanel>
             <ChartPanel title="Program passing rates" period={`${currentPeriod} / as of ${currentAsOf}`}>
-              <ComparisonBars
+              <LazyComparisonBars
                 data={detail
                   .filter((row) => row.fiscalYear === current?.fiscalYear && row.passingRate != null)
                   .map((row) => ({

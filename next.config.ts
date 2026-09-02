@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "25mb",
     },
   },
+  images: {
+    formats: ["image/avif", "image/webp"],
+  },
   turbopack: {
     root: process.cwd(),
   },

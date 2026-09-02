@@ -13,6 +13,7 @@ export function SiteFooter() {
               alt="Partido State University official seal"
               width={48}
               height={48}
+              sizes="48px"
               className="h-12 w-12 object-contain"
             />
             <p className="font-display mt-5 max-w-md text-xl font-semibold leading-snug">{UNIVERSITY_NAME}</p>

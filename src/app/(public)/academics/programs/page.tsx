@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { ChartPanel, ComparisonBars, DonutChart } from "@/components/charts/charts";
+import { ChartPanel } from "@/components/charts/chart-panel";
+import { LazyComparisonBars, LazyDonutChart } from "@/components/charts/lazy-charts";
 import { CollegeAbbrevKey } from "@/components/ui/college-abbrev-key";
 import { EmptyState, KpiCard, ModuleHeader, StatusBadge } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
@@ -80,7 +81,7 @@ export default async function ProgramsPage() {
         <>
           <div className="mb-8 grid gap-6 xl:grid-cols-2">
             <ChartPanel title="Programs by college">
-              <ComparisonBars
+              <LazyComparisonBars
                 data={byCollege}
                 xKey="name"
                 bars={[{ key: "Programs", label: "Programs" }]}
@@ -94,7 +95,7 @@ export default async function ProgramsPage() {
                 {formatNumber(programs.length)} programs: {undergraduateCount} undergraduate and {graduateCount}{" "}
                 graduate{otherTypeCount > 0 ? `, plus ${otherTypeCount} other` : ""}.
               </p>
-              <DonutChart
+              <LazyDonutChart
                 data={byType}
                 hideSliceLabels
                 centerLabel={{ primary: formatNumber(programs.length), secondary: "programs" }}

@@ -1,5 +1,6 @@
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { ChartPanel, TrendChart } from "@/components/charts/charts";
+import { ChartPanel } from "@/components/charts/chart-panel";
+import { LazyTrendChart } from "@/components/charts/lazy-charts";
 import { KpiCard, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
 
@@ -47,7 +48,7 @@ export default async function ResearchHomePage() {
         <>
           <div className="mb-8">
             <ChartPanel title="Research accomplishments by fiscal year" period="Unique titles per year">
-              <TrendChart
+              <LazyTrendChart
                 data={trend}
                 xKey="year"
                 series={[

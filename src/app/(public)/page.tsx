@@ -1,17 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ChartPanel, DonutChart, TrendChart } from "@/components/charts/charts";
+import { ChartPanel } from "@/components/charts/chart-panel";
+import { LazyDonutChart, LazyTrendChart } from "@/components/charts/lazy-charts";
 import { PerformanceIndicatorCard } from "@/components/performance/indicator-card";
 import { ExecutiveIndicatorTabs } from "@/components/dashboard/executive-indicator-tabs";
 import { DocumentLink } from "@/components/ui/document-link";
 import { EmptyState, PageShell, SectionTitle } from "@/components/ui/primitives";
-import { prisma } from "@/lib/db";
-import { formatDate, formatNumber, formatPercent } from "@/lib/format";
+import { formatDate, formatNumber } from "@/lib/format";
+import { getHomepageData } from "@/lib/homepage-data";
 import { ACADEMIC_RANK_GROUPS } from "@/lib/import/normalize";
 import { coverageCenterLabel, hasCopcNumber, programsByCollegeSlices } from "@/lib/program-coverage";
 import { PERFORMANCE_FOCUS_YEAR, groupByProgramMfo } from "@/lib/performance-display";
 import { shortChartPeriodLabel } from "@/lib/periods";
-import { getEnrollmentSeries, getHomepageKpisByYear, getPerformanceByIndicator, latestDatasetDates } from "@/lib/queries";
 import { contributionByRankAndYear } from "@/lib/research";
 
 type CountGroups = {
@@ -43,11 +43,11 @@ function researchRankSlices(records: { fiscalYear: number; authorsJson: string }
 }
 
 export default async function DashboardPage() {
-  const [
+  const {
     kpis,
     enrollment,
     performance,
-    versions,
+    latestPublish,
     programs,
     faculty,
     staff,
@@ -58,31 +58,7 @@ export default async function DashboardPage() {
     extensionPrograms,
     extensionPartners,
     documents,
-  ] = await Promise.all([
-    getHomepageKpisByYear(),
-    getEnrollmentSeries(),
-    getPerformanceByIndicator(),
-    latestDatasetDates(),
-    prisma.academicProgram.findMany({ where: { status: "PUBLISHED" }, include: { college: true } }),
-    prisma.facultySnapshot.findMany({ where: { status: "PUBLISHED" } }),
-    prisma.staffSnapshot.findMany({ where: { status: "PUBLISHED" } }),
-    prisma.researchCompletion.findMany({ where: { status: "PUBLISHED" } }),
-    prisma.researchPublication.findMany({ where: { status: "PUBLISHED" } }),
-    prisma.researchUtilization.findMany({ where: { status: "PUBLISHED" } }),
-    prisma.licensureObservation.findMany({
-      where: { status: "PUBLISHED", isTotalRow: true },
-      orderBy: { fiscalYear: "asc" },
-    }),
-    prisma.extensionProgram.findMany({ where: { status: "PUBLISHED" } }),
-    prisma.extensionPartner.findMany({ where: { status: "PUBLISHED" } }),
-    prisma.documentRecord.findMany({
-      where: { published: true, visibility: "PUBLIC" },
-      orderBy: { publishedAt: "desc" },
-      take: 5,
-    }),
-  ]);
-
-  const latestPublish = versions[0]?.publishedAt ?? null;
+  } = await getHomepageData();
   const programRows = programs.map((program) => ({
     collegeCode: program.college?.code ?? null,
     copcNumber: program.copcNumber,
@@ -135,6 +111,7 @@ export default async function DashboardPage() {
           alt=""
           fill
           priority
+          quality={70}
           sizes="100vw"
           className="object-cover object-center"
           aria-hidden="true"
@@ -150,6 +127,8 @@ export default async function DashboardPage() {
               alt="Partido State University official seal"
               width={360}
               height={360}
+              priority
+              sizes="(max-width: 640px) 112px, (max-width: 1024px) 160px, 256px"
               className="h-28 w-28 object-contain drop-shadow-[0_12px_28px_rgba(7,31,70,0.45)] sm:h-40 sm:w-40 lg:h-64 lg:w-64"
             />
           </div>
@@ -191,7 +170,7 @@ export default async function DashboardPage() {
             <p className="sr-only">
               {copcPrograms.length} of {programRows.length} programs have COPC. Slices are college counts.
             </p>
-            <DonutChart
+            <LazyDonutChart
               data={copcSlices}
               hideSliceLabels
               centerLabel={coverageCenterLabel(copcPrograms.length, programRows.length)}
@@ -206,7 +185,7 @@ export default async function DashboardPage() {
               {accreditedPrograms.length} of {accreditablePrograms.length} accreditable programs have active
               accreditation. Slices are college counts.
             </p>
-            <DonutChart
+            <LazyDonutChart
               data={accreditedSlices}
               hideSliceLabels
               centerLabel={coverageCenterLabel(accreditedPrograms.length, accreditablePrograms.length)}
@@ -247,7 +226,7 @@ export default async function DashboardPage() {
           <SectionTitle title="Personnel" action={{ href: "/personnel", label: "View details" }} />
           <div className="grid gap-4 xl:grid-cols-3">
             <ChartPanel title="Faculty members" period="By academic rank" action={{ href: "/personnel/faculty", label: "Details" }}>
-              <DonutChart
+              <LazyDonutChart
                 data={facultyRankSlices}
                 hideSliceLabels
                 centerLabel={{ primary: formatNumber(facultyCounts.total) }}
@@ -258,7 +237,7 @@ export default async function DashboardPage() {
               period="By nature of appointment"
               action={{ href: "/personnel/faculty", label: "Details" }}
             >
-              <DonutChart
+              <LazyDonutChart
                 data={facultyAppointmentSlices}
                 hideSliceLabels
                 centerLabel={{ primary: formatNumber(facultyCounts.total) }}
@@ -269,7 +248,7 @@ export default async function DashboardPage() {
               period="By nature of appointment"
               action={{ href: "/personnel/non-teaching", label: "Details" }}
             >
-              <DonutChart
+              <LazyDonutChart
                 data={staffAppointmentSlices}
                 hideSliceLabels
                 centerLabel={{ primary: formatNumber(staffCounts.total) }}
@@ -282,7 +261,7 @@ export default async function DashboardPage() {
           <SectionTitle title="Students" action={{ href: "/students", label: "View details" }} />
           <div className="grid gap-4 xl:grid-cols-2">
             <ChartPanel title="Enrollment" period="Semestral headcount" action={{ href: "/students/enrollment", label: "Details" }}>
-              <TrendChart
+              <LazyTrendChart
                 data={enrollment.map((row) => ({
                   period: shortChartPeriodLabel(row.label),
                   Enrollment: row.total,
@@ -298,7 +277,7 @@ export default async function DashboardPage() {
               period="First-time taker passing rate"
               action={{ href: "/students/licensure", label: "Details" }}
             >
-              <TrendChart
+              <LazyTrendChart
                 data={licensureTotals.map((row) => ({
                   year: `FY ${row.fiscalYear}`,
                   Rate: Number(((row.passingRate ?? 0) * 100).toFixed(2)),
@@ -326,7 +305,7 @@ export default async function DashboardPage() {
               <p className="sr-only">
                 Colors in this donut are the percent contribution of each academic rank to completed research.
               </p>
-              <DonutChart
+              <LazyDonutChart
                 data={researchRankSlices(fyCompletions, "Completed research", fyCompletions.length)}
                 hideSliceLabels
                 centerLabel={{ primary: formatNumber(fyCompletions.length) }}
@@ -340,7 +319,7 @@ export default async function DashboardPage() {
               <p className="sr-only">
                 Colors in this donut are the percent contribution of each academic rank to publications.
               </p>
-              <DonutChart
+              <LazyDonutChart
                 data={researchRankSlices(fyPublications, "Publications", fyPublications.length)}
                 hideSliceLabels
                 centerLabel={{ primary: formatNumber(fyPublications.length) }}
@@ -354,7 +333,7 @@ export default async function DashboardPage() {
               <p className="sr-only">
                 Colors in this donut are the percent contribution of each academic rank to utilization.
               </p>
-              <DonutChart
+              <LazyDonutChart
                 data={researchRankSlices(fyUtilizations, "Utilization", fyUtilizations.length)}
                 hideSliceLabels
                 centerLabel={{ primary: formatNumber(fyUtilizations.length) }}
@@ -369,12 +348,12 @@ export default async function DashboardPage() {
             <div className="grid gap-4 xl:grid-cols-2">
               {extensionPrograms.length ? (
                 <ChartPanel title="BOR-approved programs" period="Published extension programs">
-                  <DonutChart data={programStatusSlices} />
+                  <LazyDonutChart data={programStatusSlices} />
                 </ChartPanel>
               ) : null}
               {extensionPartners.length ? (
                 <ChartPanel title="Extension partners" period="Published partners by type">
-                  <DonutChart data={partnerTypeSlices} />
+                  <LazyDonutChart data={partnerTypeSlices} />
                 </ChartPanel>
               ) : null}
             </div>

@@ -483,6 +483,13 @@ export async function persistWorkbook(parsed: ParsedWorkbook, options: {
 
   await rebuildMetrics(status);
   await ensureCmsDefaults();
+  try {
+    const { revalidatePath, revalidateTag } = await import("next/cache");
+    revalidatePath("/", "layout");
+    revalidateTag("public-data", "max");
+  } catch {
+    // Seed and other CLI runs are outside the Next.js request cache.
+  }
   return { issueVersion, issues: parsed.issues };
 }
 

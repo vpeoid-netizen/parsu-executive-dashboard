@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getEnrollmentSeries, getHomepageKpisByYear, latestDatasetDates } from "@/lib/queries";
 
+export const revalidate = 300;
+
 export async function GET() {
   const [kpis, enrollment, versions] = await Promise.all([
     getHomepageKpisByYear(),

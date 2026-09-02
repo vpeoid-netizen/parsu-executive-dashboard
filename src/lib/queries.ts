@@ -1,7 +1,10 @@
+import { unstable_cache } from "next/cache";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/db";
 import { EXECUTIVE_CURRENT_YEAR, EXECUTIVE_KPI_YEARS, type HomepageKpiCard } from "@/lib/kpi-years";
 import { sortByMfoAndTitle } from "@/lib/performance-display";
+
+const PUBLIC_CACHE: { revalidate: number; tags: string[] } = { revalidate: 300, tags: ["public-data"] };
 
 function toHomepageCard(definition: {
   id: string;
@@ -31,7 +34,7 @@ function toHomepageCard(definition: {
   };
 }
 
-export async function getPublishedKpis() {
+async function loadPublishedKpis() {
   const definitions = await prisma.metricDefinition.findMany({
     orderBy: { displayOrder: "asc" },
     include: {
@@ -49,20 +52,35 @@ export async function getPublishedKpis() {
   }));
 }
 
+export const getPublishedKpis = unstable_cache(loadPublishedKpis, ["published-kpis"], PUBLIC_CACHE);
+
 export async function getHomepageKpis() {
   const all = await getPublishedKpis();
   return all.filter((item) => item.homepageVisible);
 }
 
-export async function getHomepageKpisByYear() {
+async function loadHomepageKpisByYear() {
   const definitions = await prisma.metricDefinition.findMany({
     where: { homepageVisible: true },
     orderBy: { displayOrder: "asc" },
-    include: {
+    select: {
+      id: true,
+      code: true,
+      shortTitle: true,
+      groupName: true,
+      format: true,
+      detailsHref: true,
       observations: {
-        where: { status: "PUBLISHED" },
-        include: { period: true },
+        where: {
+          status: "PUBLISHED",
+          period: { fiscalYear: { in: [...EXECUTIVE_KPI_YEARS] } },
+        },
         orderBy: { createdAt: "desc" },
+        select: {
+          value: true,
+          sourceNote: true,
+          period: { select: { label: true, fiscalYear: true } },
+        },
       },
     },
   });
@@ -85,13 +103,19 @@ export async function getHomepageKpisByYear() {
   };
 }
 
-export async function getEnrollmentSeries() {
+export const getHomepageKpisByYear = unstable_cache(loadHomepageKpisByYear, ["homepage-kpis-by-year"], PUBLIC_CACHE);
+
+async function loadEnrollmentSeries() {
   const [rows, colleges] = await Promise.all([
     prisma.enrollmentObservation.findMany({
       where: { status: "PUBLISHED" },
-      include: { period: true },
+      select: {
+        headcount: true,
+        collegeId: true,
+        period: { select: { id: true, label: true, academicYearStart: true, semester: true } },
+      },
     }),
-    prisma.college.findMany(),
+    prisma.college.findMany({ select: { id: true, code: true } }),
   ]);
   const collegeCode = Object.fromEntries(colleges.map((item) => [item.id, item.code]));
   const grouped = new Map<string, { label: string; order: string; total: number; byCollege: Record<string, number> }>();
@@ -112,34 +136,63 @@ export async function getEnrollmentSeries() {
   return [...grouped.values()].sort((a, b) => a.order.localeCompare(b.order));
 }
 
+export const getEnrollmentSeries = unstable_cache(loadEnrollmentSeries, ["enrollment-series"], PUBLIC_CACHE);
+
 export async function getPerformanceByYear(year?: number) {
-  return prisma.performanceObservation.findMany({
-    where: { status: "PUBLISHED", ...(year ? { fiscalYear: year } : {}) },
-    include: { indicator: true },
-    orderBy: [{ fiscalYear: "asc" }, { indicator: { displayOrder: "asc" } }],
-  });
+  return unstable_cache(
+    async () =>
+      prisma.performanceObservation.findMany({
+        where: { status: "PUBLISHED", ...(year ? { fiscalYear: year } : {}) },
+        include: { indicator: true },
+        orderBy: [{ fiscalYear: "asc" }, { indicator: { displayOrder: "asc" } }],
+      }),
+    ["performance-by-year", String(year ?? "all")],
+    PUBLIC_CACHE,
+  )();
 }
 
-export async function getPerformanceByIndicator() {
+async function loadPerformanceByIndicator() {
   const indicators = await prisma.performanceIndicator.findMany({
-    include: {
+    select: {
+      id: true,
+      title: true,
+      indicatorType: true,
+      programMfo: true,
+      displayOrder: true,
       observations: {
         where: { status: "PUBLISHED" },
         orderBy: { fiscalYear: "asc" },
+        select: {
+          fiscalYear: true,
+          targetRaw: true,
+          targetValue: true,
+          accomplishmentRaw: true,
+          accomplishmentValue: true,
+          isPartial: true,
+          asOfDate: true,
+        },
       },
     },
   });
   return sortByMfoAndTitle(indicators.filter((item) => item.observations.length > 0));
 }
 
-export async function latestDatasetDates() {
-  const versions = await prisma.datasetVersion.findMany({
+export const getPerformanceByIndicator = unstable_cache(
+  loadPerformanceByIndicator,
+  ["performance-by-indicator"],
+  PUBLIC_CACHE,
+);
+
+async function loadLatestDatasetDates() {
+  return prisma.datasetVersion.findMany({
     where: { status: "PUBLISHED" },
-    include: { dataset: true },
     orderBy: { publishedAt: "desc" },
+    take: 1,
+    select: { publishedAt: true },
   });
-  return versions;
 }
+
+export const latestDatasetDates = unstable_cache(loadLatestDatasetDates, ["latest-dataset-dates"], PUBLIC_CACHE);
 
 export async function requestIp() {
   const headerList = await headers();

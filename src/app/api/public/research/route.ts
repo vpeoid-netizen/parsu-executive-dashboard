@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
+export const revalidate = 300;
+
 export async function GET() {
   const [completed, publications, utilization] = await Promise.all([
     prisma.researchCompletion.count({ where: { status: "PUBLISHED" } }),

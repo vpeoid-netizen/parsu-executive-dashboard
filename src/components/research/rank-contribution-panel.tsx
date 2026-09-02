@@ -1,4 +1,5 @@
-import { ChartPanel, DonutChart, StackedPercentBars } from "@/components/charts/charts";
+import { ChartPanel } from "@/components/charts/chart-panel";
+import { LazyDonutChart, LazyStackedPercentBars } from "@/components/charts/lazy-charts";
 import { ACADEMIC_RANK_GROUPS } from "@/lib/import/normalize";
 import { formatNumber, formatPercent } from "@/lib/format";
 import { contributionByRankAndYear, type AuthoredResearchRecord } from "@/lib/research";
@@ -22,7 +23,7 @@ export function RankContributionPanel({
     return (
       <div>
         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{title}</p>
-        <DonutChart data={share.latestSlices} />
+        <LazyDonutChart data={share.latestSlices} />
       </div>
     );
   }
@@ -47,10 +48,10 @@ export function RankContributionPanel({
           Percentage contribution to annual accomplishment by academic rank. Slice labels show percent; the legend
           names each rank.
         </p>
-        <DonutChart data={share.latestSlices} />
+        <LazyDonutChart data={share.latestSlices} />
       </ChartPanel>
       <ChartPanel title="Share by fiscal year" period="100% stacked author contribution">
-        <StackedPercentBars data={share.stacked} xKey="year" keys={[...ACADEMIC_RANK_GROUPS]} />
+        <LazyStackedPercentBars data={share.stacked} xKey="year" keys={[...ACADEMIC_RANK_GROUPS]} />
         <div className="mt-4 overflow-x-auto">
           <table className="w-full text-left text-sm">
             <caption className="sr-only">Author contribution share by academic rank and fiscal year</caption>

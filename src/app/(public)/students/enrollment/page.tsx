@@ -1,5 +1,6 @@
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { ChartPanel, ComparisonBars, TrendChart } from "@/components/charts/charts";
+import { ChartPanel } from "@/components/charts/chart-panel";
+import { LazyComparisonBars, LazyTrendChart } from "@/components/charts/lazy-charts";
 import { CollegeAbbrevKey } from "@/components/ui/college-abbrev-key";
 import { EmptyState, KpiCard, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
@@ -127,7 +128,7 @@ export default async function EnrollmentPage({
         <>
           <div className="mb-8 grid gap-6 xl:grid-cols-2">
             <ChartPanel title="University trend" period="All semesters">
-              <TrendChart
+              <LazyTrendChart
                 data={series.map((item) => ({
                   period: shortChartPeriodLabel(item.label),
                   Enrollment: item.total,
@@ -138,7 +139,7 @@ export default async function EnrollmentPage({
               />
             </ChartPanel>
             <ChartPanel title="College contribution" period={latest?.label}>
-              <ComparisonBars
+              <LazyComparisonBars
                 data={collegeContribution}
                 xKey="name"
                 bars={[{ key: "Enrollment", label: "Enrollment" }]}
@@ -179,7 +180,7 @@ export default async function EnrollmentPage({
           <div className="space-y-6">
             {collegeTrends.map((college) => (
               <ChartPanel key={college.id} title={college.title} period="Enrollment by program">
-                <TrendChart
+                <LazyTrendChart
                   data={college.trend}
                   xKey="period"
                   height={260}

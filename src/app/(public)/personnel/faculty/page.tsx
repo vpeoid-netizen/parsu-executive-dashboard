@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { ChartPanel, ComparisonBars } from "@/components/charts/charts";
+import { ChartPanel } from "@/components/charts/chart-panel";
+import { LazyComparisonBars } from "@/components/charts/lazy-charts";
 import { CollegeAbbrevKey } from "@/components/ui/college-abbrev-key";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState, KpiCard, ModuleHeader } from "@/components/ui/primitives";
@@ -75,7 +76,7 @@ export default async function FacultyPage() {
         <>
           <div className="mb-8 grid gap-6 xl:grid-cols-2">
             <ChartPanel title="By academic rank">
-              <ComparisonBars
+              <LazyComparisonBars
                 data={[
                   "Instructor",
                   "Assistant Professor",
@@ -88,7 +89,7 @@ export default async function FacultyPage() {
               />
             </ChartPanel>
             <ChartPanel title="By college">
-              <ComparisonBars
+              <LazyComparisonBars
                 data={byCollege}
                 xKey="name"
                 bars={[{ key: "Faculty", label: "Faculty" }]}

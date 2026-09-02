@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { collegeFullName } from "@/lib/import/normalize";
 
+export const revalidate = 300;
+
 export async function GET() {
   const programs = await prisma.academicProgram.findMany({
     where: { status: "PUBLISHED" },

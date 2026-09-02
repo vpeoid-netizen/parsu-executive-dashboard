@@ -1,4 +1,4 @@
-import { TrendChart } from "@/components/charts/charts";
+import { LazyTrendChart } from "@/components/charts/lazy-charts";
 import { StatusBadge } from "@/components/ui/primitives";
 import { formatDate } from "@/lib/format";
 import { classifyAchievement } from "@/lib/metrics";
@@ -96,7 +96,7 @@ export function PerformanceIndicatorCard({
           Historical {asPercent ? "percentage" : "count"} of target versus accomplishment. FY {focusYear} is the current
           year; earlier years are shown for comparison.
         </p>
-        <TrendChart
+        <LazyTrendChart
           data={history.points}
           xKey="period"
           height={compact ? 220 : 188}

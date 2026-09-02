@@ -1,5 +1,6 @@
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { ChartPanel, ComparisonBars } from "@/components/charts/charts";
+import { ChartPanel } from "@/components/charts/chart-panel";
+import { LazyComparisonBars } from "@/components/charts/lazy-charts";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState, KpiCard, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
@@ -44,7 +45,7 @@ export default async function BudgetPage() {
       ) : (
         <>
           <ChartPanel title="Budget vs obligation vs disbursement">
-            <ComparisonBars
+            <LazyComparisonBars
               data={latest.map((row) => ({
                 name: row.programPap ?? row.category ?? "Item",
                 Budget: Number(row.budget ?? 0),

@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getEnrollmentSeries } from "@/lib/queries";
 import { prisma } from "@/lib/db";
 
+export const revalidate = 300;
+
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const ay = url.searchParams.get("ay");
