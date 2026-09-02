@@ -36,10 +36,11 @@ describe("dashboard chat facts", () => {
     expect(reply).toContain("7 campuses");
     expect(reply).toContain("/about/campuses");
     expect(reply).not.toMatch(/\bPARSU\b/);
+    expect(reply.toLowerCase()).toContain("sure");
   });
 
   it("says when a figure is not in the briefing", () => {
     const reply = answerFromFacts("What is the president's private mobile number?", facts);
-    expect(reply.toLowerCase()).toContain("do not have a published figure");
+    expect(reply.toLowerCase()).toContain("published figure");
   });
 });

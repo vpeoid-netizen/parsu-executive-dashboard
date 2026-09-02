@@ -32,7 +32,9 @@ postgresql://parsu:parsu_local_dev@localhost:5433/parsu_dashboard?schema=public
 | `NEXT_PUBLIC_SITE_URL` | `https://your-project.vercel.app` |
 | `AUTH_COOKIE_SECURE` | `true` |
 | `EXCEL_SOURCE_PATH` | `./Executive-Dashboard.xlsx` |
-| `OPENAI_API_KEY` (optional) | Enables AI explanations in the public chatbot. If omitted, the chatbot still answers from published dashboard figures. |
+| `GEMINI_API_KEY` (optional) | Preferred chatbot provider. If omitted, the chatbot still answers from published dashboard figures. |
+| `GEMINI_MODEL` (optional) | Defaults to `gemini-3.1-flash-lite`. |
+| `OPENAI_API_KEY` (optional) | Used when Gemini is not set. |
 | `AI_GATEWAY_API_KEY` (optional) | Alternative to OpenAI. On Vercel, OIDC (`VERCEL_OIDC_TOKEN`) can also reach AI Gateway. |
 | `GROQ_API_KEY` (optional) | OpenAI-compatible Groq fallback. |
 | `CHAT_MODEL` (optional) | Defaults to `gpt-4o-mini` (OpenAI) or `openai/gpt-4o-mini` (AI Gateway). |
