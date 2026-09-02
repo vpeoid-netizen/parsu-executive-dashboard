@@ -3,7 +3,7 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { EmptyState, KpiCard, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
 import { formatNumber } from "@/lib/format";
-import { appointmentMixNote, groupStaffOffices, type StaffOfficeRow } from "@/lib/staff-offices";
+import { appointmentMixNote, alignStaffTotalsToAppointments, groupStaffOffices, type StaffOfficeRow } from "@/lib/staff-offices";
 import { cn } from "@/lib/utils";
 
 export default async function StaffPage() {
@@ -12,14 +12,16 @@ export default async function StaffPage() {
     prisma.campus.findMany(),
   ]);
   const campusName = Object.fromEntries(campuses.map((item) => [item.id, item.name]));
-  const parsed: StaffOfficeRow[] = rows.map((row) => ({
-    department: row.department,
-    office: row.office,
-    unit: row.unit,
-    campus: row.campusId ? campusName[row.campusId] ?? "Central / unspecified" : "Central / unspecified",
-    total: row.total ?? 0,
-    counts: JSON.parse(row.countsJson) as { appointment?: Record<string, number> },
-  }));
+  const parsed: StaffOfficeRow[] = alignStaffTotalsToAppointments(
+    rows.map((row) => ({
+      department: row.department,
+      office: row.office,
+      unit: row.unit,
+      campus: row.campusId ? campusName[row.campusId] ?? "Central / unspecified" : "Central / unspecified",
+      total: row.total ?? 0,
+      counts: JSON.parse(row.countsJson) as { appointment?: Record<string, number> },
+    })),
+  );
   const total = parsed.reduce((sum, row) => sum + (row.total ?? 0), 0);
   const sumBy = (key: string) => parsed.reduce((sum, row) => sum + (row.counts.appointment?.[key] ?? 0), 0);
   const grouped = groupStaffOffices(parsed);

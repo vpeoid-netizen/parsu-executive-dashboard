@@ -24,8 +24,9 @@ function sumCountGroup(rows: { total: number | null; countsJson: string }[]) {
   const rank: Record<string, number> = {};
   let total = 0;
   for (const row of rows) {
-    total += row.total ?? 0;
     const counts = JSON.parse(row.countsJson) as CountGroups;
+    const appointmentSum = Object.values(counts.appointment ?? {}).reduce((sum, value) => sum + value, 0);
+    total += appointmentSum || (row.total ?? 0);
     for (const [key, value] of Object.entries(counts.appointment ?? {})) {
       appointment[key] = (appointment[key] ?? 0) + value;
     }
@@ -72,6 +73,12 @@ export default async function DashboardPage() {
   const accreditedSlices = programsByCollegeSlices(accreditedPrograms);
   const facultyCounts = sumCountGroup(faculty);
   const staffCounts = sumCountGroup(staff);
+  const homepageKpis = {
+    ...kpis,
+    current: kpis.current.map((kpi) =>
+      kpi.code === "NTP_TOTAL" ? { ...kpi, value: staffCounts.total } : kpi,
+    ),
+  };
   const facultyRankSlices = ACADEMIC_RANK_GROUPS.map((name) => ({
     name,
     value: facultyCounts.rank[name] ?? 0,
@@ -158,7 +165,7 @@ export default async function DashboardPage() {
 
       <PageShell>
         <section id="executive-indicators" className="mb-8 scroll-mt-24">
-          <ExecutiveIndicatorTabs currentYear={kpis.currentYear} current={kpis.current} reference={kpis.reference} />
+          <ExecutiveIndicatorTabs currentYear={homepageKpis.currentYear} current={homepageKpis.current} reference={homepageKpis.reference} />
         </section>
 
         <div className="mb-10 grid gap-4 xl:grid-cols-2">

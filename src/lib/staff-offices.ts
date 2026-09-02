@@ -44,6 +44,18 @@ type StaffCountRow = {
   counts: { appointment?: Record<string, number> };
 };
 
+export function appointmentHeadcount(counts: { appointment?: Record<string, number> } | null | undefined) {
+  const appointment = counts?.appointment ?? {};
+  return (appointment.Permanent ?? 0) + (appointment.Casual ?? 0) + (appointment["Job Order"] ?? 0);
+}
+
+export function alignStaffTotalsToAppointments<T extends StaffCountRow>(rows: T[]): T[] {
+  return rows.map((row) => {
+    const total = appointmentHeadcount(row.counts);
+    return row.total === total ? row : { ...row, total };
+  });
+}
+
 export function applyNtpOfficePermanentRevision<T extends StaffCountRow>(rows: T[]): T[] {
   const vp = rows.find((row) => row.office === VP_ADMIN_FINANCE_OFFICE && !row.unit);
   const cao = rows.find((row) => row.office === CAO_ADMINISTRATION_OFFICE && !row.unit);
@@ -151,7 +163,7 @@ function toOfficeGroups(rows: StaffOfficeRow[]): StaffOfficeGroup[] {
 }
 
 export function groupStaffOffices(rows: StaffOfficeRow[]) {
-  const revised = applyNtpOfficePermanentRevision(rows);
+  const revised = alignStaffTotalsToAppointments(applyNtpOfficePermanentRevision(rows));
   const vicePresidentRows: StaffOfficeRow[] = [];
   const rest: StaffOfficeRow[] = [];
   for (const row of revised) {

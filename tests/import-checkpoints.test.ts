@@ -23,6 +23,10 @@ describe("Executive-Dashboard.xlsx import checkpoints", () => {
     expect(vpAdmin?.total).toBe(2);
     expect(caoAdmin?.counts.appointment?.Permanent).toBe(1);
     expect(caoAdmin?.total).toBe(1);
+    const ict = parsed.staff.find((row) => /information & communication technology/i.test(row.office ?? "") && !row.unit);
+    expect(ict?.counts.appointment?.Permanent).toBe(4);
+    expect(ict?.counts.appointment?.Casual).toBe(1);
+    expect(ict?.total).toBe(5);
     expect(parsed.staff.find((row) => /alumni affairs/i.test(row.office ?? ""))?.total).toBe(0);
     expect(parsed.staff.find((row) => /gender/i.test(row.office ?? ""))?.total).toBe(0);
     expect(parsed.staff.find((row) => /international affairs/i.test(row.office ?? ""))?.total).toBe(0);

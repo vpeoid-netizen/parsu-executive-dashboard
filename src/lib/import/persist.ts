@@ -12,6 +12,7 @@ import {
   STAFF_RANKS,
 } from "@/lib/constants";
 import { classifyAchievement, meetingTarget } from "@/lib/metrics";
+import { appointmentHeadcount } from "@/lib/staff-offices";
 import { formatPeriod, fiscalYearLabel } from "@/lib/periods";
 import { LICENSURE_SUMMARY_TOTAL_YEARS, type ParsedWorkbook } from "@/lib/import/parse-workbook";
 import {
@@ -531,7 +532,10 @@ export async function rebuildMetrics(status: DatasetStatus = "PUBLISHED") {
     return sum + (counts.appointment?.Permanent ?? 0);
   }, 0);
   const staff = await prisma.staffSnapshot.findMany({ where: { status } });
-  const ntpTotal = staff.reduce((sum, row) => sum + (row.total ?? 0), 0);
+  const ntpTotal = staff.reduce((sum, row) => {
+    const counts = JSON.parse(row.countsJson) as { appointment?: Record<string, number> };
+    return sum + appointmentHeadcount(counts);
+  }, 0);
   const enrollment = await prisma.enrollmentObservation.findMany({
     where: { status },
     include: { period: true },

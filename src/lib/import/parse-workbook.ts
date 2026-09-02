@@ -436,13 +436,12 @@ function parseStaff(workbook: ExcelJS.Workbook, result: ParsedWorkbook) {
       if (value > 0) rank[key] = value;
     }
     const appointmentSum = appointment.Permanent + appointment.Casual + appointment["Job Order"];
-    const totalCell = cellNumber(ws, rowNumber, 14);
     result.staff.push({
       campusCode: matchCampus(campusRaw),
       department,
       office,
       unit,
-      total: totalCell ?? appointmentSum,
+      total: appointmentSum,
       counts: {
         appointment,
         ...(Object.keys(rank).length ? { rank } : {}),

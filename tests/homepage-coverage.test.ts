@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { coverageCenterLabel, hasCopcNumber, programsByCollegeSlices } from "../src/lib/program-coverage";
-import { appointmentMixNote, applyNtpOfficePermanentRevision, groupStaffOffices } from "../src/lib/staff-offices";
+import { appointmentMixNote, alignStaffTotalsToAppointments, applyNtpOfficePermanentRevision, groupStaffOffices } from "../src/lib/staff-offices";
 import { shortChartPeriodLabel } from "../src/lib/periods";
 
 describe("program coverage", () => {
@@ -121,6 +121,18 @@ describe("staff office grouping", () => {
     expect(revised[0]?.counts.appointment?.Permanent).toBe(2);
     expect(revised[1]?.total).toBe(1);
     expect(revised[1]?.counts.appointment?.Permanent).toBe(1);
+  });
+
+  it("uses appointment mix as the office headcount when the stored total is short", () => {
+    const aligned = alignStaffTotalsToAppointments([
+      {
+        office: "Information & Communication Technology Office",
+        unit: null,
+        total: 4,
+        counts: { appointment: { Permanent: 4, Casual: 1 } },
+      },
+    ]);
+    expect(aligned[0]?.total).toBe(5);
   });
 });
 
