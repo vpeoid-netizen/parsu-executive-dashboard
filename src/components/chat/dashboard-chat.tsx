@@ -58,8 +58,8 @@ function AssistantPortrait({
   sizes: string;
 }) {
   return (
-    <span className={cn("relative block overflow-hidden bg-navy-950", className)}>
-      <Image src={ASSISTANT_IMAGE} alt="" fill sizes={sizes} className="object-contain" />
+    <span className={cn("relative block overflow-hidden bg-transparent", className)}>
+      <Image src={ASSISTANT_IMAGE} alt="" fill sizes={sizes} className="object-contain" unoptimized />
     </span>
   );
 }
@@ -266,13 +266,13 @@ export function DashboardChat() {
       <button
         ref={toggleRef}
         type="button"
-        className="pointer-events-auto relative h-24 w-24 overflow-hidden rounded-[1.75rem] bg-navy-950 shadow-[0_8px_20px_rgba(7,31,70,0.28)] ring-2 ring-gold hover:ring-gold-dark sm:h-28 sm:w-28"
+        className="pointer-events-auto relative h-24 w-24 overflow-visible bg-transparent p-0 shadow-none ring-0 transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:h-28 sm:w-28"
         aria-label={open ? "Close dashboard chat" : "Ask about dashboard data"}
         aria-expanded={open}
         aria-haspopup="dialog"
         onClick={() => setOpen((current) => !current)}
       >
-        <AssistantPortrait className="h-full w-full" sizes="112px" />
+        <AssistantPortrait className="h-full w-full overflow-visible" sizes="112px" />
         {open ? (
           <span className="absolute right-1 top-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-navy-950 text-white ring-1 ring-gold">
             <X className="h-4 w-4" />
