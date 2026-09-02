@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getEnrollmentSeries } from "@/lib/queries";
 import { prisma } from "@/lib/db";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);

@@ -4,26 +4,13 @@ import { PERFORMANCE_FOCUS_YEAR } from "@/lib/performance-display";
 import { getEnrollmentSeries, getHomepageKpisByYear, getPerformanceByIndicator, latestDatasetDates } from "@/lib/queries";
 
 async function loadHomepageData() {
-  const [
-    kpis,
-    enrollment,
-    performance,
-    versions,
-    programs,
-    faculty,
-    staff,
-    completions,
-    publications,
-    utilizations,
-    licensureTotals,
-    extensionPrograms,
-    extensionPartners,
-    documents,
-  ] = await Promise.all([
+  const [kpis, enrollment, performance, versions] = await Promise.all([
     getHomepageKpisByYear(),
     getEnrollmentSeries(),
     getPerformanceByIndicator(),
     latestDatasetDates(),
+  ]);
+  const [programs, faculty, staff, completions] = await Promise.all([
     prisma.academicProgram.findMany({
       where: { status: "PUBLISHED" },
       select: {
@@ -45,6 +32,8 @@ async function loadHomepageData() {
       where: { status: "PUBLISHED", fiscalYear: PERFORMANCE_FOCUS_YEAR },
       select: { fiscalYear: true, authorsJson: true },
     }),
+  ]);
+  const [publications, utilizations, licensureTotals, extensionPrograms] = await Promise.all([
     prisma.researchPublication.findMany({
       where: { status: "PUBLISHED", fiscalYear: PERFORMANCE_FOCUS_YEAR },
       select: { fiscalYear: true, authorsJson: true },
@@ -62,6 +51,8 @@ async function loadHomepageData() {
       where: { status: "PUBLISHED" },
       select: { programStatus: true },
     }),
+  ]);
+  const [extensionPartners, documents] = await Promise.all([
     prisma.extensionPartner.findMany({
       where: { status: "PUBLISHED" },
       select: { organizationType: true },
