@@ -3,11 +3,10 @@
 import { useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
-  Award,
   BookOpen,
   Briefcase,
-  BriefcaseBusiness,
   Building2,
+  ClipboardCheck,
   FlaskConical,
   GraduationCap,
   Handshake,
@@ -15,6 +14,7 @@ import {
   Lightbulb,
   School,
   Target,
+  UserCheck,
   UserCog,
   Users,
 } from "lucide-react";
@@ -29,8 +29,8 @@ const KPI_ICONS: Record<string, LucideIcon> = {
   FACULTY_TOTAL: Users,
   NTP_TOTAL: UserCog,
   ENROLLMENT_CURRENT: School,
-  LICENSURE_PASSING_RATE: Award,
-  EMPLOYABILITY_RATE: BriefcaseBusiness,
+  LICENSURE_PASSING_RATE: ClipboardCheck,
+  EMPLOYABILITY_RATE: UserCheck,
   PERFORMANCE_MEETING_TARGET: Target,
   RESEARCH_COMPLETED: FlaskConical,
   RESEARCH_PUBLICATIONS: BookOpen,
