@@ -6,6 +6,7 @@ import { CollegeAbbrevKey } from "@/components/ui/college-abbrev-key";
 import { EmptyState, KpiCard, ModuleHeader, StatusBadge } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
 import { formatDate, formatNumber } from "@/lib/format";
+import { formatProgramAuthority, programStatusIndicators } from "@/lib/program-coverage";
 import { collegeAbbrev, collegeChartPoint, collegeFullName, collegeSortIndex } from "@/lib/import/normalize";
 
 function monthsUntil(date: Date | null) {
@@ -61,6 +62,10 @@ export default async function ProgramsPage() {
       programs: programs.filter((item) => (item.collegeId ?? "unspecified") === (college?.id ?? "unspecified")),
     }));
   const phaseOutCount = programs.filter((item) => item.phaseOut).length;
+  const newProgramCount = programs.filter((item) => programStatusIndicators(item).some((badge) => badge.label === "New program")).length;
+  const notAccreditableCount = programs.filter((item) =>
+    programStatusIndicators(item).some((badge) => badge.label === "Not accreditable"),
+  ).length;
 
   return (
     <div className="page-shell">
@@ -71,7 +76,7 @@ export default async function ProgramsPage() {
       />
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard title="Total programs" value={programs.length} />
-        <KpiCard title="With COPC / authority" value={programs.filter((item) => item.copcNumber).length} />
+        <KpiCard title="With COPC/RRPA" value={programs.filter((item) => item.copcNumber).length} />
         <KpiCard title="Accreditable" value={programs.filter((item) => item.accreditable).length} />
         <KpiCard title="Accredited" value={programs.filter((item) => item.accredited).length} />
       </div>
@@ -115,8 +120,17 @@ export default async function ProgramsPage() {
             </section>
           ) : null}
           <p className="mb-4 text-sm text-muted-foreground">
-            Programs marked with an asterisk (*) in the source inventory are for phasing out
-            {phaseOutCount ? ` (${phaseOutCount} program${phaseOutCount === 1 ? "" : "s"})` : ""}.
+            Status markers show programs that are new, not accreditable, or for phasing out
+            {phaseOutCount || newProgramCount || notAccreditableCount
+              ? ` (${[
+                  newProgramCount ? `${newProgramCount} new` : null,
+                  notAccreditableCount ? `${notAccreditableCount} not accreditable` : null,
+                  phaseOutCount ? `${phaseOutCount} phasing out` : null,
+                ]
+                  .filter(Boolean)
+                  .join(", ")})`
+              : ""}
+            .
           </p>
           <div className="grid gap-4 md:grid-cols-2">
             {collegeCards.map((college) => (
@@ -129,28 +143,40 @@ export default async function ProgramsPage() {
                   <p className="font-display text-2xl font-bold tabular-nums text-navy-900">{college.programs.length}</p>
                 </div>
                 <ul className="mt-4 space-y-3">
-                  {college.programs.map((item) => (
-                    <li key={item.id} className="border-t border-border pt-3 first:border-0 first:pt-0">
-                      <div className="flex flex-wrap items-start justify-between gap-2">
-                        <p className="text-sm font-semibold leading-snug text-navy-900">
-                          {item.name}
-                          {item.phaseOut ? <span className="text-warning"> *</span> : null}
+                  {college.programs.map((item) => {
+                    const indicators = programStatusIndicators(item);
+                    const statusShownAsBadge = indicators.some(
+                      (badge) => badge.label.toLowerCase() === (item.programStatus ?? "").toLowerCase(),
+                    );
+                    const statusDetail = item.accreditationLevel ?? (statusShownAsBadge ? null : item.programStatus);
+                    return (
+                      <li key={item.id} className="border-t border-border pt-3 first:border-0 first:pt-0">
+                        <div className="flex flex-wrap items-start justify-between gap-2">
+                          <p className="text-sm font-semibold leading-snug text-navy-900">
+                            {item.name}
+                            {item.phaseOut ? <span className="text-warning"> *</span> : null}
+                          </p>
+                          {indicators.length ? (
+                            <span className="flex flex-wrap justify-end gap-1.5">
+                              {indicators.map((badge) => (
+                                <StatusBadge key={badge.label} label={badge.label} tone={badge.tone} />
+                              ))}
+                            </span>
+                          ) : null}
+                        </div>
+                        <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                          {[item.programType, item.campus?.name, formatProgramAuthority(item.copcNumber)]
+                            .filter(Boolean)
+                            .join(" · ")}
                         </p>
-                        {item.phaseOut ? <StatusBadge label="Phasing out" tone="warning" /> : null}
-                      </div>
-                      <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                        {[item.programType, item.campus?.name, item.copcNumber ? `COPC ${item.copcNumber}` : null]
-                          .filter(Boolean)
-                          .join(" · ")}
-                      </p>
-                      {item.accreditationLevel || item.programStatus || item.validityRaw ? (
-                        <p className="mt-1 text-xs leading-5 text-navy-800">
-                          {item.accreditationLevel ?? item.programStatus}
-                          {item.validityRaw ? ` · ${item.validityRaw}` : ""}
-                        </p>
-                      ) : null}
-                    </li>
-                  ))}
+                        {statusDetail || item.validityRaw ? (
+                          <p className="mt-1 text-xs leading-5 text-navy-800">
+                            {[statusDetail, item.validityRaw].filter(Boolean).join(" · ")}
+                          </p>
+                        ) : null}
+                      </li>
+                    );
+                  })}
                 </ul>
               </article>
             ))}

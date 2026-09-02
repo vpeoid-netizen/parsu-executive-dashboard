@@ -48,6 +48,14 @@ export const publicNavigation: NavItem[] = [
     ],
   },
   { href: "/extension", label: "Extension" },
+  {
+    href: "/documents",
+    label: "Documents",
+    children: [
+      { href: "/documents/administrative-orders", label: "Administrative Orders" },
+      { href: "/documents", label: "Institutional Documents" },
+    ],
+  },
 ];
 
 export const adminNavigation: NavItem[] = [

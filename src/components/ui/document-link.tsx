@@ -1,8 +1,9 @@
 import type { LucideIcon } from "lucide-react";
-import { FileBarChart, FileText, Landmark, Scale, ScrollText, Shield } from "lucide-react";
+import { FileBarChart, FileText, Landmark, Scale, ScrollText, Shield, Stamp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const DOCUMENT_ICONS: Record<string, LucideIcon> = {
+  "Administrative Orders": Stamp,
   "Strategic Plan": ScrollText,
   "Organizational Structure": Landmark,
   "Board Resolutions": Scale,

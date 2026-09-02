@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { EmptyState, ModuleHeader } from "@/components/ui/primitives";
+import { searchAdministrativeOrders, administrativeOrderUrl } from "@/lib/administrative-orders";
 import { prisma } from "@/lib/db";
 
 export default async function SearchPage({
@@ -35,7 +36,8 @@ export default async function SearchPage({
     : [[], [], [], []];
 
   const [programs, research, awards, documents] = results;
-  const empty = query && ![...programs, ...research, ...awards, ...documents].length;
+  const administrativeOrders = query ? searchAdministrativeOrders(query) : [];
+  const empty = query && ![...programs, ...research, ...awards, ...documents, ...administrativeOrders].length;
 
   return (
     <div className="page-shell">
@@ -67,7 +69,17 @@ export default async function SearchPage({
           <ResultGroup title="Programs" href="/academics/programs" items={programs.map((item) => ({ href: "/academics/programs", label: item.name }))} />
           <ResultGroup title="Research" href="/research/completed" items={research.map((item) => ({ href: "/research/completed", label: item.title }))} />
           <ResultGroup title="Awards" href="/students/awards" items={awards.map((item) => ({ href: "/students/awards", label: `${item.recipient} — ${item.awardRank}` }))} />
-          <ResultGroup title="Documents" href="/documents" items={documents.map((item) => ({ href: item.externalUrl ?? "/documents", label: item.title }))} />
+          <ResultGroup
+            title="Documents"
+            href="/documents"
+            items={[
+              ...administrativeOrders.map((item) => ({
+                href: administrativeOrderUrl(item.fileId),
+                label: `PDFAO No. ${item.number} — ${item.title}`,
+              })),
+              ...documents.map((item) => ({ href: item.externalUrl ?? "/documents", label: item.title })),
+            ]}
+          />
         </div>
       )}
     </div>

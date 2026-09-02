@@ -372,21 +372,25 @@ export default async function DashboardPage() {
         <section className="grid gap-4 md:grid-cols-2">
           <div className="card p-5">
             <h2 className="text-lg font-semibold tracking-tight text-navy-900">Institutional documents</h2>
-            {documents.length ? (
-              <ul className="mt-4 space-y-3">
-                {documents.map((doc) => (
-                  <li key={doc.id}>
-                    <DocumentLink
-                      title={doc.title}
-                      category={doc.category}
-                      href={doc.externalUrl ?? "/documents"}
-                    />
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="mt-3 text-sm text-muted-foreground">Data not yet available</p>
-            )}
+            <ul className="mt-4 space-y-3">
+              <li>
+                <DocumentLink
+                  title="Administrative Orders"
+                  category="Administrative Orders"
+                  href="/documents/administrative-orders"
+                  meta="PDFAO issuances for 2025 and 2026"
+                />
+              </li>
+              {documents.map((doc) => (
+                <li key={doc.id}>
+                  <DocumentLink
+                    title={doc.title}
+                    category={doc.category}
+                    href={doc.externalUrl ?? "/documents"}
+                  />
+                </li>
+              ))}
+            </ul>
           </div>
           <div className="card p-5">
             <h2 className="text-lg font-semibold tracking-tight text-navy-900">Quick links</h2>
@@ -397,6 +401,7 @@ export default async function DashboardPage() {
                 ["/performance", "University performance"],
                 ["/research", "Research"],
                 ["/personnel/faculty", "Faculty"],
+                ["/documents/administrative-orders", "Administrative Orders"],
                 ["/documents", "Documents"],
               ].map(([href, label]) => (
                 <li key={href}>

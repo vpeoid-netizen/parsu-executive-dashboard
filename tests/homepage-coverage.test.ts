@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { coverageCenterLabel, hasCopcNumber, programsByCollegeSlices } from "../src/lib/program-coverage";
-import { appointmentMixNote, alignStaffTotalsToAppointments, applyNtpOfficePermanentRevision, groupStaffOffices } from "../src/lib/staff-offices";
+import { coverageCenterLabel, formatProgramAuthority, hasCopcNumber, programStatusIndicators, programsByCollegeSlices } from "../src/lib/program-coverage";
+import { appointmentMixNote, alignStaffTotalsToAppointments, applyNtpOfficePermanentRevision, groupStaffOffices, partitionAcademicDeliveryOffices } from "../src/lib/staff-offices";
 import { shortChartPeriodLabel } from "../src/lib/periods";
 
 describe("program coverage", () => {
@@ -19,6 +19,16 @@ describe("program coverage", () => {
     expect(slices.find((item) => item.code === "CECS")?.value).toBe(2);
     expect(hasCopcNumber("COPC-1")).toBe(true);
     expect(hasCopcNumber("  ")).toBe(false);
+    expect(formatProgramAuthority("RRPA No. 02,")).toBe("RRPA No. 02,");
+    expect(formatProgramAuthority("COPC RRPA No. 02,")).toBe("RRPA No. 02,");
+    expect(formatProgramAuthority("123")).toBe("COPC 123");
+    expect(programStatusIndicators({ programStatus: "New program", accreditable: false })).toEqual([
+      { label: "New program", tone: "success" },
+    ]);
+    expect(programStatusIndicators({ programStatus: "Not accreditable", accreditable: false })).toEqual([
+      { label: "Not accreditable", tone: "neutral" },
+    ]);
+    expect(programStatusIndicators({ phaseOut: true })).toEqual([{ label: "Phasing out", tone: "warning" }]);
   });
 });
 
@@ -133,6 +143,23 @@ describe("staff office grouping", () => {
       },
     ]);
     expect(aligned[0]?.total).toBe(5);
+  });
+
+  it("keeps Goa Campus colleges together without merging their cards", () => {
+    const grouped = partitionAcademicDeliveryOffices([
+      { title: "College of Education", campus: "Goa Campus" },
+      { title: "College of Fisheries and Marine Science", campus: "Sagnay Campus" },
+      { title: "College of Arts and Humanities", campus: "Goa Campus" },
+      { title: "College of Public Safety and Community Health", campus: "Lagonoy Campus" },
+    ]);
+    expect(grouped.goa.map((item) => item.title)).toEqual([
+      "College of Education",
+      "College of Arts and Humanities",
+    ]);
+    expect(grouped.other.map((item) => item.title)).toEqual([
+      "College of Fisheries and Marine Science",
+      "College of Public Safety and Community Health",
+    ]);
   });
 });
 

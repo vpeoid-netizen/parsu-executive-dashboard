@@ -174,6 +174,7 @@ export const LOGIN_MAX_ATTEMPTS = 5;
 export const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
 
 export const DOCUMENT_CATEGORIES = [
+  "Administrative Orders",
   "Strategic Plan",
   "Organizational Structure",
   "Board Resolutions",

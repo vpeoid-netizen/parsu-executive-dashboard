@@ -15,8 +15,21 @@ export default async function DocumentsPage() {
       <Breadcrumbs items={[{ label: "Documents" }]} />
       <ModuleHeader
         title="Institutional Documents"
-        description="Strategic plans, organizational charts and other public records. Categories can be extended by administrators."
+        description="Strategic plans, administrative orders, and other public records."
       />
+      <div className="card mb-8 p-5">
+        <h2 className="text-lg font-semibold tracking-tight text-navy-900">Administrative Orders</h2>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">
+          Issued presidential and administrative orders for 2025 and 2026. Each listing opens the signed PDF.
+        </p>
+        <DocumentLink
+          title="Browse Administrative Orders"
+          category="Administrative Orders"
+          href="/documents/administrative-orders"
+          meta="PDFAO issuances by year"
+          className="mt-4"
+        />
+      </div>
       {documents.length === 0 ? (
         <EmptyState description="Institutional documents are not yet available." />
       ) : (

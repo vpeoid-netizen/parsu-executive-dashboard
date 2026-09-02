@@ -3,7 +3,16 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { EmptyState, KpiCard, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
 import { formatNumber } from "@/lib/format";
-import { appointmentMixNote, alignStaffTotalsToAppointments, groupStaffOffices, type StaffOfficeRow } from "@/lib/staff-offices";
+import {
+  ACADEMIC_DELIVERY_DEPARTMENT,
+  GOA_CAMPUS_LABEL,
+  appointmentMixNote,
+  alignStaffTotalsToAppointments,
+  groupStaffOffices,
+  partitionAcademicDeliveryOffices,
+  type StaffOfficeGroup,
+  type StaffOfficeRow,
+} from "@/lib/staff-offices";
 import { cn } from "@/lib/utils";
 
 export default async function StaffPage() {
@@ -62,19 +71,35 @@ export default async function StaffPage() {
           {grouped.departments.map((department) => {
             const leafOffices = department.offices.filter((office) => office.units.length === 0);
             const officesWithUnits = department.offices.filter((office) => office.units.length > 0);
+            const isAcademicDelivery = department.title === ACADEMIC_DELIVERY_DEPARTMENT;
+            const leafGroups = isAcademicDelivery ? partitionAcademicDeliveryOffices(leafOffices) : null;
             return (
               <section key={department.title}>
                 <h2 className="font-display text-lg font-semibold tracking-tight text-navy-900">{department.title}</h2>
-                {leafOffices.length ? (
+                {leafGroups ? (
+                  <>
+                    {leafGroups.goa.length ? (
+                      <div className="mt-4">
+                        <p className="section-kicker">{GOA_CAMPUS_LABEL}</p>
+                        <CardGrid className="mt-3">
+                          {leafGroups.goa.map((group) => (
+                            <OfficeCard key={group.key} group={group} />
+                          ))}
+                        </CardGrid>
+                      </div>
+                    ) : null}
+                    {leafGroups.other.length ? (
+                      <CardGrid className={leafGroups.goa.length ? "mt-6" : "mt-4"}>
+                        {leafGroups.other.map((group) => (
+                          <OfficeCard key={group.key} group={group} />
+                        ))}
+                      </CardGrid>
+                    ) : null}
+                  </>
+                ) : leafOffices.length ? (
                   <CardGrid className="mt-4">
                     {leafOffices.map((group) => (
-                      <StaffCard
-                        key={group.key}
-                        title={group.title}
-                        campus={group.campus}
-                        total={group.total}
-                        counts={group.counts}
-                      />
+                      <OfficeCard key={group.key} group={group} />
                     ))}
                   </CardGrid>
                 ) : null}
@@ -112,6 +137,10 @@ export default async function StaffPage() {
 
 function CardGrid({ children, className }: { children: ReactNode; className?: string }) {
   return <div className={cn("grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-4", className)}>{children}</div>;
+}
+
+function OfficeCard({ group }: { group: StaffOfficeGroup }) {
+  return <StaffCard title={group.title} campus={group.campus} total={group.total} counts={group.counts} />;
 }
 
 function StaffCard({

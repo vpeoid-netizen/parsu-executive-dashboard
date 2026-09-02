@@ -162,6 +162,37 @@ function toOfficeGroups(rows: StaffOfficeRow[]): StaffOfficeGroup[] {
   });
 }
 
+export const ACADEMIC_DELIVERY_DEPARTMENT = "Academic Delivery Units";
+export const GOA_CAMPUS_LABEL = "Goa Campus";
+
+const GOA_COLLEGE_TITLE_MARKERS = [
+  "arts and humanities",
+  "business and management",
+  "college of education",
+  "engineering and computational",
+  "college of science",
+];
+
+export function isGoaCampusLabel(campus: string | null | undefined) {
+  return /\bgoa\b/i.test(campus ?? "");
+}
+
+export function isGoaAcademicDeliveryOffice(office: { campus: string; title: string }) {
+  if (isGoaCampusLabel(office.campus)) return true;
+  const title = office.title.toLowerCase();
+  return GOA_COLLEGE_TITLE_MARKERS.some((marker) => title.includes(marker));
+}
+
+export function partitionAcademicDeliveryOffices<T extends { campus: string; title: string }>(offices: T[]) {
+  const goa: T[] = [];
+  const other: T[] = [];
+  for (const office of offices) {
+    if (isGoaAcademicDeliveryOffice(office)) goa.push(office);
+    else other.push(office);
+  }
+  return { goa, other };
+}
+
 export function groupStaffOffices(rows: StaffOfficeRow[]) {
   const revised = alignStaffTotalsToAppointments(applyNtpOfficePermanentRevision(rows));
   const vicePresidentRows: StaffOfficeRow[] = [];
