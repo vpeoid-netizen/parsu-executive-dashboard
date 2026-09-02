@@ -493,7 +493,10 @@ export async function rebuildMetrics(status: DatasetStatus = "PUBLISHED") {
     await prisma.metricObservation.updateMany({ where: { status: "PUBLISHED" }, data: { status: "ARCHIVED" } });
   }
 
-  async function observe(code: string, data: Prisma.MetricObservationUncheckedCreateInput) {
+  async function observe(
+    code: string,
+    data: Omit<Prisma.MetricObservationUncheckedCreateInput, "metricId" | "status">,
+  ) {
     const metric = byCode[code];
     if (!metric) return;
     await prisma.metricObservation.create({

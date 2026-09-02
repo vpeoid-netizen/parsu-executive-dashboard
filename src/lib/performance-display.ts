@@ -45,7 +45,7 @@ export function indicatorAnchorId(title: string) {
 }
 
 export function groupByProgramMfo<T extends { programMfo: string }>(items: T[]) {
-  const grouped = PERFORMANCE_MFO_ORDER.map((programMfo) => ({
+  const grouped: Array<{ programMfo: string; items: T[] }> = PERFORMANCE_MFO_ORDER.map((programMfo) => ({
     programMfo,
     items: items.filter((item) => item.programMfo === programMfo),
   })).filter((group) => group.items.length > 0);
