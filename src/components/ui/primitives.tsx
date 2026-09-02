@@ -53,11 +53,11 @@ export function KpiCard({
       ) : null}
       {group ? <p className="section-kicker relative">{group}</p> : null}
       <h3 className={cn("relative text-sm font-medium text-muted-foreground", group && "mt-3")}>{title}</h3>
-      <div className="relative mt-4 flex items-end justify-between gap-4">
+      <div className="relative z-10 mt-4 flex min-w-0 items-end gap-3">
         <p
           className={cn(
-            "font-display font-bold tabular-nums tracking-tight text-navy-900",
-            emphasizeValue ? "text-[clamp(2.75rem,6vw,4.25rem)] leading-none" : "text-3xl",
+            "min-w-0 flex-1 font-display font-bold tabular-nums tracking-tight text-navy-900",
+            emphasizeValue ? "text-[clamp(2.15rem,4.6vw,3.35rem)] leading-none" : "text-3xl",
           )}
         >
           {display}
@@ -65,12 +65,12 @@ export function KpiCard({
         {Icon ? (
           <span
             className={cn(
-              "flex shrink-0 items-center justify-center rounded-2xl bg-gold-soft text-navy-900 ring-1 ring-[rgba(247,185,24,0.4)]",
-              emphasizeValue ? "h-14 w-14" : "h-16 w-16",
+              "mb-0.5 flex shrink-0 items-center justify-center rounded-2xl bg-gold-soft text-navy-900 ring-1 ring-[rgba(247,185,24,0.4)]",
+              emphasizeValue ? "h-12 w-12" : "h-14 w-14",
             )}
             aria-hidden="true"
           >
-            <Icon className={emphasizeValue ? "h-7 w-7" : "h-8 w-8"} strokeWidth={1.7} />
+            <Icon className={emphasizeValue ? "h-6 w-6" : "h-7 w-7"} strokeWidth={1.7} />
           </span>
         ) : null}
       </div>
