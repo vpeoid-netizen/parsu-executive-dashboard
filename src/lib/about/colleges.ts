@@ -45,7 +45,7 @@ export const COLLEGES_DIRECTORY = [
     body: "The College of Science advances scientific knowledge, research, and innovation in the natural sciences. It offers Bachelor of Science in Biology and Bachelor of Science in Geology, preparing graduates to address environmental, biological, and geological challenges.",
   },
   {
-    code: "CSCE",
+    code: "CAR",
     name: "College of Sustainable Communities and Ecosystems",
     campus: "Caramoan Campus",
     href: "https://www.parsu.edu.ph/caramoan-campus",
@@ -61,7 +61,7 @@ export const COLLEGES_DIRECTORY = [
     body: "Based at Lagonoy Campus, this college prepares students for public safety, criminology, and community-health service, including partnerships that support survivors and strengthen local justice and health systems.",
   },
   {
-    code: "CFMS",
+    code: "SAG",
     name: "College of Fisheries and Marine Science",
     campus: "Sagñay Campus",
     href: "https://www.parsu.edu.ph/sagnay-campus",
@@ -69,7 +69,7 @@ export const COLLEGES_DIRECTORY = [
     body: "Based at Sagñay Campus, this college produces graduates who contribute to sustainable fisheries, marine science, and environmental stewardship along the Partido coastline.",
   },
   {
-    code: "CACD",
+    code: "SAL",
     name: "College of Agribusiness and Community Development",
     campus: "Salogon Campus",
     href: "https://www.parsu.edu.ph/salogon-campus",
@@ -77,7 +77,7 @@ export const COLLEGES_DIRECTORY = [
     body: "Based at Salogon Campus, this college focuses on agribusiness, production, and community development, including work on crops such as abaca and support for rural enterprise.",
   },
   {
-    code: "CHTM",
+    code: "SAN",
     name: "College of Hospitality and Tourism Management",
     campus: "San Jose Campus",
     href: "https://www.parsu.edu.ph/san-jose-campus",
@@ -85,7 +85,7 @@ export const COLLEGES_DIRECTORY = [
     body: "Based at San Jose Campus, this college develops hospitality and tourism professionals and works with partners on sustainable coastal tourism and quality assurance.",
   },
   {
-    code: "CESD",
+    code: "TIN",
     name: "College of Environmental Science and Design",
     campus: "Tinambac Campus",
     href: "https://www.parsu.edu.ph/tinambac-campus",

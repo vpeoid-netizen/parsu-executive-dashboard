@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ModuleHeader } from "@/components/ui/primitives";
 import { COLLEGES_DIRECTORY, COLLEGES_INTRO, COLLEGES_SOURCE_URL } from "@/lib/about/colleges";
+import { collegeAbbrev } from "@/lib/import/normalize";
 
 export default function CollegesPage() {
   return (
@@ -20,7 +21,7 @@ export default function CollegesPage() {
                 className="h-16 w-16 shrink-0 rounded-2xl bg-muted object-contain p-1 ring-1 ring-border sm:h-20 sm:w-20"
               />
               <div className="min-w-0">
-                <p className="section-kicker">{college.code}</p>
+                <p className="section-kicker">{collegeAbbrev(college.code)}</p>
                 <h2 className="font-display mt-2 text-lg font-semibold leading-snug tracking-tight text-navy-900">
                   {college.name}
                 </h2>

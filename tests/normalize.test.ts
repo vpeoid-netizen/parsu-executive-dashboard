@@ -32,6 +32,11 @@ describe("name normalization", () => {
     expect(matchCollege("Caramoan")).toBeNull();
     expect(collegeAbbrev("CECS")).toBe("CEC");
     expect(collegeAbbrev("CSCE")).toBe("CAR");
+    expect(collegeAbbrev("CPSCH")).toBe("LAG");
+    expect(collegeAbbrev("CFMS")).toBe("SAG");
+    expect(collegeAbbrev("CACD")).toBe("SAL");
+    expect(collegeAbbrev("CHTM")).toBe("SAN");
+    expect(collegeAbbrev("CESD")).toBe("TIN");
     expect(collegeFullName("COS")).toBe("College of Science");
     expect(collegeFullName("CECS")).toBe("College of Engineering and Computational Science");
     expect(collegeFullName("CSCE")).toBe("College of Sustainable Communities and Ecosystem");
