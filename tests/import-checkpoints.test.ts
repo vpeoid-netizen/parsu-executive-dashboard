@@ -13,6 +13,16 @@ describe("Executive-Dashboard.xlsx import checkpoints", () => {
     const eoid = parsed.staff.find((row) => /executive operations/i.test(row.office ?? ""));
     expect(eoid?.total).toBe(0);
     expect(eoid?.counts.appointment?.Permanent).toBe(0);
+    const vpAdmin = parsed.staff.find(
+      (row) => /vice president for administration and finance/i.test(row.office ?? "") && !row.unit,
+    );
+    const caoAdmin = parsed.staff.find(
+      (row) => /chief administrative officer for administration/i.test(row.office ?? "") && !row.unit,
+    );
+    expect(vpAdmin?.counts.appointment?.Permanent).toBe(2);
+    expect(vpAdmin?.total).toBe(2);
+    expect(caoAdmin?.counts.appointment?.Permanent).toBe(1);
+    expect(caoAdmin?.total).toBe(1);
     expect(parsed.staff.find((row) => /alumni affairs/i.test(row.office ?? ""))?.total).toBe(0);
     expect(parsed.staff.find((row) => /gender/i.test(row.office ?? ""))?.total).toBe(0);
     expect(parsed.staff.find((row) => /international affairs/i.test(row.office ?? ""))?.total).toBe(0);

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { coverageCenterLabel, hasCopcNumber, programsByCollegeSlices } from "../src/lib/program-coverage";
-import { appointmentMixNote, groupStaffOffices } from "../src/lib/staff-offices";
+import { appointmentMixNote, applyNtpOfficePermanentRevision, groupStaffOffices } from "../src/lib/staff-offices";
 import { shortChartPeriodLabel } from "../src/lib/periods";
 
 describe("program coverage", () => {
@@ -100,6 +100,27 @@ describe("staff office grouping", () => {
     expect(grouped.departments[0]!.offices).toHaveLength(1);
     expect(grouped.departments[0]!.offices[0]!.total).toBe(0);
     expect(grouped.departments[0]!.offices[0]!.units.map((item) => item.unit)).toEqual(["Human Resource Management Unit"]);
+  });
+
+  it("moves one Permanent from VP Administration and Finance to the CAO for Administration", () => {
+    const revised = applyNtpOfficePermanentRevision([
+      {
+        office: "Office of the Vice President for Administration and Finance",
+        unit: null,
+        total: 3,
+        counts: { appointment: { Permanent: 3 } },
+      },
+      {
+        office: "Office of the Chief Administrative Officer for Administration",
+        unit: null,
+        total: 0,
+        counts: { appointment: { Permanent: 0 } },
+      },
+    ]);
+    expect(revised[0]?.total).toBe(2);
+    expect(revised[0]?.counts.appointment?.Permanent).toBe(2);
+    expect(revised[1]?.total).toBe(1);
+    expect(revised[1]?.counts.appointment?.Permanent).toBe(1);
   });
 });
 

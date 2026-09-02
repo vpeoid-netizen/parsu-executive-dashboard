@@ -5,6 +5,9 @@ export const VP_OFFICE_ORDER = [
   "Executive Operations",
 ] as const;
 
+export const VP_ADMIN_FINANCE_OFFICE = "Office of the Vice President for Administration and Finance";
+export const CAO_ADMINISTRATION_OFFICE = "Office of the Chief Administrative Officer for Administration";
+
 export const STAFF_DEPARTMENT_ORDER = [
   "Support to Presidential Operation",
   "Executive Operations",
@@ -33,6 +36,45 @@ export type StaffOfficeGroup = {
   counts: { appointment?: Record<string, number> };
   units: StaffOfficeRow[];
 };
+
+type StaffCountRow = {
+  office: string | null;
+  unit: string | null;
+  total: number | null;
+  counts: { appointment?: Record<string, number> };
+};
+
+export function applyNtpOfficePermanentRevision<T extends StaffCountRow>(rows: T[]): T[] {
+  const vp = rows.find((row) => row.office === VP_ADMIN_FINANCE_OFFICE && !row.unit);
+  const cao = rows.find((row) => row.office === CAO_ADMINISTRATION_OFFICE && !row.unit);
+  if (!vp || !cao) return rows;
+  const vpPermanent = vp.counts.appointment?.Permanent ?? 0;
+  const caoPermanent = cao.counts.appointment?.Permanent ?? 0;
+  if (vpPermanent !== 3 || caoPermanent !== 0) return rows;
+  return rows.map((row) => {
+    if (row === vp) {
+      return {
+        ...row,
+        total: Math.max(0, (row.total ?? 3) - 1),
+        counts: {
+          ...row.counts,
+          appointment: { ...row.counts.appointment, Permanent: 2 },
+        },
+      };
+    }
+    if (row === cao) {
+      return {
+        ...row,
+        total: (row.total ?? 0) + 1,
+        counts: {
+          ...row.counts,
+          appointment: { ...row.counts.appointment, Permanent: 1 },
+        },
+      };
+    }
+    return row;
+  });
+}
 
 export function isVicePresidentOffice(office: string | null | undefined) {
   if (!office) return false;
@@ -109,9 +151,10 @@ function toOfficeGroups(rows: StaffOfficeRow[]): StaffOfficeGroup[] {
 }
 
 export function groupStaffOffices(rows: StaffOfficeRow[]) {
+  const revised = applyNtpOfficePermanentRevision(rows);
   const vicePresidentRows: StaffOfficeRow[] = [];
   const rest: StaffOfficeRow[] = [];
-  for (const row of rows) {
+  for (const row of revised) {
     if (isVicePresidentOffice(row.office)) vicePresidentRows.push(row);
     else rest.push(row);
   }

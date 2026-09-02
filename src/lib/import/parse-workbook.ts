@@ -12,6 +12,7 @@ import {
   parseLooseDate,
 } from "@/lib/import/excel-cells";
 import { matchCampus, matchCollege } from "@/lib/import/normalize";
+import { applyNtpOfficePermanentRevision } from "@/lib/staff-offices";
 
 export type ValidationDraft = {
   severity: "INFO" | "WARNING" | "ERROR" | "CONFLICT";
@@ -224,6 +225,7 @@ export async function parseWorkbook(filePath: string): Promise<ParsedWorkbook> {
   parsePrograms(workbook, result);
   parseFaculty(workbook, result);
   parseStaff(workbook, result);
+  applyStaffSourceRevisions(result);
   parseStudents(workbook, result);
   parsePerformance(workbook, result);
   parseResearchCompleted(workbook, result);
@@ -378,6 +380,10 @@ function parseFaculty(workbook: ExcelJS.Workbook, result: ParsedWorkbook) {
       sourceRow: rowNumber,
     });
   });
+}
+
+function applyStaffSourceRevisions(result: ParsedWorkbook) {
+  result.staff = applyNtpOfficePermanentRevision(result.staff);
 }
 
 function parseStaff(workbook: ExcelJS.Workbook, result: ParsedWorkbook) {
