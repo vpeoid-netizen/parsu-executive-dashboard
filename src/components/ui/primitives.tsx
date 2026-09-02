@@ -1,7 +1,20 @@
 import Link from "next/link";
 import { ArrowUpRight, type LucideIcon } from "lucide-react";
 import { formatNumber, formatPercent } from "@/lib/format";
-import { cn } from "@/lib/utils";
+import { cn, normalizeParSuSpelling } from "@/lib/utils";
+
+function ParSuText({ text }: { text: string }) {
+  const normalized = normalizeParSuSpelling(text);
+  return normalized.split(/(ParSU)/g).map((part, index) =>
+    part === "ParSU" ? (
+      <span key={index} className="normal-case">
+        ParSU
+      </span>
+    ) : (
+      part
+    ),
+  );
+}
 
 export function PageShell({ children, className }: { children: React.ReactNode; className?: string }) {
   return <div className={cn("page-shell", className)}>{children}</div>;
@@ -51,7 +64,11 @@ export function KpiCard({
           aria-hidden="true"
         />
       ) : null}
-      {group ? <p className="section-kicker relative">{group}</p> : null}
+      {group ? (
+        <p className="section-kicker relative">
+          <ParSuText text={group} />
+        </p>
+      ) : null}
       <h3 className={cn("relative text-sm font-medium text-muted-foreground", group && "mt-3")}>{title}</h3>
       <div className="relative z-10 mt-4 flex min-w-0 items-end gap-3">
         <p

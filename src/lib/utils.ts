@@ -16,3 +16,8 @@ export function compactText(value: unknown): string | null {
   const text = String(value).replace(/\s+/g, " ").trim();
   return text.length ? text : null;
 }
+
+/** Official brand spelling. Do not apply to emails or hostnames. */
+export function normalizeParSuSpelling(text: string) {
+  return text.replace(/\bPARSU\b(?!\.)/gi, "ParSU");
+}

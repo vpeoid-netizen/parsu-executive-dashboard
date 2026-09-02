@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { EmptyState, ModuleHeader } from "@/components/ui/primitives";
-import { searchAdministrativeOrders, administrativeOrderUrl } from "@/lib/administrative-orders";
+import { administrativeOrderLabel, administrativeOrderUrl, searchAdministrativeOrders } from "@/lib/administrative-orders";
 import { prisma } from "@/lib/db";
 
 export default async function SearchPage({
@@ -75,7 +75,7 @@ export default async function SearchPage({
             items={[
               ...administrativeOrders.map((item) => ({
                 href: administrativeOrderUrl(item.fileId),
-                label: `PDFAO No. ${item.number} — ${item.title}`,
+                label: `${administrativeOrderLabel(item)} — ${item.title}`,
               })),
               ...documents.map((item) => ({ href: item.externalUrl ?? "/documents", label: item.title })),
             ]}

@@ -5,6 +5,7 @@ import { EmptyState, ModuleHeader } from "@/components/ui/primitives";
 import {
   ADMINISTRATIVE_ORDER_FOLDER_URL,
   ADMINISTRATIVE_ORDER_YEARS,
+  administrativeOrderLabel,
   administrativeOrderUrl,
   administrativeOrdersForYear,
 } from "@/lib/administrative-orders";
@@ -62,7 +63,7 @@ export default async function AdministrativeOrdersPage({
           {orders.map((order) => (
             <li key={order.fileId} className="px-4 py-3 sm:px-5">
               <DocumentLink
-                title={`PDFAO No. ${order.number}`}
+                title={administrativeOrderLabel(order)}
                 category="Administrative Orders"
                 href={administrativeOrderUrl(order.fileId)}
                 meta={order.title}

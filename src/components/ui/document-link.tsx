@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { FileBarChart, FileText, Landmark, Scale, ScrollText, Shield, Stamp } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, normalizeParSuSpelling } from "@/lib/utils";
 
 const DOCUMENT_ICONS: Record<string, LucideIcon> = {
   "Administrative Orders": Stamp,
@@ -48,7 +48,7 @@ export function DocumentLink({
         <Icon className="h-5 w-5" strokeWidth={1.7} />
       </span>
       <span className="min-w-0">
-        <span className="block font-medium leading-5 group-hover:underline">{title}</span>
+        <span className="block font-medium leading-5 group-hover:underline">{normalizeParSuSpelling(title)}</span>
         {meta ? <span className="mt-0.5 block text-sm text-muted-foreground">{meta}</span> : null}
       </span>
     </a>

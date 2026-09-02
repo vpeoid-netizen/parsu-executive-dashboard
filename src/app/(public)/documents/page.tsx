@@ -26,7 +26,7 @@ export default async function DocumentsPage() {
           title="Browse Administrative Orders"
           category="Administrative Orders"
           href="/documents/administrative-orders"
-          meta="PDFAO issuances by year"
+          meta="Issuances by year"
           className="mt-4"
         />
       </div>

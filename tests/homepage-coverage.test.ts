@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { coverageCenterLabel, formatProgramAuthority, hasCopcNumber, programStatusIndicators, programsByCollegeSlices } from "../src/lib/program-coverage";
 import { appointmentMixNote, alignStaffTotalsToAppointments, applyNtpOfficePermanentRevision, groupStaffOffices, partitionAcademicDeliveryOffices } from "../src/lib/staff-offices";
 import { shortChartPeriodLabel } from "../src/lib/periods";
+import { normalizeParSuSpelling } from "../src/lib/utils";
 
 describe("program coverage", () => {
   it("labels complete coverage as 100% with a fraction", () => {
@@ -167,5 +168,13 @@ describe("chart period labels", () => {
   it("shortens semestral labels so axis ticks do not collide", () => {
     expect(shortChartPeriodLabel("AY 2024-2025 / Second Semester")).toBe("24–25 2nd");
     expect(shortChartPeriodLabel("AY 2025-2026 / First Semester")).toBe("25–26 1st");
+  });
+});
+
+describe("brand spelling", () => {
+  it("rewrites PARSU to ParSU without changing emails", () => {
+    expect(normalizeParSuSpelling("ABOUT PARSU")).toBe("ABOUT ParSU");
+    expect(normalizeParSuSpelling("ParSU SAVE")).toBe("ParSU SAVE");
+    expect(normalizeParSuSpelling("vpeoid@parsu.edu.ph")).toBe("vpeoid@parsu.edu.ph");
   });
 });

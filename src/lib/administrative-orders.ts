@@ -14,6 +14,10 @@ export function administrativeOrderUrl(fileId: string) {
   return `https://drive.google.com/file/d/${fileId}/view`;
 }
 
+export function administrativeOrderLabel(order: Pick<AdministrativeOrder, "number">) {
+  return `Administrative Order No. ${order.number}`;
+}
+
 export const ADMINISTRATIVE_ORDERS: AdministrativeOrder[] = [
   {
     year: 2026,
@@ -177,7 +181,7 @@ export function searchAdministrativeOrders(query: string, limit = 8) {
   const needle = query.trim().toLowerCase();
   if (!needle) return [];
   return ADMINISTRATIVE_ORDERS.filter((order) => {
-    const haystack = `pdfao no. ${order.number} ${order.title}`.toLowerCase();
+    const haystack = `${administrativeOrderLabel(order)} ${order.title}`.toLowerCase();
     return haystack.includes(needle);
   }).slice(0, limit);
 }

@@ -378,7 +378,7 @@ export default async function DashboardPage() {
                   title="Administrative Orders"
                   category="Administrative Orders"
                   href="/documents/administrative-orders"
-                  meta="PDFAO issuances for 2025 and 2026"
+                  meta="Issuances for 2025 and 2026"
                 />
               </li>
               {documents.map((doc) => (
