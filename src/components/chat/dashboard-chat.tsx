@@ -148,7 +148,7 @@ export function DashboardChat() {
             <AssistantPortrait className="mt-0.5 h-11 w-11 shrink-0 rounded-2xl ring-1 ring-gold" sizes="44px" />
             <div className="min-w-0 flex-1">
               <h2 id={titleId} className="font-display text-base font-semibold tracking-tight">
-                Ask ParSU
+                Ask Arzi
               </h2>
               <p className="mt-0.5 text-xs leading-5 text-white/70">Happy to explain published dashboard figures</p>
             </div>
@@ -267,7 +267,7 @@ export function DashboardChat() {
         ref={toggleRef}
         type="button"
         className="pointer-events-auto relative h-24 w-24 overflow-visible bg-transparent p-0 shadow-none ring-0 transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:h-28 sm:w-28"
-        aria-label={open ? "Close dashboard chat" : "Ask about dashboard data"}
+        aria-label={open ? "Close Ask Arzi" : "Ask Arzi"}
         aria-expanded={open}
         aria-haspopup="dialog"
         onClick={() => setOpen((current) => !current)}
