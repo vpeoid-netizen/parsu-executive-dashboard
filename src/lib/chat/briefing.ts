@@ -18,6 +18,12 @@ import {
 } from "@/lib/performance-display";
 import { formatProgramAuthority, hasCopcNumber } from "@/lib/program-coverage";
 import { type ChatFact, FY_2026_PARTIAL_NOTE, factsToBriefingText } from "@/lib/chat/facts";
+import { staffFactsFromGrouped } from "@/lib/chat/staff-facts";
+import {
+  alignStaffTotalsToAppointments,
+  groupStaffOffices,
+  type StaffOfficeRow,
+} from "@/lib/staff-offices";
 
 type CountGroups = {
   appointment?: Record<string, number>;
@@ -135,7 +141,7 @@ function buildStaticFacts() {
 }
 
 async function loadPublishedFacts() {
-  const [home, programs, officials] = await Promise.all([
+  const [home, programs, officials, staffRows, campuses, facultyRows, colleges] = await Promise.all([
     getHomepageData(),
     prisma.academicProgram.findMany({
       where: { status: "PUBLISHED" },
@@ -156,6 +162,23 @@ async function loadPublishedFacts() {
       orderBy: { displayOrder: "asc" },
       select: { name: true, position: true, office: true, section: true },
     }),
+    prisma.staffSnapshot.findMany({
+      where: { status: "PUBLISHED" },
+      select: {
+        department: true,
+        office: true,
+        unit: true,
+        campusId: true,
+        total: true,
+        countsJson: true,
+      },
+    }),
+    prisma.campus.findMany({ select: { id: true, name: true } }),
+    prisma.facultySnapshot.findMany({
+      where: { status: "PUBLISHED" },
+      select: { collegeId: true, total: true, countsJson: true },
+    }),
+    prisma.college.findMany({ select: { id: true, code: true } }),
   ]);
 
   const facts: ChatFact[] = [];
@@ -231,10 +254,45 @@ async function loadPublishedFacts() {
   addFact(facts, {
     id: "ntp",
     title: "Non-teaching personnel",
-    body: `Published non-teaching personnel headcount is ${formatNumber(staffCounts.total, 0)}. Appointment mix: ${mixLine(staffCounts.appointment) || "not specified"}.`,
+    body: `Published non-teaching personnel headcount is ${formatNumber(staffCounts.total, 0)}. Appointment mix: ${mixLine(staffCounts.appointment) || "not specified"}. Office and department counts are listed below and can be added together.`,
     href: "/personnel/non-teaching",
     keywords: "ntp staff non-teaching personnel casual job order permanent",
   });
+
+  const campusName = Object.fromEntries(campuses.map((item) => [item.id, item.name]));
+  const staffParsed: StaffOfficeRow[] = alignStaffTotalsToAppointments(
+    staffRows.map((row) => ({
+      department: row.department,
+      office: row.office,
+      unit: row.unit,
+      campus: row.campusId ? campusName[row.campusId] ?? "Central / unspecified" : "Central / unspecified",
+      total: row.total ?? 0,
+      counts: JSON.parse(row.countsJson) as { appointment?: Record<string, number> },
+    })),
+  );
+  for (const fact of staffFactsFromGrouped(groupStaffOffices(staffParsed))) {
+    addFact(facts, fact);
+  }
+
+  const collegeById = Object.fromEntries(colleges.map((item) => [item.id, item]));
+  const facultyByCollege = new Map<string, number>();
+  for (const row of facultyRows) {
+    const code = row.collegeId ? collegeById[row.collegeId]?.code : undefined;
+    const label = collegeAbbrev(code);
+    facultyByCollege.set(label, (facultyByCollege.get(label) ?? 0) + (row.total ?? 0));
+  }
+  if (facultyByCollege.size) {
+    addFact(facts, {
+      id: "faculty-by-college",
+      title: "Faculty by college",
+      body: `Published faculty by college: ${[...facultyByCollege.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .map(([name, value]) => `${name} ${formatNumber(value, 0)}`)
+        .join("; ")}.`,
+      href: "/personnel/faculty",
+      keywords: "faculty by college teachers professors instructors",
+    });
+  }
 
   for (const indicator of home.performance) {
     const asPercent = isPercentMeasure(indicator.title, indicator.observations);

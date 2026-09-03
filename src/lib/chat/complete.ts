@@ -114,29 +114,39 @@ export function extractGeminiText(payload: unknown) {
 }
 
 async function generateWithGemini(provider: GeminiProvider, history: ChatMessage[], systemInstruction: string) {
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(provider.model)}:generateContent`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": provider.key,
-      },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: systemInstruction }] },
-        contents: toGeminiContents(history),
-        generationConfig: {
-          temperature: 0.3,
-          maxOutputTokens: 700,
+  const models = [...new Set([provider.model, DEFAULT_GEMINI_MODEL, "gemini-2.5-flash", "gemini-2.0-flash"])];
+  let lastError: Error | null = null;
+  for (const model of models) {
+    try {
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": provider.key,
+          },
+          body: JSON.stringify({
+            system_instruction: { parts: [{ text: systemInstruction }] },
+            contents: toGeminiContents(history),
+            generationConfig: {
+              temperature: 0.3,
+              maxOutputTokens: 700,
+            },
+          }),
+          signal: AbortSignal.timeout(20_000),
         },
-      }),
-      signal: AbortSignal.timeout(20_000),
-    },
-  );
-  if (!response.ok) {
-    throw new Error(`Chat provider ${response.status}`);
+      );
+      if (!response.ok) {
+        lastError = new Error(`Chat provider ${response.status}`);
+        continue;
+      }
+      return extractGeminiText(await response.json());
+    } catch (caught) {
+      lastError = caught instanceof Error ? caught : new Error("Gemini request failed");
+    }
   }
-  return extractGeminiText(await response.json());
+  throw lastError ?? new Error("Gemini request failed");
 }
 
 async function generateWithOpenAi(provider: OpenAiProvider, messages: ChatMessage[]) {

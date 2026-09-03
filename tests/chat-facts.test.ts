@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { answerFromFacts, rankFacts, type ChatFact } from "../src/lib/chat/facts";
+import { staffFactsFromGrouped } from "../src/lib/chat/staff-facts";
+import { groupStaffOffices } from "../src/lib/staff-offices";
 
 const facts: ChatFact[] = [
   {
@@ -42,5 +44,53 @@ describe("dashboard chat facts", () => {
   it("says when a figure is not in the briefing", () => {
     const reply = answerFromFacts("What is the president's private mobile number?", facts);
     expect(reply.toLowerCase()).toContain("published figure");
+  });
+});
+
+describe("staff chat facts", () => {
+  it("totals Executive Operations offices including nested units", () => {
+    const grouped = groupStaffOffices([
+      {
+        department: "Executive Operations",
+        office: "Legal Services",
+        unit: null,
+        campus: "Goa Campus",
+        total: 4,
+        counts: { appointment: { Permanent: 4 } },
+      },
+      {
+        department: "Executive Operations",
+        office: "Information and Communications Technology",
+        unit: null,
+        campus: "Goa Campus",
+        total: 5,
+        counts: { appointment: { Permanent: 4, Casual: 1 } },
+      },
+      {
+        department: "Executive Operations",
+        office: "Information and Communications Technology",
+        unit: "Systems Unit",
+        campus: "Goa Campus",
+        total: 2,
+        counts: { appointment: { "Job Order": 2 } },
+      },
+      {
+        department: "Commission on Audit",
+        office: "Commission on Audit",
+        unit: null,
+        campus: "Goa Campus",
+        total: 19,
+        counts: { appointment: { Permanent: 19 } },
+      },
+    ]);
+    const staffFacts = staffFactsFromGrouped(grouped);
+    const executive = staffFacts.find((fact) => fact.id === "ntp-department-executive-operations");
+    expect(executive?.body).toContain("total 11");
+    expect(executive?.body).toContain("Legal Services 4");
+    expect(executive?.body).toContain("Systems Unit 2");
+    const reply = answerFromFacts("How many personnel are there under the executive operations offices?", staffFacts);
+    expect(reply).toContain("11");
+    expect(reply.toLowerCase()).toContain("executive operations");
+    expect(reply).not.toContain("19");
   });
 });

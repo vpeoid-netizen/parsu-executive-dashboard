@@ -193,6 +193,14 @@ export function partitionAcademicDeliveryOffices<T extends { campus: string; tit
   return { goa, other };
 }
 
+export function staffOfficeHeadcount(group: StaffOfficeGroup) {
+  return group.total + group.units.reduce((sum, unit) => sum + (unit.total ?? 0), 0);
+}
+
+export function staffDepartmentHeadcount(offices: StaffOfficeGroup[]) {
+  return offices.reduce((sum, office) => sum + staffOfficeHeadcount(office), 0);
+}
+
 export function groupStaffOffices(rows: StaffOfficeRow[]) {
   const revised = alignStaffTotalsToAppointments(applyNtpOfficePermanentRevision(rows));
   const vicePresidentRows: StaffOfficeRow[] = [];
