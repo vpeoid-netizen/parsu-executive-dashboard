@@ -268,7 +268,7 @@ export function DonutChart({
             <span className="leading-snug">
               <span className="font-semibold text-navy-800">{item.name}</span>
               <span className="text-muted-foreground">
-                {` · ${Number.isInteger(item.value) ? item.value : item.value.toFixed(1)} · ${formatShareLabel(item.sharePct)}`}
+                {` · ${Number.isInteger(item.value) ? item.value : item.value.toFixed(1)} (${formatShareLabel(item.sharePct)})`}
               </span>
             </span>
           </li>
