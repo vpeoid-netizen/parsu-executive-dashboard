@@ -114,7 +114,7 @@ export async function ensureReferenceData() {
   return { campusByCode, colleges: await prisma.college.findMany() };
 }
 
-async function getOrCreatePeriod(data: {
+export async function getOrCreatePeriod(data: {
   type: PeriodType;
   label: string;
   fiscalYear?: number | null;

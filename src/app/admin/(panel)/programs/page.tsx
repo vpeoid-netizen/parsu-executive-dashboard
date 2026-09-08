@@ -1,72 +1,57 @@
+import { saveProgramsAction } from "@/app/admin/data-actions";
+import { AdminModuleIntro } from "@/components/admin/module-intro";
+import { WorkbookEditor } from "@/components/admin/workbook-editor";
+import { campusCollegeOptions } from "@/lib/admin/reference-options";
 import { prisma } from "@/lib/db";
-import { collegeFullName } from "@/lib/import/normalize";
-
-async function TablePage({
-  title,
-  rows,
-  columns,
-}: {
-  title: string;
-  rows: Array<Record<string, unknown>>;
-  columns: { key: string; header: string }[];
-}) {
-  return (
-    <div>
-      <h1 className="text-2xl font-semibold tracking-tight text-navy-900">{title}</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Use Import to update large datasets. Destructive changes are performed through dataset versioning rather than silent overwrite.
-      </p>
-      <div className="card mt-4 overflow-x-auto">
-        <table className="min-w-full text-sm">
-          <thead className="bg-muted">
-            <tr>
-              {columns.map((column) => (
-                <th key={column.key} className="px-3 py-2 text-left">
-                  {column.header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.slice(0, 100).map((row, index) => (
-              <tr key={index} className="border-t">
-                {columns.map((column) => (
-                  <td key={column.key} className="px-3 py-2">
-                    {String(row[column.key] ?? "—")}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
 
 export default async function ProgramsAdminPage() {
-  const rows = await prisma.academicProgram.findMany({
-    where: { status: "PUBLISHED" },
-    include: { campus: true, college: true },
-    take: 100,
-  });
+  const [{ campuses, colleges }, rows] = await Promise.all([
+    campusCollegeOptions(),
+    prisma.academicProgram.findMany({ where: { status: "PUBLISHED" }, orderBy: { name: "asc" } }),
+  ]);
+
   return (
-    <TablePage
-      title="Academic programs"
-      columns={[
-        { key: "college", header: "College" },
-        { key: "name", header: "Program" },
-        { key: "campus", header: "Campus" },
-        { key: "copcNumber", header: "COPC" },
-        { key: "status", header: "Status" },
-      ]}
-      rows={rows.map((row) => ({
-        college: row.college?.code ? collegeFullName(row.college.code) : "Unspecified",
-        name: row.name,
-        campus: row.campus?.name,
-        copcNumber: row.copcNumber,
-        status: row.status,
-      }))}
-    />
+    <div className="space-y-6">
+      <AdminModuleIntro
+        title="Academic programs"
+        description="Edit program names, campuses, COPC, and accreditation. Saving publishes to Academics and updates the program-count KPI."
+      />
+      <WorkbookEditor
+        title="Program inventory"
+        description="One row per academic program, matching the academic programs worksheet."
+        excelSheet="2 Academic Programs"
+        saveAction={saveProgramsAction}
+        addLabel="Add program"
+        columns={[
+          { key: "campusId", header: "Campus", type: "select", options: campuses, width: "11rem" },
+          { key: "collegeId", header: "College", type: "select", options: colleges, width: "14rem" },
+          { key: "name", header: "Program", type: "text", required: true, width: "18rem" },
+          { key: "programType", header: "Type", type: "text", hint: "Baccalaureate, Master’s…", width: "10rem" },
+          { key: "specializedMajor", header: "Major / specialization", type: "text", width: "12rem" },
+          { key: "copcNumber", header: "COPC number", type: "text", width: "10rem" },
+          { key: "accreditationLevel", header: "Accreditation", type: "text", width: "12rem" },
+          { key: "programStatus", header: "Status", type: "text", width: "10rem" },
+          { key: "accreditable", header: "Accreditable", type: "checkbox", width: "7rem" },
+          { key: "accredited", header: "Accredited", type: "checkbox", width: "7rem" },
+          { key: "phaseOut", header: "Phase-out", type: "checkbox", width: "7rem" },
+          { key: "remarks", header: "Remarks", type: "text", width: "14rem" },
+        ]}
+        rows={rows.map((row) => ({
+          id: row.id,
+          campusId: row.campusId ?? "",
+          collegeId: row.collegeId ?? "",
+          name: row.name,
+          programType: row.programType ?? "",
+          specializedMajor: row.specializedMajor ?? "",
+          copcNumber: row.copcNumber ?? "",
+          accreditationLevel: row.accreditationLevel ?? "",
+          programStatus: row.programStatus ?? "",
+          accreditable: Boolean(row.accreditable),
+          accredited: Boolean(row.accredited),
+          phaseOut: row.phaseOut,
+          remarks: row.remarks ?? "",
+        }))}
+      />
+    </div>
   );
 }

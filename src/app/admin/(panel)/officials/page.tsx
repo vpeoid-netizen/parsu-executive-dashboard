@@ -1,30 +1,42 @@
-import { saveOfficialAction } from "@/app/admin/actions";
+import { saveOfficialsTableAction } from "@/app/admin/data-actions";
+import { AdminModuleIntro } from "@/components/admin/module-intro";
+import { WorkbookEditor } from "@/components/admin/workbook-editor";
 import { prisma } from "@/lib/db";
 
 export default async function OfficialsAdminPage() {
   const officials = await prisma.official.findMany({ orderBy: { displayOrder: "asc" } });
   return (
-    <div className="space-y-8">
-      <h1 className="text-2xl font-semibold tracking-tight text-navy-900">University officials</h1>
-      <form action={saveOfficialAction} className="card grid gap-3 p-5">
-        <input name="name" required placeholder="Name" className="field" />
-        <input name="position" required placeholder="Position" className="field" />
-        <input name="office" placeholder="Office / section" className="field" />
-        <input name="section" placeholder="Section heading" className="field" />
-        <input name="email" placeholder="Email" className="field" />
-        <input name="displayOrder" type="number" defaultValue={0} className="field" />
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" name="published" /> Publish
-        </label>
-        <button className="btn btn-primary w-fit">Add official</button>
-      </form>
-      <ul className="card divide-y overflow-hidden">
-        {officials.map((official) => (
-          <li key={official.id} className="px-4 py-3 text-sm">
-            {official.name} — {official.position} ({official.published ? "published" : "draft"})
-          </li>
-        ))}
-      </ul>
+    <div className="space-y-6">
+      <AdminModuleIntro
+        title="University officials"
+        description="Edit names, positions, and offices. Uncheck Published to hide an official from the public About page without deleting the row."
+      />
+      <WorkbookEditor
+        title="Officials directory"
+        description="Display order is lowest first. Section is the heading on the public page, such as Board of Regents or Administrative Council."
+        saveAction={saveOfficialsTableAction}
+        addLabel="Add official"
+        addRowDefaults={{ published: true, displayOrder: officials.length }}
+        columns={[
+          { key: "displayOrder", header: "Order", type: "number", min: 0, width: "6rem" },
+          { key: "name", header: "Name", type: "text", required: true, width: "14rem" },
+          { key: "position", header: "Position", type: "text", required: true, width: "16rem" },
+          { key: "office", header: "Office", type: "text", width: "14rem" },
+          { key: "section", header: "Section heading", type: "text", width: "14rem" },
+          { key: "email", header: "Email", type: "text", width: "14rem" },
+          { key: "published", header: "Published", type: "checkbox", width: "7rem" },
+        ]}
+        rows={officials.map((official) => ({
+          id: official.id,
+          displayOrder: official.displayOrder,
+          name: official.name,
+          position: official.position,
+          office: official.office ?? "",
+          section: official.section ?? "",
+          email: official.email ?? "",
+          published: official.published,
+        }))}
+      />
     </div>
   );
 }

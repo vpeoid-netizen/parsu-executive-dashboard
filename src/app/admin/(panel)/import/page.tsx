@@ -11,7 +11,7 @@ export default function ImportPage() {
       <header>
         <h1 className="text-2xl font-semibold tracking-tight text-navy-900">Upload dataset</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Workflow: upload → parse → validate → preview → approve/publish. An upload never overwrites public information unless you choose Publish.
+          Use a full workbook when many sheets change at once. For a correction to faculty, enrollment, performance, or another module, open that page in Admin and edit the labeled table instead.
         </p>
       </header>
       <form action={action} className="card p-5">

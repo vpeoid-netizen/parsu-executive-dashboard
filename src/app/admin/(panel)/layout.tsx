@@ -4,6 +4,8 @@ import { logoutAction } from "@/app/admin/actions";
 import { getCurrentAdmin } from "@/lib/auth";
 import { adminNavigation } from "@/lib/navigation";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPanelLayout({ children }: { children: React.ReactNode }) {
   const admin = await getCurrentAdmin();
   if (!admin) redirect("/admin/login");
@@ -19,22 +21,35 @@ export default async function AdminPanelLayout({ children }: { children: React.R
               <Link
                 key={item.href}
                 href={item.href}
-                className="block rounded-xl px-3 py-2 text-sm text-navy-800 hover:bg-muted"
+                className="block min-h-11 rounded-xl px-3 py-2 text-sm text-navy-800 hover:bg-muted"
               >
                 {item.label}
               </Link>
             ))}
           </nav>
           <form action={logoutAction} className="mt-8">
-            <button className="text-sm text-muted-foreground hover:text-navy-900">Sign out</button>
+            <button className="btn btn-ghost">Sign out</button>
           </form>
         </aside>
         <div className="flex-1">
-          <header className="flex items-center justify-between border-b border-border bg-white px-4 py-3 md:hidden">
-            <p className="font-semibold text-navy-900">ParSU Admin</p>
-            <form action={logoutAction}>
-              <button className="text-sm">Sign out</button>
-            </form>
+          <header className="border-b border-border bg-white md:hidden">
+            <div className="flex items-center justify-between px-4 py-3">
+              <p className="font-semibold text-navy-900">ParSU Admin</p>
+              <form action={logoutAction}>
+                <button className="text-sm">Sign out</button>
+              </form>
+            </div>
+            <nav className="flex gap-1 overflow-x-auto px-3 pb-3" aria-label="Administration">
+              {adminNavigation.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="btn btn-ghost shrink-0 whitespace-nowrap px-3 text-xs"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
           </header>
           <div className="p-4 lg:p-8">{children}</div>
         </div>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { contributionByRankAndYear } from "../src/lib/research";
+import { contributionByRankAndYear, authorsJsonToEditorText, editorTextToAuthorsJson } from "../src/lib/research";
 
 describe("research contribution shares", () => {
   it("weights annual accomplishment by author contribution and academic rank", () => {
@@ -25,5 +25,20 @@ describe("research contribution shares", () => {
     const stacked = share.stacked[0] as Record<string, number | string>;
     expect(stacked.Instructor).toBe(70);
     expect(stacked.Professor).toBe(30);
+  });
+
+  it("round-trips author names and ranks through the admin editor text", () => {
+    const json = JSON.stringify([
+      { name: "Santos, A.", academicRank: "Assistant Professor", contribution: 1 },
+      { name: "Cruz, B.", contribution: 1 },
+    ]);
+    const text = authorsJsonToEditorText(json);
+    expect(text).toBe("Santos, A. (Assistant Professor); Cruz, B.");
+    expect(editorTextToAuthorsJson(text)).toBe(
+      JSON.stringify([
+        { name: "Santos, A.", academicRank: "Assistant Professor", contribution: 1 },
+        { name: "Cruz, B.", contribution: 1 },
+      ]),
+    );
   });
 });

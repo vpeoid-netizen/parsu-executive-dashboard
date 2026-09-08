@@ -29,6 +29,33 @@ export function formatAuthorNames(json: string | null | undefined) {
     .join("; ");
 }
 
+export function authorsJsonToEditorText(json: string | null | undefined) {
+  return parseAuthorsJson(json)
+    .map((item) => {
+      const name = item.name?.trim();
+      if (!name) return "";
+      const rank = item.academicRank?.trim();
+      return rank ? `${name} (${rank})` : name;
+    })
+    .filter(Boolean)
+    .join("; ");
+}
+
+export function editorTextToAuthorsJson(text: string | null | undefined) {
+  const authors = String(text ?? "")
+    .split(/[;\n]+/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => {
+      const match = part.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+      if (match) {
+        return { name: match[1].trim(), academicRank: match[2].trim(), contribution: 1 };
+      }
+      return { name: part, contribution: 1 };
+    });
+  return JSON.stringify(authors);
+}
+
 function contributionWeight(value: number | null | undefined) {
   if (value === null || value === undefined || Number.isNaN(value) || value < 0) return 0;
   if (value > 1.5 && value <= 100) return value / 100;

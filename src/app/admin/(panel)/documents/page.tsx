@@ -1,34 +1,42 @@
-import { saveDocumentAction } from "@/app/admin/actions";
+import { saveDocumentsTableAction } from "@/app/admin/data-actions";
+import { AdminModuleIntro } from "@/components/admin/module-intro";
+import { WorkbookEditor } from "@/components/admin/workbook-editor";
 import { DOCUMENT_CATEGORIES } from "@/lib/constants";
 import { prisma } from "@/lib/db";
 
 export default async function DocumentsAdminPage() {
-  const documents = await prisma.documentRecord.findMany({ orderBy: { publishedAt: "desc" } });
+  const documents = await prisma.documentRecord.findMany({ orderBy: { title: "asc" } });
+  const categories = DOCUMENT_CATEGORIES.map((category) => ({ value: category, label: category }));
   return (
-    <div className="space-y-8">
-      <h1 className="text-2xl font-semibold tracking-tight text-navy-900">Documents</h1>
-      <form action={saveDocumentAction} className="card grid gap-3 p-5">
-        <input name="title" required placeholder="Title" className="field" />
-        <select name="category" className="field">
-          {DOCUMENT_CATEGORIES.map((category) => (
-            <option key={category}>{category}</option>
-          ))}
-        </select>
-        <input name="externalUrl" placeholder="External URL" className="field" />
-        <input name="version" placeholder="Version" className="field" />
-        <textarea name="description" placeholder="Description" className="field" />
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" name="published" /> Publish
-        </label>
-        <button className="btn btn-primary w-fit">Add document</button>
-      </form>
-      <ul className="card divide-y overflow-hidden text-sm">
-        {documents.map((doc) => (
-          <li key={doc.id} className="px-4 py-3">
-            {doc.title} — {doc.category} ({doc.published ? "published" : "draft"})
-          </li>
-        ))}
-      </ul>
+    <div className="space-y-6">
+      <AdminModuleIntro
+        title="Documents"
+        description="Edit titles, categories, and links. Published documents appear on the public Documents pages."
+      />
+      <WorkbookEditor
+        title="Institutional documents"
+        description="Prefer an external URL (Google Drive or the ParSU website) so files stay in existing repositories."
+        saveAction={saveDocumentsTableAction}
+        addLabel="Add document"
+        addRowDefaults={{ category: "Other", published: true }}
+        columns={[
+          { key: "title", header: "Title", type: "text", required: true, width: "18rem" },
+          { key: "category", header: "Category", type: "select", options: categories, width: "14rem" },
+          { key: "externalUrl", header: "Link", type: "text", width: "18rem" },
+          { key: "version", header: "Version", type: "text", width: "8rem" },
+          { key: "description", header: "Description", type: "textarea", width: "16rem" },
+          { key: "published", header: "Published", type: "checkbox", width: "7rem" },
+        ]}
+        rows={documents.map((doc) => ({
+          id: doc.id,
+          title: doc.title,
+          category: doc.category,
+          externalUrl: doc.externalUrl ?? "",
+          version: doc.version ?? "",
+          description: doc.description ?? "",
+          published: doc.published,
+        }))}
+      />
     </div>
   );
 }

@@ -23,14 +23,20 @@ export default async function AdminHomePage() {
     <div className="space-y-8">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight text-navy-900">Data overview</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Published versions, validation warnings and recent administrator activity.</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Edit published dashboard tables in each module, or upload a full workbook. Changes are recorded in the audit log.
+        </p>
       </header>
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          ["/admin/import", "Upload dataset"],
+          ["/admin/faculty", "Edit faculty"],
+          ["/admin/staff", "Edit non-teaching"],
+          ["/admin/students", "Edit students"],
+          ["/admin/performance", "Edit performance"],
+          ["/admin/programs", "Edit programs"],
+          ["/admin/research", "Edit research"],
           ["/admin/content", "Manage content"],
-          ["/admin/documents", "Manage documents"],
-          ["/admin/officials", "Manage officials"],
+          ["/admin/import", "Upload workbook"],
         ].map(([href, label]) => (
           <Link key={href} href={href} className="card card-interactive px-4 py-4 text-sm font-medium text-navy-900">
             {label}
