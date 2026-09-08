@@ -1,0 +1,280 @@
+{
+  "sourceFile": "3 Faculty Members.xlsx",
+  "faculty": [
+    {
+      "campusCode": "GOA",
+      "collegeCode": "COS",
+      "total": 15,
+      "counts": {
+        "appointment": {
+          "Permanent": 7,
+          "Temporary": 6,
+          "COS": 2
+        },
+        "rank": {
+          "Instructor": 8,
+          "Assistant Professor": 4,
+          "Associate Professor": 1,
+          "Professor": 0,
+          "University Professor": 0
+        },
+        "education": {
+          "Bachelor's Degree": 5,
+          "Master's Degree": 9,
+          "Doctorate Degree": 1
+        }
+      },
+      "sourceRow": 7
+    },
+    {
+      "campusCode": "GOA",
+      "collegeCode": "CAH",
+      "total": 30,
+      "counts": {
+        "appointment": {
+          "Permanent": 20,
+          "Temporary": 6,
+          "COS": 10
+        },
+        "rank": {
+          "Instructor": 11,
+          "Assistant Professor": 5,
+          "Associate Professor": 4,
+          "Professor": 0,
+          "University Professor": 0
+        },
+        "education": {
+          "Bachelor's Degree": 15,
+          "Master's Degree": 12,
+          "Doctorate Degree": 3
+        }
+      },
+      "sourceRow": 8
+    },
+    {
+      "campusCode": "GOA",
+      "collegeCode": "CECS",
+      "total": 46,
+      "counts": {
+        "appointment": {
+          "Permanent": 37,
+          "Temporary": 12,
+          "COS": 9
+        },
+        "rank": {
+          "Instructor": 17,
+          "Assistant Professor": 14,
+          "Associate Professor": 3,
+          "Professor": 3,
+          "University Professor": 0
+        },
+        "education": {
+          "Bachelor's Degree": 17,
+          "Master's Degree": 23,
+          "Doctorate Degree": 6
+        }
+      },
+      "sourceRow": 9
+    },
+    {
+      "campusCode": "GOA",
+      "collegeCode": "CBM",
+      "total": 29,
+      "counts": {
+        "appointment": {
+          "Permanent": 28,
+          "Temporary": 3,
+          "COS": 1
+        },
+        "rank": {
+          "Instructor": 10,
+          "Assistant Professor": 8,
+          "Associate Professor": 9,
+          "Professor": 1,
+          "University Professor": 0
+        },
+        "education": {
+          "Bachelor's Degree": 5,
+          "Master's Degree": 16,
+          "Doctorate Degree": 8
+        }
+      },
+      "sourceRow": 10
+    },
+    {
+      "campusCode": "GOA",
+      "collegeCode": "CED",
+      "total": 66,
+      "counts": {
+        "appointment": {
+          "Permanent": 66,
+          "Temporary": 3,
+          "COS": 0
+        },
+        "rank": {
+          "Instructor": 17,
+          "Assistant Professor": 19,
+          "Associate Professor": 29,
+          "Professor": 1,
+          "University Professor": 0
+        },
+        "education": {
+          "Bachelor's Degree": 10,
+          "Master's Degree": 44,
+          "Doctorate Degree": 12
+        }
+      },
+      "sourceRow": 11
+    },
+    {
+      "campusCode": "CARAMOAN",
+      "collegeCode": "CSCE",
+      "total": 12,
+      "counts": {
+        "appointment": {
+          "Permanent": 10,
+          "Temporary": 3,
+          "COS": 2
+        },
+        "rank": {
+          "Instructor": 8,
+          "Assistant Professor": 1,
+          "Associate Professor": 0,
+          "Professor": 1,
+          "University Professor": 0
+        },
+        "education": {
+          "Bachelor's Degree": 6,
+          "Master's Degree": 5,
+          "Doctorate Degree": 1
+        }
+      },
+      "sourceRow": 12
+    },
+    {
+      "campusCode": "LAGONOY",
+      "collegeCode": "CPSCH",
+      "total": 14,
+      "counts": {
+        "appointment": {
+          "Permanent": 13,
+          "Temporary": 1,
+          "COS": 1
+        },
+        "rank": {
+          "Instructor": 7,
+          "Assistant Professor": 4,
+          "Associate Professor": 2,
+          "Professor": 0,
+          "University Professor": 0
+        },
+        "education": {
+          "Bachelor's Degree": 6,
+          "Master's Degree": 3,
+          "Doctorate Degree": 5
+        }
+      },
+      "sourceRow": 13
+    },
+    {
+      "campusCode": "SAGNAY",
+      "collegeCode": "CFMS",
+      "total": 15,
+      "counts": {
+        "appointment": {
+          "Permanent": 15,
+          "Temporary": 3,
+          "COS": 0
+        },
+        "rank": {
+          "Instructor": 10,
+          "Assistant Professor": 1,
+          "Associate Professor": 1,
+          "Professor": 2,
+          "University Professor": 1
+        },
+        "education": {
+          "Bachelor's Degree": 6,
+          "Master's Degree": 5,
+          "Doctorate Degree": 4
+        }
+      },
+      "sourceRow": 14
+    },
+    {
+      "campusCode": "SAN_JOSE",
+      "collegeCode": "CHTM",
+      "total": 15,
+      "counts": {
+        "appointment": {
+          "Permanent": 11,
+          "Temporary": 1,
+          "COS": 4
+        },
+        "rank": {
+          "Instructor": 8,
+          "Assistant Professor": 3,
+          "Associate Professor": 0,
+          "Professor": 0,
+          "University Professor": 0
+        },
+        "education": {
+          "Bachelor's Degree": 8,
+          "Master's Degree": 3,
+          "Doctorate Degree": 4
+        }
+      },
+      "sourceRow": 15
+    },
+    {
+      "campusCode": "SALOGON",
+      "collegeCode": "CACD",
+      "total": 12,
+      "counts": {
+        "appointment": {
+          "Permanent": 9,
+          "Temporary": 1,
+          "COS": 3
+        },
+        "rank": {
+          "Instructor": 5,
+          "Assistant Professor": 1,
+          "Associate Professor": 3,
+          "Professor": 0,
+          "University Professor": 0
+        },
+        "education": {
+          "Bachelor's Degree": 7,
+          "Master's Degree": 5,
+          "Doctorate Degree": 2
+        }
+      },
+      "sourceRow": 16
+    },
+    {
+      "campusCode": "TINAMBAC",
+      "collegeCode": "CESD",
+      "total": 8,
+      "counts": {
+        "appointment": {
+          "Permanent": 8,
+          "Temporary": 3,
+          "COS": 0
+        },
+        "rank": {
+          "Instructor": 5,
+          "Assistant Professor": 2,
+          "Associate Professor": 1,
+          "Professor": 0,
+          "University Professor": 0
+        },
+        "education": {
+          "Bachelor's Degree": 5,
+          "Master's Degree": 3,
+          "Doctorate Degree": 0
+        }
+      },
+      "sourceRow": 17
+    }
+  ]
+}
