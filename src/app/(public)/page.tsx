@@ -6,6 +6,7 @@ import { PerformanceIndicatorCard } from "@/components/performance/indicator-car
 import { ExecutiveIndicatorTabs } from "@/components/dashboard/executive-indicator-tabs";
 import { DocumentLink } from "@/components/ui/document-link";
 import { EmptyState, PageShell, SectionTitle } from "@/components/ui/primitives";
+import { FACULTY_APPOINTMENT_COLORS } from "@/lib/chart-colors";
 import { formatDate, formatNumber } from "@/lib/format";
 import { getHomepageData } from "@/lib/homepage-data";
 import { ACADEMIC_RANK_GROUPS } from "@/lib/import/normalize";
@@ -86,6 +87,7 @@ export default async function DashboardPage() {
   const facultyAppointmentSlices = ["Permanent", "Temporary", "COS"].map((name) => ({
     name,
     value: facultyCounts.appointment[name] ?? 0,
+    color: FACULTY_APPOINTMENT_COLORS[name],
   })).filter((item) => item.value > 0);
   const staffAppointmentSlices = ["Permanent", "Casual", "Job Order"].map((name) => ({
     name,

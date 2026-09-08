@@ -3,6 +3,7 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ChartPanel } from "@/components/charts/chart-panel";
 import { LazyDonutChart } from "@/components/charts/lazy-charts";
 import type { DonutSlice } from "@/components/charts/charts";
+import { FACULTY_APPOINTMENT_COLORS } from "@/lib/chart-colors";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState, KpiCard, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
@@ -28,8 +29,14 @@ function addCounts(left: CountGroups, right: CountGroups): CountGroups {
   return result;
 }
 
-function countSlices(order: readonly string[], counts: Record<string, number> | undefined): DonutSlice[] {
-  return order.map((name) => ({ name, value: counts?.[name] ?? 0 })).filter((item) => item.value > 0);
+function countSlices(
+  order: readonly string[],
+  counts: Record<string, number> | undefined,
+  colors?: Record<string, string>,
+): DonutSlice[] {
+  return order
+    .map((name) => ({ name, value: counts?.[name] ?? 0, color: colors?.[name] }))
+    .filter((item) => item.value > 0);
 }
 
 export default async function FacultyPage() {
@@ -61,11 +68,15 @@ export default async function FacultyPage() {
   const sumBy = (group: "appointment" | "rank" | "education", key: string) =>
     parsed.reduce((sum, row) => sum + (row.counts[group]?.[key] ?? 0), 0);
   const rankSlices = countSlices(ACADEMIC_RANK_GROUPS, Object.fromEntries(ACADEMIC_RANK_GROUPS.map((name) => [name, sumBy("rank", name)])));
-  const appointmentSlices = countSlices(APPOINTMENT_GROUPS, {
-    Permanent: sumBy("appointment", "Permanent"),
-    Temporary: sumBy("appointment", "Temporary"),
-    COS: sumBy("appointment", "COS"),
-  });
+  const appointmentSlices = countSlices(
+    APPOINTMENT_GROUPS,
+    {
+      Permanent: sumBy("appointment", "Permanent"),
+      Temporary: sumBy("appointment", "Temporary"),
+      COS: sumBy("appointment", "COS"),
+    },
+    FACULTY_APPOINTMENT_COLORS,
+  );
   const collegeMix = parsed.filter((row) => row.total > 0);
 
   return (
@@ -89,14 +100,14 @@ export default async function FacultyPage() {
             <ChartPanel title="Faculty members" period="By academic rank">
               <LazyDonutChart
                 data={rankSlices}
-                showPercentLabels
+                hideSliceLabels
                 centerLabel={{ primary: formatNumber(total) }}
               />
             </ChartPanel>
             <ChartPanel title="Faculty members" period="By nature of appointment">
               <LazyDonutChart
                 data={appointmentSlices}
-                showPercentLabels
+                hideSliceLabels
                 centerLabel={{ primary: formatNumber(total) }}
               />
             </ChartPanel>
@@ -105,7 +116,7 @@ export default async function FacultyPage() {
           <h2 className="font-display mb-4 text-lg font-semibold tracking-tight text-navy-900">By college</h2>
           <div className="mb-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {collegeMix.map((row) => (
-              <article key={row.collegeCode ?? row.college} className="card min-w-0 p-5">
+              <article key={row.collegeCode ?? row.college} className="card min-w-0 overflow-visible p-5">
                 <p className="section-kicker">{collegeAbbrev(row.collegeCode)}</p>
                 <h3 className="mt-1 text-sm font-semibold leading-snug tracking-tight text-navy-900">{row.college}</h3>
                 <div className="mt-4 grid gap-5 sm:grid-cols-2">
@@ -113,7 +124,7 @@ export default async function FacultyPage() {
                     <p className="mb-2 text-xs font-semibold text-muted-foreground">By academic rank</p>
                     <LazyDonutChart
                       data={countSlices(ACADEMIC_RANK_GROUPS, row.counts.rank)}
-                      showPercentLabels
+                      hideSliceLabels
                       compact
                       centerLabel={{ primary: formatNumber(row.total) }}
                     />
@@ -121,8 +132,8 @@ export default async function FacultyPage() {
                   <div>
                     <p className="mb-2 text-xs font-semibold text-muted-foreground">By nature of appointment</p>
                     <LazyDonutChart
-                      data={countSlices(APPOINTMENT_GROUPS, row.counts.appointment)}
-                      showPercentLabels
+                      data={countSlices(APPOINTMENT_GROUPS, row.counts.appointment, FACULTY_APPOINTMENT_COLORS)}
+                      hideSliceLabels
                       compact
                       centerLabel={{ primary: formatNumber(row.total) }}
                     />

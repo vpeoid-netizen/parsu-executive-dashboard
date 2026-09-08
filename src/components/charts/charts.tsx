@@ -1,5 +1,6 @@
 "use client";
 
+import { SHARE_COLORS } from "@/lib/chart-colors";
 import { formatShareLabel, sharesThatSumTo100 } from "@/lib/percent-share";
 import {
   Bar,
@@ -163,22 +164,7 @@ export function ComparisonBars({
   );
 }
 
-const SHARE_COLORS = [
-  "#071f46",
-  "#f7b918",
-  "#304e70",
-  "#166534",
-  "#a47b00",
-  "#5c6b82",
-  "#10294d",
-  "#c45c26",
-  "#3d6b99",
-  "#8b6914",
-  "#1d4a3a",
-  "#6b3a4a",
-];
-
-export type DonutSlice = { name: string; value: number; fullName?: string };
+export type DonutSlice = { name: string; value: number; fullName?: string; color?: string };
 
 export function DonutChart({
   data,
@@ -201,18 +187,18 @@ export function DonutChart({
   const slices = data.map((item, index) => ({
     ...item,
     sharePct: shares[index],
-    color: SHARE_COLORS[index % SHARE_COLORS.length],
+    color: item.color ?? SHARE_COLORS[index % SHARE_COLORS.length],
   }));
   const useHoleLabel = Boolean(centerLabel) || hideSliceLabels;
-  const labelSlices = showPercentLabels ?? !hideSliceLabels;
+  const labelSlices = showPercentLabels ?? (!hideSliceLabels && !centerLabel);
   const pie = (
-    <PieChart>
+    <PieChart margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
       <Pie
         data={slices}
         dataKey="value"
         nameKey="name"
-        innerRadius={useHoleLabel ? "62%" : "55%"}
-        outerRadius={useHoleLabel ? "88%" : "80%"}
+        innerRadius={useHoleLabel ? "58%" : "52%"}
+        outerRadius={useHoleLabel ? "82%" : "76%"}
         paddingAngle={2}
         label={labelSlices ? ({ payload }) => formatShareLabel(payload?.sharePct) : false}
         labelLine={labelSlices && !useHoleLabel && !compact}
@@ -250,7 +236,7 @@ export function DonutChart({
   }
   return (
     <div>
-      <div className={compact ? "relative mx-auto h-44 w-full max-w-[13.5rem]" : "relative mx-auto h-64 w-full max-w-sm"}>
+      <div className={compact ? "relative mx-auto h-48 w-full max-w-[14.5rem] overflow-visible" : "relative mx-auto h-72 w-full max-w-sm overflow-visible"}>
         <ResponsiveContainer width="100%" height="100%">
           {pie}
         </ResponsiveContainer>
@@ -281,7 +267,7 @@ export function DonutChart({
             />
             <span className="leading-snug">
               <span className="font-semibold text-navy-800">{item.name}</span>
-              <span className="whitespace-nowrap text-muted-foreground">
+              <span className="text-muted-foreground">
                 {` · ${Number.isInteger(item.value) ? item.value : item.value.toFixed(1)} · ${formatShareLabel(item.sharePct)}`}
               </span>
             </span>
