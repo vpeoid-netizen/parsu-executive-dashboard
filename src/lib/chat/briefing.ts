@@ -20,34 +20,12 @@ import {
 import { formatProgramAuthority, hasCopcNumber } from "@/lib/program-coverage";
 import { type ChatFact, FY_2026_PARTIAL_NOTE, factsToBriefingText } from "@/lib/chat/facts";
 import { staffFactsFromGrouped } from "@/lib/chat/staff-facts";
+import { sumFacultyCounts, sumStaffCounts } from "@/lib/personnel-counts";
 import {
   alignStaffTotalsToAppointments,
   groupStaffOffices,
   type StaffOfficeRow,
 } from "@/lib/staff-offices";
-
-type CountGroups = {
-  appointment?: Record<string, number>;
-  rank?: Record<string, number>;
-};
-
-function sumCountGroup(rows: { total: number | null; countsJson: string }[]) {
-  const appointment: Record<string, number> = {};
-  const rank: Record<string, number> = {};
-  let total = 0;
-  for (const row of rows) {
-    const counts = JSON.parse(row.countsJson) as CountGroups;
-    const appointmentSum = Object.values(counts.appointment ?? {}).reduce((sum, value) => sum + value, 0);
-    total += appointmentSum || (row.total ?? 0);
-    for (const [key, value] of Object.entries(counts.appointment ?? {})) {
-      appointment[key] = (appointment[key] ?? 0) + value;
-    }
-    for (const [key, value] of Object.entries(counts.rank ?? {})) {
-      rank[key] = (rank[key] ?? 0) + value;
-    }
-  }
-  return { total, appointment, rank };
-}
 
 function formatKpiValue(format: string, value: number | null) {
   return format === "percent" ? formatPercent(value) : formatNumber(value, 0);
@@ -183,8 +161,8 @@ async function loadPublishedFacts() {
   ]);
 
   const facts: ChatFact[] = [];
-  const facultyCounts = sumCountGroup(home.faculty);
-  const staffCounts = sumCountGroup(home.staff);
+  const facultyCounts = sumFacultyCounts(home.faculty);
+  const staffCounts = sumStaffCounts(home.staff);
   const kpis = {
     ...home.kpis,
     current: home.kpis.current.map((kpi) =>
@@ -248,9 +226,9 @@ async function loadPublishedFacts() {
   addFact(facts, {
     id: "faculty",
     title: "Faculty members",
-    body: `Published faculty headcount is ${formatNumber(facultyCounts.total, 0)}. Appointment mix: ${mixLine(facultyCounts.appointment) || "not specified"}. Rank mix: ${mixLine(facultyCounts.rank) || "not specified"}.`,
+    body: `Published faculty headcount is ${formatNumber(facultyCounts.total, 0)}. Appointment mix: ${mixLine(facultyCounts.appointment) || "not specified"}. Rank mix: ${mixLine(facultyCounts.rank) || "not specified"}. Highest educational attainment: ${mixLine(facultyCounts.education) || "not specified"}.`,
     href: "/personnel/faculty",
-    keywords: "faculty teachers professors instructors permanent temporary cos",
+    keywords: "faculty teachers professors instructors permanent temporary cos bachelor master doctorate education attainment",
   });
   addFact(facts, {
     id: "ntp",

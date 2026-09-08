@@ -19,3 +19,10 @@ export const FACULTY_APPOINTMENT_COLORS: Record<string, string> = {
   Temporary: "#be185d",
   COS: "#6d28d9",
 };
+
+/** Distinct from rank (navy/gold) and appointment (teal/pink/purple). */
+export const FACULTY_EDUCATION_COLORS: Record<string, string> = {
+  "Bachelor's Degree": "#b45309",
+  "Master's Degree": "#0369a1",
+  "Doctorate Degree": "#3f6212",
+};

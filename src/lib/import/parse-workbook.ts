@@ -157,6 +157,25 @@ export type ParsedWorkbook = {
   issues: ValidationDraft[];
 };
 
+const FACULTY_ONLY_EMPTY_KEYS = [
+  "programs",
+  "staff",
+  "enrollment",
+  "licensure",
+  "awards",
+  "employability",
+  "performance",
+  "researchCompleted",
+  "researchUtilization",
+  "researchPublications",
+  "extensionPrograms",
+] as const;
+
+export function isFacultyOnlyWorkbook(parsed: ParsedWorkbook) {
+  if (!parsed.faculty.length) return false;
+  return FACULTY_ONLY_EMPTY_KEYS.every((key) => parsed[key].length === 0);
+}
+
 function accreditationMeta(raw: string | null): {
   level: string | null;
   accreditable: boolean | null;

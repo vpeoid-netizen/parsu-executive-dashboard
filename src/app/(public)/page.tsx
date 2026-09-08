@@ -6,37 +6,16 @@ import { PerformanceIndicatorCard } from "@/components/performance/indicator-car
 import { ExecutiveIndicatorTabs } from "@/components/dashboard/executive-indicator-tabs";
 import { DocumentLink } from "@/components/ui/document-link";
 import { EmptyState, PageShell, SectionTitle } from "@/components/ui/primitives";
-import { FACULTY_APPOINTMENT_COLORS } from "@/lib/chart-colors";
+import { FACULTY_APPOINTMENT_COLORS, FACULTY_EDUCATION_COLORS } from "@/lib/chart-colors";
 import { formatDate, formatNumber } from "@/lib/format";
 import { getHomepageData } from "@/lib/homepage-data";
+import { EDUCATION_LEVELS } from "@/lib/constants";
 import { ACADEMIC_RANK_GROUPS } from "@/lib/import/normalize";
+import { sumFacultyCounts, sumStaffCounts } from "@/lib/personnel-counts";
 import { coverageCenterLabel, hasCopcNumber, programsByCollegeSlices } from "@/lib/program-coverage";
 import { PERFORMANCE_FOCUS_YEAR, groupByProgramMfo } from "@/lib/performance-display";
 import { shortChartPeriodLabel } from "@/lib/periods";
 import { contributionByRankAndYear } from "@/lib/research";
-
-type CountGroups = {
-  appointment?: Record<string, number>;
-  rank?: Record<string, number>;
-};
-
-function sumCountGroup(rows: { total: number | null; countsJson: string }[]) {
-  const appointment: Record<string, number> = {};
-  const rank: Record<string, number> = {};
-  let total = 0;
-  for (const row of rows) {
-    const counts = JSON.parse(row.countsJson) as CountGroups;
-    const appointmentSum = Object.values(counts.appointment ?? {}).reduce((sum, value) => sum + value, 0);
-    total += appointmentSum || (row.total ?? 0);
-    for (const [key, value] of Object.entries(counts.appointment ?? {})) {
-      appointment[key] = (appointment[key] ?? 0) + value;
-    }
-    for (const [key, value] of Object.entries(counts.rank ?? {})) {
-      rank[key] = (rank[key] ?? 0) + value;
-    }
-  }
-  return { total, appointment, rank };
-}
 
 function researchRankSlices(records: { fiscalYear: number; authorsJson: string }[], fallbackName: string, total: number) {
   const share = contributionByRankAndYear(records);
@@ -72,8 +51,8 @@ export default async function DashboardPage() {
   const accreditedPrograms = programRows.filter((program) => program.accredited === true);
   const copcSlices = programsByCollegeSlices(copcPrograms);
   const accreditedSlices = programsByCollegeSlices(accreditedPrograms);
-  const facultyCounts = sumCountGroup(faculty);
-  const staffCounts = sumCountGroup(staff);
+  const facultyCounts = sumFacultyCounts(faculty);
+  const staffCounts = sumStaffCounts(staff);
   const homepageKpis = {
     ...kpis,
     current: kpis.current.map((kpi) =>
@@ -88,6 +67,11 @@ export default async function DashboardPage() {
     name,
     value: facultyCounts.appointment[name] ?? 0,
     color: FACULTY_APPOINTMENT_COLORS[name],
+  })).filter((item) => item.value > 0);
+  const facultyEducationSlices = EDUCATION_LEVELS.map((item) => ({
+    name: item.name,
+    value: facultyCounts.education[item.name] ?? 0,
+    color: FACULTY_EDUCATION_COLORS[item.name],
   })).filter((item) => item.value > 0);
   const staffAppointmentSlices = ["Permanent", "Casual", "Job Order"].map((name) => ({
     name,
@@ -252,6 +236,19 @@ export default async function DashboardPage() {
                 centerLabel={{ primary: formatNumber(facultyCounts.total) }}
               />
             </ChartPanel>
+            <ChartPanel
+              title="Faculty members"
+              period="By highest educational attainment"
+              action={{ href: "/personnel/faculty", label: "Details" }}
+            >
+              <LazyDonutChart
+                data={facultyEducationSlices}
+                hideSliceLabels
+                centerLabel={{ primary: formatNumber(facultyCounts.total) }}
+              />
+            </ChartPanel>
+          </div>
+          <div className="mt-4 grid gap-4 xl:grid-cols-3">
             <ChartPanel
               title="Non-teaching personnel"
               period="By nature of appointment"

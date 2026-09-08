@@ -11,7 +11,10 @@ export default function ImportPage() {
       <header>
         <h1 className="text-2xl font-semibold tracking-tight text-navy-900">Upload dataset</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Use a full workbook when many sheets change at once. For a correction to faculty, enrollment, performance, or another module, open that page in Admin and edit the labeled table instead.
+          Use a full workbook when many sheets change at once. A faculty-only workbook (sheet
+          &quot;3 Faculty Members&quot;) updates faculty without replacing other published datasets.
+          For a correction to enrollment, performance, or another module, open that page in Admin and
+          edit the labeled table instead.
         </p>
       </header>
       <form action={action} className="card p-5">

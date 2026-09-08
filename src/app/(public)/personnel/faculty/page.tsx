@@ -3,9 +3,10 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ChartPanel } from "@/components/charts/chart-panel";
 import { LazyDonutChart } from "@/components/charts/lazy-charts";
 import type { DonutSlice } from "@/components/charts/charts";
-import { FACULTY_APPOINTMENT_COLORS } from "@/lib/chart-colors";
+import { FACULTY_APPOINTMENT_COLORS, FACULTY_EDUCATION_COLORS } from "@/lib/chart-colors";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState, KpiCard, ModuleHeader } from "@/components/ui/primitives";
+import { EDUCATION_LEVELS } from "@/lib/constants";
 import { prisma } from "@/lib/db";
 import { formatNumber } from "@/lib/format";
 import { ACADEMIC_RANK_GROUPS, collegeAbbrev, collegeFullName, collegeSortIndex } from "@/lib/import/normalize";
@@ -17,6 +18,7 @@ type CountGroups = {
 };
 
 const APPOINTMENT_GROUPS = ["Permanent", "Temporary", "COS"] as const;
+const EDUCATION_GROUPS = EDUCATION_LEVELS.map((item) => item.name);
 
 function addCounts(left: CountGroups, right: CountGroups): CountGroups {
   const result: CountGroups = { appointment: {}, rank: {}, education: {} };
@@ -77,6 +79,11 @@ export default async function FacultyPage() {
     },
     FACULTY_APPOINTMENT_COLORS,
   );
+  const educationSlices = countSlices(
+    EDUCATION_GROUPS,
+    Object.fromEntries(EDUCATION_GROUPS.map((name) => [name, sumBy("education", name)])),
+    FACULTY_EDUCATION_COLORS,
+  );
   const collegeMix = parsed.filter((row) => row.total > 0);
 
   return (
@@ -84,7 +91,7 @@ export default async function FacultyPage() {
       <Breadcrumbs items={[{ href: "/personnel", label: "Personnel" }, { label: "Faculty Members" }]} />
       <ModuleHeader
         title="Faculty Members"
-        description="Faculty by college, with appointment, academic rank, and educational background."
+        description="Faculty by college, with nature of appointment, academic rank, and highest educational attainment."
       />
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard title="Total faculty" value={total} />
@@ -96,7 +103,7 @@ export default async function FacultyPage() {
         <EmptyState />
       ) : (
         <>
-          <div className="mb-10 grid gap-6 xl:grid-cols-2">
+          <div className="mb-10 grid gap-6 lg:grid-cols-3">
             <ChartPanel title="Faculty members" period="By academic rank">
               <LazyDonutChart
                 data={rankSlices}
@@ -111,6 +118,13 @@ export default async function FacultyPage() {
                 centerLabel={{ primary: formatNumber(total) }}
               />
             </ChartPanel>
+            <ChartPanel title="Faculty members" period="By highest educational attainment">
+              <LazyDonutChart
+                data={educationSlices}
+                hideSliceLabels
+                centerLabel={{ primary: formatNumber(total) }}
+              />
+            </ChartPanel>
           </div>
 
           <h2 className="font-display mb-4 text-lg font-semibold tracking-tight text-navy-900">By college</h2>
@@ -119,7 +133,7 @@ export default async function FacultyPage() {
               <article key={row.collegeCode ?? row.college} className="card min-w-0 overflow-visible p-5">
                 <p className="section-kicker">{collegeAbbrev(row.collegeCode)}</p>
                 <h3 className="mt-1 text-sm font-semibold leading-snug tracking-tight text-navy-900">{row.college}</h3>
-                <div className="mt-4 grid gap-5 sm:grid-cols-2">
+                <div className="mt-4 grid gap-5 sm:grid-cols-3">
                   <div>
                     <p className="mb-2 text-xs font-semibold text-muted-foreground">By academic rank</p>
                     <LazyDonutChart
@@ -133,6 +147,15 @@ export default async function FacultyPage() {
                     <p className="mb-2 text-xs font-semibold text-muted-foreground">By nature of appointment</p>
                     <LazyDonutChart
                       data={countSlices(APPOINTMENT_GROUPS, row.counts.appointment, FACULTY_APPOINTMENT_COLORS)}
+                      hideSliceLabels
+                      compact
+                      centerLabel={{ primary: formatNumber(row.total) }}
+                    />
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs font-semibold text-muted-foreground">By highest educational attainment</p>
+                    <LazyDonutChart
+                      data={countSlices(EDUCATION_GROUPS, row.counts.education, FACULTY_EDUCATION_COLORS)}
                       hideSliceLabels
                       compact
                       centerLabel={{ primary: formatNumber(row.total) }}
@@ -184,6 +207,20 @@ export default async function FacultyPage() {
                     accessor: (row) => row.counts.rank?.["University Professor"],
                     hideOnMobile: true,
                   },
+                ]}
+                rows={parsed}
+              />
+            </section>
+            <section>
+              <h3 className="mb-3 text-sm font-semibold tracking-tight text-navy-900">By highest educational attainment</h3>
+              <DataTable
+                exportName="faculty-by-education"
+                columns={[
+                  { key: "college", header: "College", accessor: (row) => row.college },
+                  { key: "total", header: "Total", accessor: (row) => row.total },
+                  { key: "bachelors", header: "Bachelor's", accessor: (row) => row.counts.education?.["Bachelor's Degree"] },
+                  { key: "masters", header: "Master's", accessor: (row) => row.counts.education?.["Master's Degree"] },
+                  { key: "doctorate", header: "Doctorate", accessor: (row) => row.counts.education?.["Doctorate Degree"] },
                 ]}
                 rows={parsed}
               />

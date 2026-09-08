@@ -14,7 +14,7 @@ import {
 import { classifyAchievement, meetingTarget } from "@/lib/metrics";
 import { appointmentHeadcount } from "@/lib/staff-offices";
 import { formatPeriod, fiscalYearLabel } from "@/lib/periods";
-import { LICENSURE_SUMMARY_TOTAL_YEARS, type ParsedWorkbook } from "@/lib/import/parse-workbook";
+import { isFacultyOnlyWorkbook, LICENSURE_SUMMARY_TOTAL_YEARS, type ParsedWorkbook } from "@/lib/import/parse-workbook";
 import {
   HISTORY_BODY,
   HISTORY_TITLE,
@@ -145,6 +145,10 @@ export async function persistWorkbook(parsed: ParsedWorkbook, options: {
   publish: boolean;
   adminId?: string | null;
 }) {
+  if (isFacultyOnlyWorkbook(parsed)) {
+    const faculty = await persistFacultyDataset(parsed, options);
+    return { issueVersion: null, issues: parsed.issues, faculty };
+  }
   const { campusByCode, colleges } = await ensureReferenceData();
   const collegeByCode = Object.fromEntries(colleges.map((item) => [item.code, item]));
   const status: DatasetStatus = options.publish ? "PUBLISHED" : "DRAFT";
@@ -784,4 +788,68 @@ export async function ensureAdminUser() {
       passwordHash: await bcrypt.hash(password, 12),
     },
   });
+}
+
+export async function persistFacultyDataset(
+  parsed: Pick<ParsedWorkbook, "faculty">,
+  options: { sourceFile: string; publish?: boolean; adminId?: string | null },
+) {
+  if (!parsed.faculty.length) {
+    throw new Error("No faculty rows found in the workbook.");
+  }
+  const { campusByCode, colleges } = await ensureReferenceData();
+  const collegeByCode = Object.fromEntries(colleges.map((item) => [item.code, item]));
+  const publish = options.publish !== false;
+  const status: DatasetStatus = publish ? "PUBLISHED" : "DRAFT";
+  const dataset = await prisma.dataset.upsert({
+    where: { code: "faculty" },
+    update: { title: "Faculty Members" },
+    create: { code: "faculty", title: "Faculty Members", ownerId: options.adminId ?? undefined },
+  });
+  const last = await prisma.datasetVersion.findFirst({
+    where: { datasetId: dataset.id },
+    orderBy: { versionNumber: "desc" },
+  });
+  if (publish) {
+    await prisma.datasetVersion.updateMany({
+      where: { datasetId: dataset.id, status: "PUBLISHED" },
+      data: { status: "ARCHIVED" },
+    });
+    await prisma.facultySnapshot.updateMany({ data: { status: "ARCHIVED" }, where: { status: "PUBLISHED" } });
+  }
+  const facultyVersion = await prisma.datasetVersion.create({
+    data: {
+      datasetId: dataset.id,
+      versionNumber: (last?.versionNumber ?? 0) + 1,
+      status,
+      sourceFile: options.sourceFile,
+      worksheet: "3 Faculty Members",
+      importedAt: new Date(),
+      publishedAt: publish ? new Date() : null,
+      publishedById: publish ? options.adminId ?? null : null,
+    },
+  });
+  for (const row of parsed.faculty) {
+    await prisma.facultySnapshot.create({
+      data: {
+        datasetVersionId: facultyVersion.id,
+        status,
+        campusId: row.campusCode ? campusByCode[row.campusCode]?.id : null,
+        collegeId: row.collegeCode ? collegeByCode[row.collegeCode]?.id : null,
+        total: row.total,
+        countsJson: JSON.stringify(row.counts),
+        sourceRow: row.sourceRow,
+      },
+    });
+  }
+  await rebuildMetrics(status);
+  try {
+    const { revalidatePath, revalidateTag } = await import("next/cache");
+    revalidatePath("/", "layout");
+    revalidatePath("/personnel/faculty");
+    revalidateTag("public-data", "max");
+  } catch {
+    // CLI imports are outside the Next.js request cache.
+  }
+  return { versionId: facultyVersion.id, count: parsed.faculty.length };
 }
