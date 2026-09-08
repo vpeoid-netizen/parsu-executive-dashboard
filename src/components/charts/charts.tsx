@@ -1,5 +1,6 @@
 "use client";
 
+import { formatNumber } from "@/lib/format";
 import { SHARE_COLORS } from "@/lib/chart-colors";
 import { formatShareLabel, sharesThatSumTo100 } from "@/lib/percent-share";
 import {
@@ -50,11 +51,11 @@ export function TrendChart({
   const formatValue = (value: number) => {
     if (Number.isNaN(value)) return "Data not yet available";
     if (valueFormat === "percent") return `${value.toFixed(1)}%`;
-    return new Intl.NumberFormat("en-PH", { maximumFractionDigits: value % 1 === 0 ? 0 : 2 }).format(value);
+    return formatNumber(value, value % 1 === 0 ? 0 : 2);
   };
   const formatTick = (value: number) => {
     if (valueFormat === "percent") return `${value}%`;
-    return new Intl.NumberFormat("en-PH", { maximumFractionDigits: 0, notation: value >= 10000 ? "compact" : "standard" }).format(value);
+    return formatNumber(value, 0);
   };
   return (
     <div className="w-full" style={{ height }}>
@@ -69,7 +70,7 @@ export function TrendChart({
             textAnchor="end"
             height={58}
           />
-          <YAxis tick={{ fontSize: 12 }} tickFormatter={formatTick} width={valueFormat === "percent" ? 48 : 56} />
+          <YAxis tick={{ fontSize: 12 }} tickFormatter={formatTick} width={valueFormat === "percent" ? 48 : 72} />
           <Tooltip
             formatter={(value, name) => {
               const numeric = typeof value === "number" ? value : Number(value);
@@ -130,16 +131,20 @@ export function ComparisonBars({
           <CartesianGrid strokeDasharray="3 3" stroke="#d7e0ec" />
           {horizontal ? (
             <>
-              <XAxis type="number" tick={{ fontSize: 12 }} />
+              <XAxis type="number" tick={{ fontSize: 12 }} tickFormatter={(value) => formatNumber(Number(value), 0)} />
               <YAxis type="category" dataKey={xKey} width={yWidth} tick={{ fontSize: 11 }} />
             </>
           ) : (
             <>
               <XAxis dataKey={xKey} tick={{ fontSize: 12 }} interval={0} angle={-20} textAnchor="end" height={70} />
-              <YAxis tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }} tickFormatter={(value) => formatNumber(Number(value), 0)} width={72} />
             </>
           )}
           <Tooltip
+            formatter={(value, name) => {
+              const numeric = typeof value === "number" ? value : Number(value);
+              return [Number.isNaN(numeric) ? String(value) : formatNumber(numeric, numeric % 1 === 0 ? 0 : 2), String(name)];
+            }}
             labelFormatter={(label, payload) => {
               const fullName = payload?.[0]?.payload?.fullName;
               if (typeof fullName === "string" && fullName && fullName !== label) {
@@ -268,7 +273,7 @@ export function DonutChart({
             <span className="leading-snug">
               <span className="font-semibold text-navy-800">{item.name}</span>
               <span className="text-muted-foreground">
-                {` · ${Number.isInteger(item.value) ? item.value : item.value.toFixed(1)} (${formatShareLabel(item.sharePct)})`}
+                {` · ${formatNumber(item.value, Number.isInteger(item.value) ? 0 : 1)} (${formatShareLabel(item.sharePct)})`}
               </span>
             </span>
           </li>

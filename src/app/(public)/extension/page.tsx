@@ -2,7 +2,7 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState, KpiCard, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatThousandsInText } from "@/lib/format";
 
 export default async function ExtensionPage() {
   const [programs, partners, performance] = await Promise.all([
@@ -32,7 +32,7 @@ export default async function ExtensionPage() {
             key={row.id}
             title={row.indicator.title.slice(0, 48)}
             value={row.accomplishmentValue}
-            note={row.accomplishmentRaw}
+            note={row.accomplishmentRaw ? formatThousandsInText(row.accomplishmentRaw) : null}
           />
         ))}
       </div>

@@ -35,6 +35,9 @@ describe("performance display helpers", () => {
     expect(displayMeasure(null, 0.54, true)).toBe("54.00%");
     expect(displayMeasure("0.5405", 0.5405, true)).toBe("54.05%");
     expect(displayMeasure("1", 1, true)).toBe("100.00%");
+    expect(displayMeasure("4353", 4353, false)).toBe("4,353");
+    expect(displayMeasure("12750", 12750, false)).toBe("12,750");
+    expect(displayMeasure("99.79% (4259/4268)", 0.9979, true)).toBe("99.79% (4,259/4,268)");
   });
 
   it("builds a historical series with partial-year labels", () => {

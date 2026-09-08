@@ -5,9 +5,38 @@ export function formatNumber(value: number | null | undefined, digits = 0): stri
     return "Data not yet available";
   }
   return new Intl.NumberFormat("en-PH", {
+    useGrouping: true,
     maximumFractionDigits: digits,
     minimumFractionDigits: digits,
   }).format(value);
+}
+
+export function isCalendarYear(value: number): boolean {
+  return Number.isInteger(value) && value >= 1900 && value <= 2099;
+}
+
+/** Group digits in published count text (4,353) without rewriting years such as 2026. */
+export function formatThousandsInText(text: string): string {
+  return text.replace(/(\d{1,3}(?:,\d{3})+|\d+)(?:\.(\d+))?/g, (match, intPart: string, frac?: string) => {
+    const n = Number(String(intPart).replace(/,/g, ""));
+    if (!Number.isFinite(n)) return match;
+    if (frac === undefined && isCalendarYear(n)) return match;
+    if (Math.abs(n) < 1000 && !String(intPart).includes(",")) {
+      return frac !== undefined ? `${n}.${frac}` : String(n);
+    }
+    const grouped = formatNumber(n, 0);
+    return frac !== undefined ? `${grouped}.${frac}` : grouped;
+  });
+}
+
+export function formatCellValue(value: string | number | null | undefined): string {
+  if (value === null || value === undefined || value === "") return "—";
+  if (typeof value === "number") {
+    if (Number.isNaN(value)) return "—";
+    if (isCalendarYear(value)) return String(value);
+    return formatNumber(value, value % 1 === 0 ? 0 : 2);
+  }
+  return formatThousandsInText(String(value));
 }
 
 export function formatPercent(

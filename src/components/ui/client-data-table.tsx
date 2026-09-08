@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { formatCellValue } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 export type ClientColumn = {
@@ -125,7 +126,7 @@ export function ClientDataTable({
                       key={column.key}
                       className={cn("px-4 py-3 align-top", column.hideOnMobile && "hidden md:table-cell")}
                     >
-                      {row[column.key] ?? "—"}
+                      {formatCellValue(row[column.key])}
                     </td>
                   ))}
                 </tr>

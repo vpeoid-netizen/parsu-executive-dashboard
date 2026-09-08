@@ -1,4 +1,5 @@
 import { collegeAbbrev, collegeFullName, collegeSortIndex } from "@/lib/import/normalize";
+import { formatNumber } from "@/lib/format";
 
 export function hasCopcNumber(value: string | null | undefined) {
   return Boolean(value?.trim());
@@ -23,7 +24,7 @@ export function coverageCenterLabel(numerator: number, denominator: number) {
     numerator === denominator || pct === 0 || Math.abs(pct - Math.round(pct)) < 1e-9
       ? `${Math.round(pct)}%`
       : `${pct.toFixed(1)}%`;
-  return { primary, secondary: `${numerator}/${denominator}` };
+  return { primary, secondary: `${formatNumber(numerator, 0)}/${formatNumber(denominator, 0)}` };
 }
 
 export function programStatusIndicators(program: {

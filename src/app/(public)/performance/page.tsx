@@ -4,7 +4,9 @@ import { DataTable } from "@/components/ui/data-table";
 import { EmptyState, KpiCard, ModuleHeader } from "@/components/ui/primitives";
 import {
   PERFORMANCE_FOCUS_YEAR,
+  displayMeasure,
   groupByProgramMfo,
+  isPercentMeasure,
   slugifyMfo,
 } from "@/lib/performance-display";
 import { classifyAchievement } from "@/lib/metrics";
@@ -103,11 +105,12 @@ export default async function PerformancePage() {
                 { key: "mfo", header: "Program / MFO", accessor: (row) => row.indicator.programMfo },
                 { key: "type", header: "Type", accessor: (row) => row.indicator.indicatorType, hideOnMobile: true },
                 { key: "indicator", header: "Indicator", accessor: (row) => row.indicator.title },
-                { key: "target", header: "Target", accessor: (row) => row.targetRaw ?? String(row.targetValue ?? "") },
+                { key: "target", header: "Target", accessor: (row) => displayMeasure(row.targetRaw, row.targetValue, isPercentMeasure(row.indicator.title, [row])) },
                 {
                   key: "acc",
                   header: "Accomplishment",
-                  accessor: (row) => row.accomplishmentRaw ?? String(row.accomplishmentValue ?? ""),
+                  accessor: (row) =>
+                    displayMeasure(row.accomplishmentRaw, row.accomplishmentValue, isPercentMeasure(row.indicator.title, [row])),
                 },
                 {
                   key: "status",

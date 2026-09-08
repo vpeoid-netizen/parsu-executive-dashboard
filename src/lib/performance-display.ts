@@ -1,4 +1,4 @@
-import { formatNumber, formatPercent } from "@/lib/format";
+import { formatNumber, formatPercent, formatThousandsInText } from "@/lib/format";
 import type { AchievementStatus } from "@/lib/metrics";
 
 export const PERFORMANCE_MFO_ORDER = [
@@ -87,10 +87,16 @@ export function toChartNumber(value: number | null | undefined, asPercent: boole
 export function displayMeasure(raw: string | null | undefined, value: number | null | undefined, asPercent: boolean) {
   const text = raw?.replace(/\s+/g, " ").trim();
   if (asPercent) {
-    if (text && /%/.test(text)) return text;
+    if (text && /%/.test(text)) return formatThousandsInText(text);
     if (value !== null && value !== undefined && !Number.isNaN(value)) return formatPercent(value);
   }
-  if (text) return text;
+  if (text) {
+    const numeric = Number(text.replace(/,/g, ""));
+    if (Number.isFinite(numeric) && /^[\d,]+(?:\.\d+)?$/.test(text)) {
+      return formatNumber(numeric, numeric % 1 === 0 ? 0 : 2);
+    }
+    return formatThousandsInText(text);
+  }
   if (value === null || value === undefined || Number.isNaN(value)) return "Data not yet available";
   return formatNumber(value, value % 1 === 0 ? 0 : 2);
 }
