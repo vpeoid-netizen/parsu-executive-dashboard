@@ -217,7 +217,7 @@ export default async function DashboardPage() {
 
         <section id="personnel" className="mb-10 scroll-mt-24">
           <SectionTitle title="Personnel" action={{ href: "/personnel", label: "View details" }} />
-          <div className="grid gap-4 xl:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             <ChartPanel title="Faculty members" period="By academic rank" action={{ href: "/personnel/faculty", label: "Details" }}>
               <LazyDonutChart
                 data={facultyRankSlices}
@@ -247,8 +247,6 @@ export default async function DashboardPage() {
                 centerLabel={{ primary: formatNumber(facultyCounts.total) }}
               />
             </ChartPanel>
-          </div>
-          <div className="mt-4 grid gap-4 xl:grid-cols-3">
             <ChartPanel
               title="Non-teaching personnel"
               period="By nature of appointment"

@@ -41,6 +41,27 @@ function countSlices(
     .filter((item) => item.value > 0);
 }
 
+function CollegeDonutColumn({
+  title,
+  data,
+  total,
+}: {
+  title: string;
+  data: DonutSlice[];
+  total: number;
+}) {
+  return (
+    <div className="flex min-w-0 flex-col">
+      <p className="mb-3 flex min-h-10 items-end text-xs font-semibold leading-5 text-muted-foreground">{title}</p>
+      <LazyDonutChart
+        data={data}
+        hideSliceLabels
+        centerLabel={{ primary: formatNumber(total) }}
+      />
+    </div>
+  );
+}
+
 export default async function FacultyPage() {
   const [rows, colleges] = await Promise.all([
     prisma.facultySnapshot.findMany({ where: { status: "PUBLISHED" } }),
@@ -128,39 +149,29 @@ export default async function FacultyPage() {
           </div>
 
           <h2 className="font-display mb-4 text-lg font-semibold tracking-tight text-navy-900">By college</h2>
-          <div className="mb-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mb-10 space-y-4">
             {collegeMix.map((row) => (
-              <article key={row.collegeCode ?? row.college} className="card min-w-0 overflow-visible p-5">
+              <article key={row.collegeCode ?? row.college} className="card min-w-0 overflow-visible p-5 sm:p-6">
                 <p className="section-kicker">{collegeAbbrev(row.collegeCode)}</p>
-                <h3 className="mt-1 text-sm font-semibold leading-snug tracking-tight text-navy-900">{row.college}</h3>
-                <div className="mt-4 grid gap-5 sm:grid-cols-3">
-                  <div>
-                    <p className="mb-2 text-xs font-semibold text-muted-foreground">By academic rank</p>
-                    <LazyDonutChart
-                      data={countSlices(ACADEMIC_RANK_GROUPS, row.counts.rank)}
-                      hideSliceLabels
-                      compact
-                      centerLabel={{ primary: formatNumber(row.total) }}
-                    />
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs font-semibold text-muted-foreground">By nature of appointment</p>
-                    <LazyDonutChart
-                      data={countSlices(APPOINTMENT_GROUPS, row.counts.appointment, FACULTY_APPOINTMENT_COLORS)}
-                      hideSliceLabels
-                      compact
-                      centerLabel={{ primary: formatNumber(row.total) }}
-                    />
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs font-semibold text-muted-foreground">By highest educational attainment</p>
-                    <LazyDonutChart
-                      data={countSlices(EDUCATION_GROUPS, row.counts.education, FACULTY_EDUCATION_COLORS)}
-                      hideSliceLabels
-                      compact
-                      centerLabel={{ primary: formatNumber(row.total) }}
-                    />
-                  </div>
+                <h3 className="mt-1 text-sm font-semibold leading-snug tracking-tight text-navy-900 sm:text-base">
+                  {row.college}
+                </h3>
+                <div className="mt-5 grid items-start gap-x-6 gap-y-8 sm:grid-cols-3">
+                  <CollegeDonutColumn
+                    title="By academic rank"
+                    data={countSlices(ACADEMIC_RANK_GROUPS, row.counts.rank)}
+                    total={row.total}
+                  />
+                  <CollegeDonutColumn
+                    title="By nature of appointment"
+                    data={countSlices(APPOINTMENT_GROUPS, row.counts.appointment, FACULTY_APPOINTMENT_COLORS)}
+                    total={row.total}
+                  />
+                  <CollegeDonutColumn
+                    title="By highest educational attainment"
+                    data={countSlices(EDUCATION_GROUPS, row.counts.education, FACULTY_EDUCATION_COLORS)}
+                    total={row.total}
+                  />
                 </div>
               </article>
             ))}

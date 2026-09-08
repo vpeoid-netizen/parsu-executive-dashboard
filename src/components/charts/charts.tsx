@@ -184,9 +184,18 @@ export function DonutChart({
   showPercentLabels?: boolean;
   compact?: boolean;
 }) {
+  const chartBoxClass = compact
+    ? "relative mx-auto h-64 w-full max-w-[20rem] overflow-visible"
+    : "relative mx-auto h-72 w-full max-w-sm overflow-visible";
   const total = data.reduce((sum, item) => sum + item.value, 0);
   if (!data.length || total <= 0) {
-    return <p className="py-10 text-center text-sm text-muted-foreground">Data not yet available</p>;
+    return (
+      <div className="flex h-full flex-col">
+        <div className={`${chartBoxClass} flex items-center justify-center`}>
+          <p className="text-center text-sm text-muted-foreground">Data not yet available</p>
+        </div>
+      </div>
+    );
   }
   const shares = sharesThatSumTo100(data.map((item) => item.value));
   const slices = data.map((item, index) => ({
@@ -240,8 +249,8 @@ export function DonutChart({
     );
   }
   return (
-    <div>
-      <div className={compact ? "relative mx-auto h-48 w-full max-w-[14.5rem] overflow-visible" : "relative mx-auto h-72 w-full max-w-sm overflow-visible"}>
+    <div className="flex h-full flex-col">
+      <div className={chartBoxClass}>
         <ResponsiveContainer width="100%" height="100%">
           {pie}
         </ResponsiveContainer>
@@ -250,7 +259,7 @@ export function DonutChart({
             <p
               className={
                 compact
-                  ? "font-display text-xl font-bold tabular-nums leading-none text-navy-900"
+                  ? "font-display text-2xl font-bold tabular-nums leading-none text-navy-900"
                   : "font-display text-3xl font-bold tabular-nums leading-none text-navy-900"
               }
             >
@@ -262,7 +271,7 @@ export function DonutChart({
           </div>
         ) : null}
       </div>
-      <ul className={compact ? "mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-[11px]" : "mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs"}>
+      <ul className={compact ? "mt-4 flex flex-wrap content-start gap-x-4 gap-y-1.5 text-[11px]" : "mt-4 flex flex-wrap content-start gap-x-5 gap-y-2 text-xs"}>
         {slices.map((item, index) => (
           <li key={`${item.name}-${index}`} className="flex max-w-full items-start gap-1.5">
             <span
