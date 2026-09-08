@@ -184,10 +184,14 @@ export function DonutChart({
   data,
   centerLabel,
   hideSliceLabels = false,
+  showPercentLabels,
+  compact = false,
 }: {
   data: DonutSlice[];
   centerLabel?: { primary: string; secondary?: string };
   hideSliceLabels?: boolean;
+  showPercentLabels?: boolean;
+  compact?: boolean;
 }) {
   const total = data.reduce((sum, item) => sum + item.value, 0);
   if (!data.length || total <= 0) {
@@ -200,6 +204,7 @@ export function DonutChart({
     color: SHARE_COLORS[index % SHARE_COLORS.length],
   }));
   const useHoleLabel = Boolean(centerLabel) || hideSliceLabels;
+  const labelSlices = showPercentLabels ?? !hideSliceLabels;
   const pie = (
     <PieChart>
       <Pie
@@ -209,8 +214,8 @@ export function DonutChart({
         innerRadius={useHoleLabel ? "62%" : "55%"}
         outerRadius={useHoleLabel ? "88%" : "80%"}
         paddingAngle={2}
-        label={useHoleLabel ? false : ({ payload }) => formatShareLabel(payload?.sharePct)}
-        labelLine={!useHoleLabel}
+        label={labelSlices ? ({ payload }) => formatShareLabel(payload?.sharePct) : false}
+        labelLine={labelSlices && !useHoleLabel && !compact}
       >
         {slices.map((item, index) => (
           <Cell key={`${item.name}-${index}`} fill={item.color} />
@@ -245,13 +250,19 @@ export function DonutChart({
   }
   return (
     <div>
-      <div className="relative mx-auto h-64 w-full max-w-sm">
+      <div className={compact ? "relative mx-auto h-44 w-full max-w-[13.5rem]" : "relative mx-auto h-64 w-full max-w-sm"}>
         <ResponsiveContainer width="100%" height="100%">
           {pie}
         </ResponsiveContainer>
         {centerLabel ? (
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-            <p className="font-display text-3xl font-bold tabular-nums leading-none text-navy-900">
+            <p
+              className={
+                compact
+                  ? "font-display text-xl font-bold tabular-nums leading-none text-navy-900"
+                  : "font-display text-3xl font-bold tabular-nums leading-none text-navy-900"
+              }
+            >
               {centerLabel.primary}
             </p>
             {centerLabel.secondary ? (
@@ -260,7 +271,7 @@ export function DonutChart({
           </div>
         ) : null}
       </div>
-      <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs">
+      <ul className={compact ? "mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-[11px]" : "mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs"}>
         {slices.map((item, index) => (
           <li key={`${item.name}-${index}`} className="flex max-w-full items-start gap-1.5">
             <span
@@ -271,7 +282,7 @@ export function DonutChart({
             <span className="leading-snug">
               <span className="font-semibold text-navy-800">{item.name}</span>
               <span className="whitespace-nowrap text-muted-foreground">
-                {` · ${Number.isInteger(item.value) ? item.value : item.value.toFixed(1)}`}
+                {` · ${Number.isInteger(item.value) ? item.value : item.value.toFixed(1)} · ${formatShareLabel(item.sharePct)}`}
               </span>
             </span>
           </li>

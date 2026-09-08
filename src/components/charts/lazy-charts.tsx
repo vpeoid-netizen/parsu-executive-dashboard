@@ -48,7 +48,7 @@ export function LazyTrendChart(props: ComponentProps<typeof TrendChart>) {
 
 export function LazyDonutChart(props: ComponentProps<typeof DonutChart>) {
   const { ref, Chart } = useLazyChart("DonutChart");
-  return <div ref={ref}>{Chart ? <Chart {...props} /> : <ChartPlaceholder height={256} />}</div>;
+  return <div ref={ref}>{Chart ? <Chart {...props} /> : <ChartPlaceholder height={props.compact ? 180 : 256} />}</div>;
 }
 
 export function LazyComparisonBars(props: ComponentProps<typeof ComparisonBars>) {

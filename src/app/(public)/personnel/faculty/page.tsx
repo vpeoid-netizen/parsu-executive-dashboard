@@ -1,18 +1,21 @@
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ChartPanel } from "@/components/charts/chart-panel";
-import { LazyComparisonBars } from "@/components/charts/lazy-charts";
-import { CollegeAbbrevKey } from "@/components/ui/college-abbrev-key";
+import { LazyDonutChart } from "@/components/charts/lazy-charts";
+import type { DonutSlice } from "@/components/charts/charts";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState, KpiCard, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
-import { collegeChartPoint, collegeFullName, collegeSortIndex } from "@/lib/import/normalize";
+import { formatNumber } from "@/lib/format";
+import { ACADEMIC_RANK_GROUPS, collegeAbbrev, collegeFullName, collegeSortIndex } from "@/lib/import/normalize";
 
 type CountGroups = {
   appointment?: Record<string, number>;
   rank?: Record<string, number>;
   education?: Record<string, number>;
 };
+
+const APPOINTMENT_GROUPS = ["Permanent", "Temporary", "COS"] as const;
 
 function addCounts(left: CountGroups, right: CountGroups): CountGroups {
   const result: CountGroups = { appointment: {}, rank: {}, education: {} };
@@ -23,6 +26,10 @@ function addCounts(left: CountGroups, right: CountGroups): CountGroups {
     }
   }
   return result;
+}
+
+function countSlices(order: readonly string[], counts: Record<string, number> | undefined): DonutSlice[] {
+  return order.map((name) => ({ name, value: counts?.[name] ?? 0 })).filter((item) => item.value > 0);
 }
 
 export default async function FacultyPage() {
@@ -53,9 +60,13 @@ export default async function FacultyPage() {
   const total = parsed.reduce((sum, row) => sum + row.total, 0);
   const sumBy = (group: "appointment" | "rank" | "education", key: string) =>
     parsed.reduce((sum, row) => sum + (row.counts[group]?.[key] ?? 0), 0);
-  const byCollege = parsed
-    .filter((row) => row.total > 0)
-    .map((row) => collegeChartPoint(row.collegeCode, { Faculty: row.total }));
+  const rankSlices = countSlices(ACADEMIC_RANK_GROUPS, Object.fromEntries(ACADEMIC_RANK_GROUPS.map((name) => [name, sumBy("rank", name)])));
+  const appointmentSlices = countSlices(APPOINTMENT_GROUPS, {
+    Permanent: sumBy("appointment", "Permanent"),
+    Temporary: sumBy("appointment", "Temporary"),
+    COS: sumBy("appointment", "COS"),
+  });
+  const collegeMix = parsed.filter((row) => row.total > 0);
 
   return (
     <div className="page-shell">
@@ -74,31 +85,54 @@ export default async function FacultyPage() {
         <EmptyState />
       ) : (
         <>
-          <div className="mb-8 grid gap-6 xl:grid-cols-2">
-            <ChartPanel title="By academic rank">
-              <LazyComparisonBars
-                data={[
-                  "Instructor",
-                  "Assistant Professor",
-                  "Associate Professor",
-                  "Professor",
-                  "University Professor",
-                ].map((name) => ({ name, Faculty: sumBy("rank", name) }))}
-                xKey="name"
-                bars={[{ key: "Faculty", label: "Faculty" }]}
+          <div className="mb-10 grid gap-6 xl:grid-cols-2">
+            <ChartPanel title="Faculty members" period="By academic rank">
+              <LazyDonutChart
+                data={rankSlices}
+                showPercentLabels
+                centerLabel={{ primary: formatNumber(total) }}
               />
             </ChartPanel>
-            <ChartPanel title="By college">
-              <LazyComparisonBars
-                data={byCollege}
-                xKey="name"
-                bars={[{ key: "Faculty", label: "Faculty" }]}
-                horizontal
-                categoryWidth={56}
+            <ChartPanel title="Faculty members" period="By nature of appointment">
+              <LazyDonutChart
+                data={appointmentSlices}
+                showPercentLabels
+                centerLabel={{ primary: formatNumber(total) }}
               />
-              <CollegeAbbrevKey codes={byCollege.map((item) => item.code)} />
             </ChartPanel>
           </div>
+
+          <h2 className="font-display mb-4 text-lg font-semibold tracking-tight text-navy-900">By college</h2>
+          <div className="mb-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {collegeMix.map((row) => (
+              <article key={row.collegeCode ?? row.college} className="card min-w-0 p-5">
+                <p className="section-kicker">{collegeAbbrev(row.collegeCode)}</p>
+                <h3 className="mt-1 text-sm font-semibold leading-snug tracking-tight text-navy-900">{row.college}</h3>
+                <div className="mt-4 grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <p className="mb-2 text-xs font-semibold text-muted-foreground">By academic rank</p>
+                    <LazyDonutChart
+                      data={countSlices(ACADEMIC_RANK_GROUPS, row.counts.rank)}
+                      showPercentLabels
+                      compact
+                      centerLabel={{ primary: formatNumber(row.total) }}
+                    />
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs font-semibold text-muted-foreground">By nature of appointment</p>
+                    <LazyDonutChart
+                      data={countSlices(APPOINTMENT_GROUPS, row.counts.appointment)}
+                      showPercentLabels
+                      compact
+                      centerLabel={{ primary: formatNumber(row.total) }}
+                    />
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <h2 className="font-display mb-4 text-lg font-semibold tracking-tight text-navy-900">Summary</h2>
           <DataTable
             exportName="faculty-snapshots"
             columns={[
@@ -107,6 +141,36 @@ export default async function FacultyPage() {
               { key: "perm", header: "Permanent", accessor: (row) => row.counts.appointment?.Permanent },
               { key: "temp", header: "Temporary", accessor: (row) => row.counts.appointment?.Temporary },
               { key: "cos", header: "COS", accessor: (row) => row.counts.appointment?.COS },
+              {
+                key: "instructor",
+                header: "Instructor",
+                accessor: (row) => row.counts.rank?.Instructor,
+                hideOnMobile: true,
+              },
+              {
+                key: "asst",
+                header: "Asst. Professor",
+                accessor: (row) => row.counts.rank?.["Assistant Professor"],
+                hideOnMobile: true,
+              },
+              {
+                key: "assoc",
+                header: "Assoc. Professor",
+                accessor: (row) => row.counts.rank?.["Associate Professor"],
+                hideOnMobile: true,
+              },
+              {
+                key: "professor",
+                header: "Professor",
+                accessor: (row) => row.counts.rank?.Professor,
+                hideOnMobile: true,
+              },
+              {
+                key: "univ",
+                header: "University Professor",
+                accessor: (row) => row.counts.rank?.["University Professor"],
+                hideOnMobile: true,
+              },
             ]}
             rows={parsed}
           />
