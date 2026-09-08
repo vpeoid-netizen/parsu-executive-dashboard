@@ -144,47 +144,51 @@ export default async function FacultyPage() {
           </div>
 
           <h2 className="font-display mb-4 text-lg font-semibold tracking-tight text-navy-900">Summary</h2>
-          <DataTable
-            exportName="faculty-snapshots"
-            columns={[
-              { key: "college", header: "College", accessor: (row) => row.college },
-              { key: "total", header: "Total", accessor: (row) => row.total },
-              { key: "perm", header: "Permanent", accessor: (row) => row.counts.appointment?.Permanent },
-              { key: "temp", header: "Temporary", accessor: (row) => row.counts.appointment?.Temporary },
-              { key: "cos", header: "COS", accessor: (row) => row.counts.appointment?.COS },
-              {
-                key: "instructor",
-                header: "Instructor",
-                accessor: (row) => row.counts.rank?.Instructor,
-                hideOnMobile: true,
-              },
-              {
-                key: "asst",
-                header: "Asst. Professor",
-                accessor: (row) => row.counts.rank?.["Assistant Professor"],
-                hideOnMobile: true,
-              },
-              {
-                key: "assoc",
-                header: "Assoc. Professor",
-                accessor: (row) => row.counts.rank?.["Associate Professor"],
-                hideOnMobile: true,
-              },
-              {
-                key: "professor",
-                header: "Professor",
-                accessor: (row) => row.counts.rank?.Professor,
-                hideOnMobile: true,
-              },
-              {
-                key: "univ",
-                header: "University Professor",
-                accessor: (row) => row.counts.rank?.["University Professor"],
-                hideOnMobile: true,
-              },
-            ]}
-            rows={parsed}
-          />
+          <div className="space-y-8">
+            <section>
+              <h3 className="mb-3 text-sm font-semibold tracking-tight text-navy-900">By nature of appointment</h3>
+              <DataTable
+                exportName="faculty-by-appointment"
+                columns={[
+                  { key: "college", header: "College", accessor: (row) => row.college },
+                  { key: "total", header: "Total", accessor: (row) => row.total },
+                  { key: "perm", header: "Permanent", accessor: (row) => row.counts.appointment?.Permanent },
+                  { key: "temp", header: "Temporary", accessor: (row) => row.counts.appointment?.Temporary },
+                  { key: "cos", header: "COS", accessor: (row) => row.counts.appointment?.COS },
+                ]}
+                rows={parsed}
+              />
+            </section>
+            <section>
+              <h3 className="mb-3 text-sm font-semibold tracking-tight text-navy-900">By academic rank</h3>
+              <DataTable
+                exportName="faculty-by-academic-rank"
+                columns={[
+                  { key: "college", header: "College", accessor: (row) => row.college },
+                  { key: "total", header: "Total", accessor: (row) => row.total },
+                  { key: "instructor", header: "Instructor", accessor: (row) => row.counts.rank?.Instructor },
+                  {
+                    key: "asst",
+                    header: "Asst. Professor",
+                    accessor: (row) => row.counts.rank?.["Assistant Professor"],
+                  },
+                  {
+                    key: "assoc",
+                    header: "Assoc. Professor",
+                    accessor: (row) => row.counts.rank?.["Associate Professor"],
+                  },
+                  { key: "professor", header: "Professor", accessor: (row) => row.counts.rank?.Professor },
+                  {
+                    key: "univ",
+                    header: "University Professor",
+                    accessor: (row) => row.counts.rank?.["University Professor"],
+                    hideOnMobile: true,
+                  },
+                ]}
+                rows={parsed}
+              />
+            </section>
+          </div>
         </>
       )}
       <p className="mt-6 text-sm text-muted-foreground">
