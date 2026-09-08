@@ -1,9 +1,16 @@
-import { answerFromFacts, CHAT_SYSTEM_PROMPT, type ChatTurn } from "@/lib/chat/facts";
+import {
+  answerFromFacts,
+  CHAT_SYSTEM_PROMPT,
+  factsToBriefingText,
+  selectFactsForQuestion,
+  stripChatDateDisclaimer,
+  type ChatTurn,
+} from "@/lib/chat/facts";
 import { getChatCorpus } from "@/lib/chat/briefing";
 import { normalizeParSuSpelling } from "@/lib/utils";
 
 const MAX_USER_CHARS = 500;
-const MAX_HISTORY = 8;
+const MAX_HISTORY = 6;
 const DEFAULT_GEMINI_MODEL = "gemini-3.1-flash-lite";
 
 type ChatMessage = { role: string; content: string };
@@ -114,36 +121,42 @@ export function extractGeminiText(payload: unknown) {
 }
 
 async function generateWithGemini(provider: GeminiProvider, history: ChatMessage[], systemInstruction: string) {
-  const models = [...new Set([provider.model, DEFAULT_GEMINI_MODEL, "gemini-2.5-flash", "gemini-2.0-flash"])];
+  const models = [...new Set([provider.model, "gemini-2.0-flash"])];
   let lastError: Error | null = null;
   for (const model of models) {
-    try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-goog-api-key": provider.key,
-          },
-          body: JSON.stringify({
-            system_instruction: { parts: [{ text: systemInstruction }] },
-            contents: toGeminiContents(history),
-            generationConfig: {
-              temperature: 0.3,
-              maxOutputTokens: 700,
+    for (const disableThinking of [true, false]) {
+      try {
+        const generationConfig: Record<string, unknown> = {
+          temperature: 0.2,
+          maxOutputTokens: 280,
+        };
+        if (disableThinking) generationConfig.thinkingConfig = { thinkingBudget: 0 };
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-goog-api-key": provider.key,
             },
-          }),
-          signal: AbortSignal.timeout(20_000),
-        },
-      );
-      if (!response.ok) {
-        lastError = new Error(`Chat provider ${response.status}`);
-        continue;
+            body: JSON.stringify({
+              system_instruction: { parts: [{ text: systemInstruction }] },
+              contents: toGeminiContents(history),
+              generationConfig,
+            }),
+            signal: AbortSignal.timeout(12_000),
+          },
+        );
+        if (!response.ok) {
+          lastError = new Error(`Chat provider ${response.status}`);
+          if (response.status !== 400) break;
+          continue;
+        }
+        return extractGeminiText(await response.json());
+      } catch (caught) {
+        lastError = caught instanceof Error ? caught : new Error("Gemini request failed");
+        break;
       }
-      return extractGeminiText(await response.json());
-    } catch (caught) {
-      lastError = caught instanceof Error ? caught : new Error("Gemini request failed");
     }
   }
   throw lastError ?? new Error("Gemini request failed");
@@ -159,10 +172,10 @@ async function generateWithOpenAi(provider: OpenAiProvider, messages: ChatMessag
     body: JSON.stringify({
       model: provider.model,
       temperature: 0.2,
-      max_tokens: 700,
+      max_tokens: 280,
       messages,
     }),
-    signal: AbortSignal.timeout(20_000),
+    signal: AbortSignal.timeout(12_000),
   });
   if (!response.ok) {
     throw new Error(`Chat provider ${response.status}`);
@@ -189,14 +202,15 @@ export async function completeDashboardChat(turns: ChatTurn[]) {
     role: turn.role,
     content: turn.role === "user" ? turn.content.slice(0, MAX_USER_CHARS) : turn.content.slice(0, 4000),
   }));
-  const systemInstruction = `${CHAT_SYSTEM_PROMPT}\n\nDASHBOARD BRIEFING:\n${corpus.briefing}`;
+  const focusedBriefing = factsToBriefingText(selectFactsForQuestion(question, corpus.facts));
+  const systemInstruction = `${CHAT_SYSTEM_PROMPT}\n\nDASHBOARD BRIEFING:\n${focusedBriefing}`;
 
   try {
     const text =
       provider.kind === "gemini"
         ? await generateWithGemini(provider, history, systemInstruction)
         : await generateWithOpenAi(provider, [{ role: "system", content: systemInstruction }, ...history]);
-    return { reply: normalizeParSuSpelling(text), source: "ai" as const };
+    return { reply: stripChatDateDisclaimer(normalizeParSuSpelling(text)), source: "ai" as const };
   } catch {
     return { reply: fallback, source: "briefing" as const };
   }

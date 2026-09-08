@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { answerFromFacts, rankFacts, type ChatFact } from "../src/lib/chat/facts";
+import { answerFromFacts, rankFacts, stripChatDateDisclaimer, type ChatFact } from "../src/lib/chat/facts";
 import { staffFactsFromGrouped } from "../src/lib/chat/staff-facts";
 import { groupStaffOffices } from "../src/lib/staff-offices";
 
@@ -44,6 +44,17 @@ describe("dashboard chat facts", () => {
   it("says when a figure is not in the briefing", () => {
     const reply = answerFromFacts("What is the president's private mobile number?", facts);
     expect(reply.toLowerCase()).toContain("published figure");
+  });
+
+  it("does not repeat the June 30, 2026 as-of note in replies", () => {
+    const reply = answerFromFacts("What is the licensure passing rate?", facts);
+    expect(reply).toContain("66.43%");
+    expect(reply).not.toMatch(/june\s*30/i);
+    expect(
+      stripChatDateDisclaimer(
+        "There are 29 personnel under Executive Operations. This figure is based on the latest data as of June 30, 2026.",
+      ),
+    ).toBe("There are 29 personnel under Executive Operations.");
   });
 });
 

@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { ADMINISTRATIVE_ORDERS, administrativeOrderLabel } from "@/lib/administrative-orders";
 import { CAMPUSES_DIRECTORY } from "@/lib/about/campuses";
 import { COLLEGES_DIRECTORY } from "@/lib/about/colleges";
@@ -376,7 +377,7 @@ async function loadPublishedFacts() {
   return facts;
 }
 
-export async function getChatCorpus() {
+async function loadChatCorpus() {
   const facts = buildStaticFacts();
   try {
     facts.push(...(await loadPublishedFacts()));
@@ -392,6 +393,10 @@ export async function getChatCorpus() {
   return {
     facts,
     briefing: factsToBriefingText(facts),
-    generatedAt: new Date().toISOString(),
   };
 }
+
+export const getChatCorpus = unstable_cache(loadChatCorpus, ["chat-corpus"], {
+  revalidate: 300,
+  tags: ["public-data"],
+});
