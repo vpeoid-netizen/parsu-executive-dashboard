@@ -21,18 +21,18 @@ function countsEqual(left: FacultyCounts, right: FacultyCounts) {
 }
 
 async function publishedMatchesSource() {
-  const rows = await prisma.facultySnapshot.findMany({
-    where: { status: "PUBLISHED" },
-    select: {
-      total: true,
-      countsJson: true,
-      college: { select: { code: true } },
-    },
-  });
+  const [rows, colleges] = await Promise.all([
+    prisma.facultySnapshot.findMany({
+      where: { status: "PUBLISHED" },
+      select: { total: true, countsJson: true, collegeId: true },
+    }),
+    prisma.college.findMany({ select: { id: true, code: true } }),
+  ]);
   if (rows.length !== facultySource.faculty.length) return false;
+  const codeById = Object.fromEntries(colleges.map((college) => [college.id, college.code]));
   const published = new Map(
     rows.map((row) => [
-      row.college?.code ?? "",
+      (row.collegeId ? codeById[row.collegeId] : null) ?? "",
       { total: row.total ?? 0, counts: JSON.parse(row.countsJson) as FacultyCounts },
     ]),
   );
