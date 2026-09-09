@@ -1,6 +1,7 @@
+import { existsSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { sumFacultyCounts, sumStaffCounts } from "../src/lib/personnel-counts";
-import { isFacultyOnlyWorkbook, type ParsedWorkbook } from "../src/lib/import/parse-workbook";
+import { isFacultyOnlyWorkbook, parseWorkbook, type ParsedWorkbook } from "../src/lib/import/parse-workbook";
 
 function emptyWorkbook(facultyCount: number): ParsedWorkbook {
   return {
@@ -76,5 +77,21 @@ describe("faculty-only workbook detection", () => {
       },
     ];
     expect(isFacultyOnlyWorkbook(parsed)).toBe(false);
+  });
+});
+
+const correctedFacultyFile = "/Users/kiergasga/Downloads/3-Faculty-Members.xlsx";
+
+describe.skipIf(!existsSync(correctedFacultyFile))("corrected faculty worksheet", () => {
+  it("reads group totals and education from the added total columns", async () => {
+    const parsed = await parseWorkbook(correctedFacultyFile);
+    const total = parsed.faculty.reduce((sum, row) => sum + (row.total ?? 0), 0);
+    const science = parsed.faculty.find((row) => row.collegeCode === "COS");
+    expect(parsed.faculty).toHaveLength(11);
+    expect(total).toBe(270);
+    expect(science?.total).toBe(14);
+    expect(science?.counts.rank?.Instructor).toBe(9);
+    expect(science?.counts.education?.["Bachelor's Degree"]).toBe(6);
+    expect(science?.counts.education?.["Master's Degree"]).toBe(7);
   });
 });

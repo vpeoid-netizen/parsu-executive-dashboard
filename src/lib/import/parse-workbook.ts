@@ -333,10 +333,22 @@ function parsePrograms(workbook: ExcelJS.Workbook, result: ParsedWorkbook) {
   });
 }
 
+function facultyHasGroupTotals(ws: ExcelJS.Worksheet) {
+  return /^total$/i.test((cellText(ws, 6, 7) ?? "").trim());
+}
+
 function parseFaculty(workbook: ExcelJS.Workbook, result: ParsedWorkbook) {
   const ws = workbook.getWorksheet("3 Faculty Members");
   if (!ws) return;
   result.asOfHints.faculty = cellText(ws, 2, 1);
+  const groupedTotals = facultyHasGroupTotals(ws);
+  const rankCols = groupedTotals
+    ? { Instructor: 8, "Assistant Professor": 9, "Associate Professor": 10, Professor: 11, "University Professor": 12 }
+    : { Instructor: 7, "Assistant Professor": 8, "Associate Professor": 9, Professor: 10, "University Professor": 11 };
+  const educationCols = groupedTotals
+    ? { "Bachelor's Degree": 14, "Master's Degree": 15, "Doctorate Degree": 16 }
+    : { "Bachelor's Degree": 12, "Master's Degree": 13, "Doctorate Degree": 14 };
+  const totalCol = groupedTotals ? 7 : 15;
   let campusRaw: string | null = null;
   ws.eachRow((row, rowNumber) => {
     if (rowNumber < 7) return;
@@ -344,7 +356,7 @@ function parseFaculty(workbook: ExcelJS.Workbook, result: ParsedWorkbook) {
     const campusCell = cellText(ws, rowNumber, 2);
     if (campusCell) campusRaw = campusCell;
     if (!collegeRaw && !campusCell) return;
-    if (!collegeRaw) return;
+    if (!collegeRaw || isTotalRow(collegeRaw)) return;
     const counts = {
       appointment: {
         Permanent: pickCount(ws, rowNumber, 4),
@@ -352,16 +364,16 @@ function parseFaculty(workbook: ExcelJS.Workbook, result: ParsedWorkbook) {
         COS: pickCount(ws, rowNumber, 6),
       },
       rank: {
-        Instructor: pickCount(ws, rowNumber, 7),
-        "Assistant Professor": pickCount(ws, rowNumber, 8),
-        "Associate Professor": pickCount(ws, rowNumber, 9),
-        Professor: pickCount(ws, rowNumber, 10),
-        "University Professor": pickCount(ws, rowNumber, 11),
+        Instructor: pickCount(ws, rowNumber, rankCols.Instructor),
+        "Assistant Professor": pickCount(ws, rowNumber, rankCols["Assistant Professor"]),
+        "Associate Professor": pickCount(ws, rowNumber, rankCols["Associate Professor"]),
+        Professor: pickCount(ws, rowNumber, rankCols.Professor),
+        "University Professor": pickCount(ws, rowNumber, rankCols["University Professor"]),
       },
       education: {
-        "Bachelor's Degree": pickCount(ws, rowNumber, 12),
-        "Master's Degree": pickCount(ws, rowNumber, 13),
-        "Doctorate Degree": pickCount(ws, rowNumber, 14),
+        "Bachelor's Degree": pickCount(ws, rowNumber, educationCols["Bachelor's Degree"]),
+        "Master's Degree": pickCount(ws, rowNumber, educationCols["Master's Degree"]),
+        "Doctorate Degree": pickCount(ws, rowNumber, educationCols["Doctorate Degree"]),
       },
     };
     const compactCounts: Record<string, Record<string, number>> = {};
@@ -372,8 +384,8 @@ function parseFaculty(workbook: ExcelJS.Workbook, result: ParsedWorkbook) {
       }
       if (Object.keys(next).length) compactCounts[group] = next;
     }
-    const total = cellNumber(ws, rowNumber, 15);
     const appointmentSum = Object.values(compactCounts.appointment ?? {}).reduce((a, b) => a + b, 0);
+    const total = cellNumber(ws, rowNumber, totalCol) ?? (appointmentSum || null);
     if (total !== null && Object.keys(compactCounts.appointment ?? {}).length && appointmentSum !== total) {
       result.issues.push({
         severity: "WARNING",
@@ -388,6 +400,15 @@ function parseFaculty(workbook: ExcelJS.Workbook, result: ParsedWorkbook) {
         severity: "WARNING",
         code: "FACULTY_RANK_TOTAL_MISMATCH",
         message: `Faculty rank subtotal (${rankSum}) does not equal the supplied total (${total}) for ${collegeRaw}.`,
+        sourceRef: `3 Faculty Members!A${rowNumber}`,
+      });
+    }
+    const educationSum = Object.values(compactCounts.education ?? {}).reduce((a, b) => a + b, 0);
+    if (total !== null && Object.keys(compactCounts.education ?? {}).length && educationSum !== total) {
+      result.issues.push({
+        severity: "WARNING",
+        code: "FACULTY_EDUCATION_TOTAL_MISMATCH",
+        message: `Faculty education subtotal (${educationSum}) does not equal the supplied total (${total}) for ${collegeRaw}.`,
         sourceRef: `3 Faculty Members!A${rowNumber}`,
       });
     }

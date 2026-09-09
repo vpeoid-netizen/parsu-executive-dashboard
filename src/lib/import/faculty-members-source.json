@@ -1,26 +1,26 @@
 {
-  "sourceFile": "3 Faculty Members.xlsx",
+  "sourceFile": "3-Faculty-Members.xlsx",
   "faculty": [
     {
       "campusCode": "GOA",
       "collegeCode": "COS",
-      "total": 15,
+      "total": 14,
       "counts": {
         "appointment": {
           "Permanent": 7,
-          "Temporary": 6,
+          "Temporary": 5,
           "COS": 2
         },
         "rank": {
-          "Instructor": 8,
+          "Instructor": 9,
           "Assistant Professor": 4,
           "Associate Professor": 1,
           "Professor": 0,
           "University Professor": 0
         },
         "education": {
-          "Bachelor's Degree": 5,
-          "Master's Degree": 9,
+          "Bachelor's Degree": 6,
+          "Master's Degree": 7,
           "Doctorate Degree": 1
         }
       },
@@ -29,23 +29,23 @@
     {
       "campusCode": "GOA",
       "collegeCode": "CAH",
-      "total": 30,
+      "total": 33,
       "counts": {
         "appointment": {
-          "Permanent": 20,
+          "Permanent": 14,
           "Temporary": 6,
-          "COS": 10
+          "COS": 13
         },
         "rank": {
-          "Instructor": 11,
+          "Instructor": 24,
           "Assistant Professor": 5,
           "Associate Professor": 4,
           "Professor": 0,
           "University Professor": 0
         },
         "education": {
-          "Bachelor's Degree": 15,
-          "Master's Degree": 12,
+          "Bachelor's Degree": 16,
+          "Master's Degree": 14,
           "Doctorate Degree": 3
         }
       },
@@ -54,24 +54,24 @@
     {
       "campusCode": "GOA",
       "collegeCode": "CECS",
-      "total": 46,
+      "total": 51,
       "counts": {
         "appointment": {
-          "Permanent": 37,
+          "Permanent": 25,
           "Temporary": 12,
-          "COS": 9
+          "COS": 14
         },
         "rank": {
-          "Instructor": 17,
+          "Instructor": 31,
           "Assistant Professor": 14,
           "Associate Professor": 3,
           "Professor": 3,
           "University Professor": 0
         },
         "education": {
-          "Bachelor's Degree": 17,
-          "Master's Degree": 23,
-          "Doctorate Degree": 6
+          "Bachelor's Degree": 26,
+          "Master's Degree": 18,
+          "Doctorate Degree": 7
         }
       },
       "sourceRow": 9
@@ -79,24 +79,24 @@
     {
       "campusCode": "GOA",
       "collegeCode": "CBM",
-      "total": 29,
+      "total": 30,
       "counts": {
         "appointment": {
-          "Permanent": 28,
+          "Permanent": 25,
           "Temporary": 3,
-          "COS": 1
+          "COS": 2
         },
         "rank": {
-          "Instructor": 10,
+          "Instructor": 12,
           "Assistant Professor": 8,
           "Associate Professor": 9,
           "Professor": 1,
           "University Professor": 0
         },
         "education": {
-          "Bachelor's Degree": 5,
+          "Bachelor's Degree": 7,
           "Master's Degree": 16,
-          "Doctorate Degree": 8
+          "Doctorate Degree": 7
         }
       },
       "sourceRow": 10
@@ -107,7 +107,7 @@
       "total": 66,
       "counts": {
         "appointment": {
-          "Permanent": 66,
+          "Permanent": 63,
           "Temporary": 3,
           "COS": 0
         },
@@ -119,9 +119,9 @@
           "University Professor": 0
         },
         "education": {
-          "Bachelor's Degree": 10,
+          "Bachelor's Degree": 9,
           "Master's Degree": 44,
-          "Doctorate Degree": 12
+          "Doctorate Degree": 13
         }
       },
       "sourceRow": 11
@@ -132,12 +132,12 @@
       "total": 12,
       "counts": {
         "appointment": {
-          "Permanent": 10,
+          "Permanent": 7,
           "Temporary": 3,
           "COS": 2
         },
         "rank": {
-          "Instructor": 8,
+          "Instructor": 10,
           "Assistant Professor": 1,
           "Associate Professor": 0,
           "Professor": 1,
@@ -157,20 +157,20 @@
       "total": 14,
       "counts": {
         "appointment": {
-          "Permanent": 13,
+          "Permanent": 12,
           "Temporary": 1,
           "COS": 1
         },
         "rank": {
-          "Instructor": 7,
+          "Instructor": 8,
           "Assistant Professor": 4,
           "Associate Professor": 2,
           "Professor": 0,
           "University Professor": 0
         },
         "education": {
-          "Bachelor's Degree": 6,
-          "Master's Degree": 3,
+          "Bachelor's Degree": 1,
+          "Master's Degree": 8,
           "Doctorate Degree": 5
         }
       },
@@ -182,7 +182,7 @@
       "total": 15,
       "counts": {
         "appointment": {
-          "Permanent": 15,
+          "Permanent": 12,
           "Temporary": 3,
           "COS": 0
         },
@@ -194,8 +194,8 @@
           "University Professor": 1
         },
         "education": {
-          "Bachelor's Degree": 6,
-          "Master's Degree": 5,
+          "Bachelor's Degree": 3,
+          "Master's Degree": 8,
           "Doctorate Degree": 4
         }
       },
@@ -207,20 +207,20 @@
       "total": 15,
       "counts": {
         "appointment": {
-          "Permanent": 11,
+          "Permanent": 10,
           "Temporary": 1,
           "COS": 4
         },
         "rank": {
-          "Instructor": 8,
+          "Instructor": 12,
           "Assistant Professor": 3,
           "Associate Professor": 0,
           "Professor": 0,
           "University Professor": 0
         },
         "education": {
-          "Bachelor's Degree": 8,
-          "Master's Degree": 3,
+          "Bachelor's Degree": 5,
+          "Master's Degree": 6,
           "Doctorate Degree": 4
         }
       },
@@ -232,21 +232,21 @@
       "total": 12,
       "counts": {
         "appointment": {
-          "Permanent": 9,
+          "Permanent": 8,
           "Temporary": 1,
           "COS": 3
         },
         "rank": {
-          "Instructor": 5,
+          "Instructor": 8,
           "Assistant Professor": 1,
           "Associate Professor": 3,
           "Professor": 0,
           "University Professor": 0
         },
         "education": {
-          "Bachelor's Degree": 7,
-          "Master's Degree": 5,
-          "Doctorate Degree": 2
+          "Bachelor's Degree": 5,
+          "Master's Degree": 3,
+          "Doctorate Degree": 4
         }
       },
       "sourceRow": 16
@@ -257,7 +257,7 @@
       "total": 8,
       "counts": {
         "appointment": {
-          "Permanent": 8,
+          "Permanent": 5,
           "Temporary": 3,
           "COS": 0
         },
@@ -269,9 +269,9 @@
           "University Professor": 0
         },
         "education": {
-          "Bachelor's Degree": 5,
+          "Bachelor's Degree": 3,
           "Master's Degree": 3,
-          "Doctorate Degree": 0
+          "Doctorate Degree": 2
         }
       },
       "sourceRow": 17

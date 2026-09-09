@@ -54,5 +54,8 @@ describe("Executive-Dashboard.xlsx import checkpoints", () => {
     expect(fy2026Licensure?.firstTimeTakers).toBe(143);
     expect(parsed.issues.some((issue) => issue.code === "LICENSURE_TOTAL_FROM_PERFORMANCE")).toBe(true);
     expect(parsed.issues.some((issue) => issue.code === "SOURCE_CONFLICT_LICENSURE")).toBe(false);
+    const science = parsed.faculty.find((row) => row.collegeCode === "COS");
+    expect(science?.counts.appointment?.Permanent).toBe(7);
+    expect(science?.counts.rank?.Instructor).toBe(8);
   }, 30000);
 });
