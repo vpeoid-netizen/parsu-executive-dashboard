@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "25mb",
     },
   },
+  serverExternalPackages: ["@prisma/client", "prisma", "exceljs"],
   images: {
     formats: ["image/avif", "image/webp"],
   },

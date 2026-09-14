@@ -3,10 +3,9 @@ import { ChartPanel } from "@/components/charts/chart-panel";
 import { LazyComparisonBars, LazyTrendChart } from "@/components/charts/lazy-charts";
 import { CollegeAbbrevKey } from "@/components/ui/college-abbrev-key";
 import { EmptyState, KpiCard, ModuleHeader } from "@/components/ui/primitives";
-import { prisma } from "@/lib/db";
 import { formatNumber, formatSignedPercent, percentageChange } from "@/lib/format";
 import { collegeChartPoint, collegeFullName, collegeSortIndex } from "@/lib/import/normalize";
-import { getEnrollmentSeries } from "@/lib/queries";
+import { getEnrollmentSeries, getPublishedEnrollmentPageData } from "@/lib/queries";
 import { shortChartPeriodLabel } from "@/lib/periods";
 
 export default async function EnrollmentPage({
@@ -15,14 +14,9 @@ export default async function EnrollmentPage({
   searchParams: Promise<{ ay?: string; semester?: string; campus?: string }>;
 }) {
   const params = await searchParams;
-  const [rows, series, campuses, colleges] = await Promise.all([
-    prisma.enrollmentObservation.findMany({
-      where: { status: "PUBLISHED" },
-      include: { period: true },
-    }),
+  const [{ rows, campuses, colleges }, series] = await Promise.all([
+    getPublishedEnrollmentPageData(),
     getEnrollmentSeries(),
-    prisma.campus.findMany(),
-    prisma.college.findMany(),
   ]);
   const campusName = Object.fromEntries(campuses.map((item) => [item.id, item.name]));
   const collegeById = Object.fromEntries(colleges.map((item) => [item.id, item]));

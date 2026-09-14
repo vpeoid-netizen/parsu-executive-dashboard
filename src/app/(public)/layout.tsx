@@ -1,8 +1,8 @@
-import { DashboardChat } from "@/components/chat/dashboard-chat";
+import { DeferredDashboardChat } from "@/components/chat/deferred-dashboard-chat";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,7 +15,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         {children}
       </main>
       <SiteFooter />
-      <DashboardChat />
+      <DeferredDashboardChat />
     </div>
   );
 }

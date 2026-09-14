@@ -7,6 +7,9 @@ import { prisma } from "@/lib/db";
 import { formatPercent } from "@/lib/format";
 import { EXECUTIVE_CURRENT_YEAR } from "@/lib/kpi-years";
 
+export const dynamic = "force-static";
+export const revalidate = 300;
+
 export default async function LicensurePage() {
   const [rows, campuses] = await Promise.all([
     prisma.licensureObservation.findMany({ where: { status: "PUBLISHED" } }),

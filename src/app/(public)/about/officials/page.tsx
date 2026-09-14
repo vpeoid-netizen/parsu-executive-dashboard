@@ -4,6 +4,9 @@ import { OFFICIALS_AS_OF, OFFICIALS_SOURCE_URL } from "@/lib/about/content";
 import { prisma } from "@/lib/db";
 import { cn } from "@/lib/utils";
 
+export const dynamic = "force-static";
+export const revalidate = 300;
+
 export default async function OfficialsPage() {
   const officials = await prisma.official.findMany({
     where: { published: true },

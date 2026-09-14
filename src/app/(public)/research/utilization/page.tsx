@@ -5,6 +5,9 @@ import { EmptyState, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
 import { collegeFullName } from "@/lib/import/normalize";
 
+export const dynamic = "force-static";
+export const revalidate = 300;
+
 export default async function UtilizationPage() {
   const rows = await prisma.researchUtilization.findMany({
     where: { status: "PUBLISHED" },

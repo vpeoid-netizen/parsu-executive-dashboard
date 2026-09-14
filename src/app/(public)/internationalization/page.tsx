@@ -4,6 +4,9 @@ import { EmptyState, KpiCard, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 
+export const dynamic = "force-static";
+export const revalidate = 300;
+
 export default async function InternationalizationPage() {
   const [partners, memberships] = await Promise.all([
     prisma.internationalPartner.findMany({ where: { status: "PUBLISHED" } }),

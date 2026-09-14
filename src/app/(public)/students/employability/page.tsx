@@ -8,6 +8,9 @@ import { prisma } from "@/lib/db";
 import { formatPercent } from "@/lib/format";
 import { collegeChartPoint, collegeFullName, collegeSortIndex, matchCollege } from "@/lib/import/normalize";
 
+export const dynamic = "force-static";
+export const revalidate = 300;
+
 export default async function EmployabilityPage() {
   const [rows, colleges] = await Promise.all([
     prisma.employabilityObservation.findMany({ where: { status: "PUBLISHED" } }),

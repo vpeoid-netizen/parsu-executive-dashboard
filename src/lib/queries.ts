@@ -194,6 +194,50 @@ async function loadLatestDatasetDates() {
 
 export const latestDatasetDates = unstable_cache(loadLatestDatasetDates, ["latest-dataset-dates"], PUBLIC_CACHE);
 
+async function loadFacultyPageData() {
+  const [rows, colleges] = await Promise.all([
+    prisma.facultySnapshot.findMany({
+      where: { status: "PUBLISHED" },
+      select: { collegeId: true, total: true, countsJson: true },
+    }),
+    prisma.college.findMany({ select: { id: true, code: true } }),
+  ]);
+  return { rows, colleges };
+}
+
+export const getFacultyPageData = unstable_cache(loadFacultyPageData, ["faculty-page"], PUBLIC_CACHE);
+
+async function loadStaffPageData() {
+  const [rows, campuses] = await Promise.all([
+    prisma.staffSnapshot.findMany({
+      where: { status: "PUBLISHED" },
+      select: { department: true, office: true, unit: true, campusId: true, total: true, countsJson: true },
+    }),
+    prisma.campus.findMany({ select: { id: true, name: true } }),
+  ]);
+  return { rows, campuses };
+}
+
+export const getStaffPageData = unstable_cache(loadStaffPageData, ["staff-page"], PUBLIC_CACHE);
+
+async function loadPublishedEnrollmentPageData() {
+  const [rows, campuses, colleges] = await Promise.all([
+    prisma.enrollmentObservation.findMany({
+      where: { status: "PUBLISHED" },
+      include: { period: true },
+    }),
+    prisma.campus.findMany(),
+    prisma.college.findMany(),
+  ]);
+  return { rows, campuses, colleges };
+}
+
+export const getPublishedEnrollmentPageData = unstable_cache(
+  loadPublishedEnrollmentPageData,
+  ["enrollment-page"],
+  PUBLIC_CACHE,
+);
+
 export async function requestIp() {
   const headerList = await headers();
   return headerList.get("x-forwarded-for")?.split(",")[0]?.trim() || headerList.get("x-real-ip") || "unknown";

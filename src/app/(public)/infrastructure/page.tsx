@@ -4,6 +4,9 @@ import { EmptyState, KpiCard, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
 import { formatPeso } from "@/lib/format";
 
+export const dynamic = "force-static";
+export const revalidate = 300;
+
 export default async function InfrastructurePage() {
   const projects = await prisma.infrastructureProject.findMany({
     where: { status: "PUBLISHED" },

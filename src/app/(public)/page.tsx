@@ -17,6 +17,9 @@ import { PERFORMANCE_FOCUS_YEAR, groupByProgramMfo } from "@/lib/performance-dis
 import { shortChartPeriodLabel } from "@/lib/periods";
 import { contributionByRankAndYear } from "@/lib/research";
 
+export const dynamic = "force-static";
+export const revalidate = 300;
+
 function researchRankSlices(records: { fiscalYear: number; authorsJson: string }[], fallbackName: string, total: number) {
   const share = contributionByRankAndYear(records);
   if (share.hasData) return share.latestSlices;

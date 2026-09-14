@@ -4,6 +4,9 @@ import { EmptyState, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 
+export const dynamic = "force-static";
+export const revalidate = 300;
+
 export default async function AwardsPage() {
   const awards = await prisma.studentAward.findMany({
     where: { status: "PUBLISHED" },

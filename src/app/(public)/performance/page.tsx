@@ -12,6 +12,9 @@ import {
 import { classifyAchievement } from "@/lib/metrics";
 import { getPerformanceByIndicator } from "@/lib/queries";
 
+export const dynamic = "force-static";
+export const revalidate = 300;
+
 export default async function PerformancePage() {
   const indicators = await getPerformanceByIndicator();
   const observations = indicators.flatMap((indicator) =>

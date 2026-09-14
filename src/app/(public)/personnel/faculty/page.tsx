@@ -7,9 +7,12 @@ import { FACULTY_APPOINTMENT_COLORS, FACULTY_EDUCATION_COLORS } from "@/lib/char
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState, KpiCard, ModuleHeader } from "@/components/ui/primitives";
 import { EDUCATION_LEVELS } from "@/lib/constants";
-import { prisma } from "@/lib/db";
 import { formatNumber } from "@/lib/format";
 import { ACADEMIC_RANK_GROUPS, collegeAbbrev, collegeFullName, collegeSortIndex } from "@/lib/import/normalize";
+import { getFacultyPageData } from "@/lib/queries";
+
+export const dynamic = "force-static";
+export const revalidate = 300;
 
 type CountGroups = {
   appointment?: Record<string, number>;
@@ -63,10 +66,7 @@ function CollegeDonutColumn({
 }
 
 export default async function FacultyPage() {
-  const [rows, colleges] = await Promise.all([
-    prisma.facultySnapshot.findMany({ where: { status: "PUBLISHED" } }),
-    prisma.college.findMany(),
-  ]);
+  const { rows, colleges } = await getFacultyPageData();
   const collegeById = Object.fromEntries(colleges.map((item) => [item.id, item]));
   const grouped = new Map<
     string,

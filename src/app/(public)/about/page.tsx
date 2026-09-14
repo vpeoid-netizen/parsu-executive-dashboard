@@ -5,6 +5,9 @@ import { ModuleHeader } from "@/components/ui/primitives";
 import { HISTORY_IMAGE, VMGO_TITLE } from "@/lib/about/content";
 import { prisma } from "@/lib/db";
 
+export const dynamic = "force-static";
+export const revalidate = 300;
+
 export default async function AboutPage() {
   const [history, vmgo, officials] = await Promise.all([
     prisma.institutionalPage.findUnique({ where: { slug: "history" } }),

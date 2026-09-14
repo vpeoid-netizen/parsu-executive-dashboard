@@ -4,6 +4,9 @@ import { EmptyState, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
 import { formatPeso } from "@/lib/format";
 
+export const dynamic = "force-static";
+export const revalidate = 300;
+
 export default async function GrantsPage() {
   const rows = await prisma.researchGrant.findMany({ where: { status: "PUBLISHED" } });
   return (

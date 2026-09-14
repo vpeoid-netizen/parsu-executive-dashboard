@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { EmptyState, KpiCard, ModuleHeader } from "@/components/ui/primitives";
-import { prisma } from "@/lib/db";
 import { formatNumber } from "@/lib/format";
+import { getStaffPageData } from "@/lib/queries";
 import {
   ACADEMIC_DELIVERY_DEPARTMENT,
   GOA_CAMPUS_LABEL,
@@ -15,11 +15,11 @@ import {
 } from "@/lib/staff-offices";
 import { cn } from "@/lib/utils";
 
+export const dynamic = "force-static";
+export const revalidate = 300;
+
 export default async function StaffPage() {
-  const [rows, campuses] = await Promise.all([
-    prisma.staffSnapshot.findMany({ where: { status: "PUBLISHED" } }),
-    prisma.campus.findMany(),
-  ]);
+  const { rows, campuses } = await getStaffPageData();
   const campusName = Object.fromEntries(campuses.map((item) => [item.id, item.name]));
   const parsed: StaffOfficeRow[] = alignStaffTotalsToAppointments(
     rows.map((row) => ({

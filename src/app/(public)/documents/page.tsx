@@ -5,6 +5,9 @@ import { DOCUMENT_CATEGORIES } from "@/lib/constants";
 import { prisma } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 
+export const dynamic = "force-static";
+export const revalidate = 300;
+
 export default async function DocumentsPage() {
   const documents = await prisma.documentRecord.findMany({
     where: { published: true, visibility: "PUBLIC" },

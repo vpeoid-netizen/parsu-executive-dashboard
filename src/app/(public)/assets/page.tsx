@@ -3,6 +3,9 @@ import { DataTable } from "@/components/ui/data-table";
 import { EmptyState, KpiCard, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
 
+export const dynamic = "force-static";
+export const revalidate = 300;
+
 export default async function AssetsPage() {
   const [land, buildings, labs, stays, vehicles] = await Promise.all([
     prisma.landAsset.findMany({ where: { status: "PUBLISHED" } }),

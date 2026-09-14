@@ -5,6 +5,9 @@ import { EmptyState, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
 import { formatAuthorNames } from "@/lib/research";
 
+export const dynamic = "force-static";
+export const revalidate = 300;
+
 export default async function CompletedResearchPage() {
   const rows = await prisma.researchCompletion.findMany({
     where: { status: "PUBLISHED" },

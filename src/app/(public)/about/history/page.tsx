@@ -5,6 +5,9 @@ import { EmptyState, ModuleHeader } from "@/components/ui/primitives";
 import { HISTORY_IMAGE, HISTORY_SOURCE_URL } from "@/lib/about/content";
 import { prisma } from "@/lib/db";
 
+export const dynamic = "force-static";
+export const revalidate = 300;
+
 export default async function HistoryPage() {
   const page = await prisma.institutionalPage.findUnique({ where: { slug: "history" } });
   return (

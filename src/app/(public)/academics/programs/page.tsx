@@ -9,6 +9,9 @@ import { formatDate, formatNumber } from "@/lib/format";
 import { formatProgramAuthority, programStatusIndicators } from "@/lib/program-coverage";
 import { collegeAbbrev, collegeChartPoint, collegeFullName, collegeSortIndex } from "@/lib/import/normalize";
 
+export const dynamic = "force-static";
+export const revalidate = 300;
+
 function monthsUntil(date: Date | null) {
   if (!date) return null;
   return (date.getTime() - Date.now()) / (1000 * 60 * 60 * 24 * 30);

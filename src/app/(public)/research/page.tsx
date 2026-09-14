@@ -4,6 +4,9 @@ import { LazyTrendChart } from "@/components/charts/lazy-charts";
 import { KpiCard, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
 
+export const dynamic = "force-static";
+export const revalidate = 300;
+
 function countByYear(rows: { fiscalYear: number }[]) {
   const counts: Record<number, number> = {};
   for (const row of rows) {
