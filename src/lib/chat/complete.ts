@@ -47,45 +47,47 @@ function geminiModel() {
   return DEFAULT_GEMINI_MODEL;
 }
 
-function resolveProvider(): Provider | null {
+function listProviders(): Provider[] {
+  const providers: Provider[] = [];
+  const requestedModel = process.env.CHAT_MODEL?.trim() || "";
   const openaiKey = process.env.OPENAI_API_KEY?.trim();
   if (openaiKey) {
-    return {
+    providers.push({
       kind: "openai",
       url: `${(process.env.OPENAI_BASE_URL ?? "https://api.openai.com/v1").replace(/\/$/, "")}/chat/completions`,
       key: openaiKey,
-      model: process.env.CHAT_MODEL?.trim() || "gpt-4o-mini",
-    };
+      model: requestedModel && !/gemini/i.test(requestedModel) ? requestedModel : "gpt-4o-mini",
+    });
   }
 
   const geminiKey = geminiApiKey();
   if (geminiKey) {
-    return { kind: "gemini", key: geminiKey, model: geminiModel() };
+    providers.push({ kind: "gemini", key: geminiKey, model: geminiModel() });
   }
 
   const groqKey = process.env.GROQ_API_KEY?.trim();
   if (groqKey) {
-    return {
+    providers.push({
       kind: "openai",
       url: "https://api.groq.com/openai/v1/chat/completions",
       key: groqKey,
-      model: process.env.CHAT_MODEL?.trim() || "llama-3.1-8b-instant",
-    };
+      model: "llama-3.1-8b-instant",
+    });
   }
 
   const gatewayKey =
     process.env.AI_GATEWAY_API_KEY?.trim() ||
     (process.env.VERCEL ? process.env.VERCEL_OIDC_TOKEN?.trim() : undefined);
   if (gatewayKey) {
-    return {
+    providers.push({
       kind: "openai",
       url: "https://ai-gateway.vercel.sh/v1/chat/completions",
       key: gatewayKey,
-      model: process.env.CHAT_MODEL?.trim() || "openai/gpt-4o-mini",
-    };
+      model: "openai/gpt-4o-mini",
+    });
   }
 
-  return null;
+  return providers;
 }
 
 export function toGeminiContents(history: ChatMessage[]): GeminiContent[] {
@@ -193,8 +195,8 @@ export async function completeDashboardChat(turns: ChatTurn[]) {
   const corpus = await getChatCorpus();
   const fallback = answerFromFacts(question, corpus.facts);
 
-  const provider = resolveProvider();
-  if (!provider || !question) {
+  const providers = listProviders();
+  if (!providers.length || !question) {
     return { reply: fallback, source: "briefing" as const };
   }
 
@@ -205,15 +207,18 @@ export async function completeDashboardChat(turns: ChatTurn[]) {
   const focusedBriefing = factsToBriefingText(selectFactsForQuestion(question, corpus.facts));
   const systemInstruction = `${CHAT_SYSTEM_PROMPT}\n\nDASHBOARD BRIEFING:\n${focusedBriefing}`;
 
-  try {
-    const text =
-      provider.kind === "gemini"
-        ? await generateWithGemini(provider, history, systemInstruction)
-        : await generateWithOpenAi(provider, [{ role: "system", content: systemInstruction }, ...history]);
-    return { reply: stripChatDateDisclaimer(normalizeParSuSpelling(text)), source: "ai" as const };
-  } catch {
-    return { reply: fallback, source: "briefing" as const };
+  for (const provider of providers) {
+    try {
+      const text =
+        provider.kind === "gemini"
+          ? await generateWithGemini(provider, history, systemInstruction)
+          : await generateWithOpenAi(provider, [{ role: "system", content: systemInstruction }, ...history]);
+      return { reply: stripChatDateDisclaimer(normalizeParSuSpelling(text)), source: "ai" as const };
+    } catch {
+      continue;
+    }
   }
+  return { reply: fallback, source: "briefing" as const };
 }
 
 export { MAX_USER_CHARS };

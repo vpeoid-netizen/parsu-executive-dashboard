@@ -57,6 +57,7 @@ const STOP_WORDS = new Set([
   "figures",
   "number",
   "numbers",
+  "published",
 ]);
 
 export function tokenizeQuestion(question: string) {
