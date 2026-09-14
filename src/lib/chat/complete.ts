@@ -48,11 +48,6 @@ function geminiModel() {
 }
 
 function resolveProvider(): Provider | null {
-  const geminiKey = geminiApiKey();
-  if (geminiKey) {
-    return { kind: "gemini", key: geminiKey, model: geminiModel() };
-  }
-
   const openaiKey = process.env.OPENAI_API_KEY?.trim();
   if (openaiKey) {
     return {
@@ -61,6 +56,11 @@ function resolveProvider(): Provider | null {
       key: openaiKey,
       model: process.env.CHAT_MODEL?.trim() || "gpt-4o-mini",
     };
+  }
+
+  const geminiKey = geminiApiKey();
+  if (geminiKey) {
+    return { kind: "gemini", key: geminiKey, model: geminiModel() };
   }
 
   const groqKey = process.env.GROQ_API_KEY?.trim();
@@ -128,7 +128,7 @@ async function generateWithGemini(provider: GeminiProvider, history: ChatMessage
       try {
         const generationConfig: Record<string, unknown> = {
           temperature: 0.2,
-          maxOutputTokens: 280,
+          maxOutputTokens: 700,
         };
         if (disableThinking) generationConfig.thinkingConfig = { thinkingBudget: 0 };
         const response = await fetch(
@@ -144,7 +144,7 @@ async function generateWithGemini(provider: GeminiProvider, history: ChatMessage
               contents: toGeminiContents(history),
               generationConfig,
             }),
-            signal: AbortSignal.timeout(12_000),
+            signal: AbortSignal.timeout(18_000),
           },
         );
         if (!response.ok) {
@@ -172,10 +172,10 @@ async function generateWithOpenAi(provider: OpenAiProvider, messages: ChatMessag
     body: JSON.stringify({
       model: provider.model,
       temperature: 0.2,
-      max_tokens: 280,
+      max_tokens: 700,
       messages,
     }),
-    signal: AbortSignal.timeout(12_000),
+    signal: AbortSignal.timeout(18_000),
   });
   if (!response.ok) {
     throw new Error(`Chat provider ${response.status}`);

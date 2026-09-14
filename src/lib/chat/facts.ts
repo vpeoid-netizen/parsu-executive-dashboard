@@ -125,21 +125,48 @@ export function answerFromFacts(question: string, facts: ChatFact[]) {
   return stripChatDateDisclaimer(normalizeParSuSpelling(parts.join(" ")));
 }
 
-export function selectFactsForQuestion(question: string, facts: ChatFact[], limit = 16) {
+const PINNED_FACT_IDS = new Set([
+  "about",
+  "campuses",
+  "colleges",
+  "faculty",
+  "ntp",
+  "enrollment-latest",
+  "programs-summary",
+  "research-fy2026",
+  "extension",
+  "documents",
+  "officials",
+  "budget-summary",
+  "assets-summary",
+  "infrastructure-summary",
+  "internationalization-summary",
+  "licensure-summary",
+  "employability-summary",
+  "awards-summary",
+  "flagship-summary",
+  "history",
+]);
+
+export function selectFactsForQuestion(question: string, facts: ChatFact[], limit = 48) {
   const ranked = rankFacts(question, facts);
   const matched = ranked.filter((item) => item.score > 0).slice(0, limit).map((item) => item.fact);
-  if (matched.length >= 6) return matched;
+  const selected: ChatFact[] = [];
+  const ids = new Set<string>();
 
-  const selected = [...matched];
-  const ids = new Set(selected.map((fact) => fact.id));
   for (const fact of facts) {
+    if (!PINNED_FACT_IDS.has(fact.id) || ids.has(fact.id)) continue;
+    selected.push(fact);
+    ids.add(fact.id);
+  }
+  for (const fact of matched) {
     if (ids.has(fact.id)) continue;
-    if (!/^(kpi-|ntp|faculty|campuses|enrollment|about)/.test(fact.id)) continue;
     selected.push(fact);
     ids.add(fact.id);
     if (selected.length >= limit) break;
   }
-  return selected.length ? selected : ranked.slice(0, Math.min(8, facts.length)).map((item) => item.fact);
+  if (selected.length) return selected;
+  return ranked.slice(0, Math.min(12, facts.length)).map((item) => item.fact);
 }
 
 export function stripChatDateDisclaimer(text: string) {
@@ -165,12 +192,14 @@ Voice:
 - Sound like a helpful colleague: warm, clear, and conversational. Use "you" and short sentences.
 - Lead with the answer, then explain what the figure means in plain language.
 - Do not sound like a report. Avoid openings such as "Here is what the published dashboard shows."
-- Keep answers to a short paragraph. Offer one follow-up only when it helps. Use markdown sparingly.
+- Keep routine answers to a short paragraph. When the user asks for a breakdown, comparison, or list, give the published details they asked for.
+- Offer one follow-up only when it helps. Use markdown sparingly.
 
 Rules:
 - Spell the university ParSU. Never write PARSU except inside parsu.edu.ph URLs.
 - Answer only from the published briefing. Do not invent counts, rates, names, or dates.
-- You may add, compare, rank, or group published numbers in the briefing. If the user asks for a department, office cluster, or campus total, sum the listed office and unit headcounts and say which offices you included.
+- The briefing covers all published dashboard modules: about/VMGO, campuses, colleges, officials, programs, enrollment, licensure, employability, awards, faculty, non-teaching personnel, performance, research, extension, flagship, budget, assets, infrastructure, internationalization, documents, and administrative orders.
+- You may add, compare, rank, or group published numbers in the briefing. If the user asks for a department, office cluster, college, or campus total, sum the listed figures and say which items you included.
 - If a figure is not in the briefing and cannot be derived from listed numbers, say so in a friendly way and point to the closest dashboard page.
 - Do not mention June 30, 2026, year-to-date dating, or that a figure is based on the latest data. The chat window already shows that FY 2026 is as of June 30, 2026.
 - Do not provide admin passwords or unpublished records. You may mention /admin/login exists for administrators.

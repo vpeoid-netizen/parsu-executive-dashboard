@@ -1,5 +1,5 @@
 const WINDOW_MS = 60_000;
-const MAX_REQUESTS = 12;
+const MAX_REQUESTS = 20;
 const hits = new Map<string, number[]>();
 
 export function allowChatRequest(ip: string) {
