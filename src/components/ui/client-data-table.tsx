@@ -84,18 +84,22 @@ export function ClientDataTable({
           Export CSV
         </button>
       </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-left text-sm">
+      <div className="overflow-x-auto overscroll-x-contain">
+        <table className="min-w-full text-left text-[13px] sm:text-sm">
           <thead className="bg-navy-950 text-white">
             <tr>
-              {columns.map((column) => (
+              {columns.map((column, columnIndex) => (
                 <th
                   key={column.key}
-                  className={cn("px-4 py-3 text-xs font-semibold uppercase tracking-[0.04em]", column.hideOnMobile && "hidden md:table-cell")}
+                  className={cn(
+                    "px-3 py-3 text-xs font-semibold uppercase tracking-[0.04em] sm:px-4",
+                    column.hideOnMobile && "hidden md:table-cell",
+                    columnIndex === 0 && "sticky left-0 z-10 bg-navy-950",
+                  )}
                 >
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1 text-white"
+                    className="inline-flex min-h-11 items-center gap-1 text-white"
                     onClick={() => {
                       if (sortKey === column.key) {
                         setSortDir((value) => (value === "asc" ? "desc" : "asc"));
@@ -120,11 +124,16 @@ export function ClientDataTable({
               </tr>
             ) : (
               current.map((row, index) => (
-                <tr key={index} className="border-t border-border even:bg-muted/35 hover:bg-gold-soft/40">
-                  {columns.map((column) => (
+                <tr key={index} className="group border-t border-border even:bg-muted/35 hover:bg-gold-soft/40">
+                  {columns.map((column, columnIndex) => (
                     <td
                       key={column.key}
-                      className={cn("px-4 py-3 align-top", column.hideOnMobile && "hidden md:table-cell")}
+                      className={cn(
+                        "whitespace-nowrap px-3 py-3 align-top sm:px-4",
+                        column.hideOnMobile && "hidden md:table-cell",
+                        columnIndex === 0 &&
+                          "sticky left-0 z-[1] bg-white group-even:bg-[color-mix(in_srgb,var(--muted)_35%,white)] group-hover:bg-gold-soft/40",
+                      )}
                     >
                       {formatCellValue(row[column.key])}
                     </td>
@@ -139,21 +148,21 @@ export function ClientDataTable({
         <p className="text-muted-foreground">
           {filtered.length} record{filtered.length === 1 ? "" : "s"}
         </p>
-        <div className="flex gap-2">
+        <div className="flex items-center justify-between gap-2 sm:justify-end">
           <button
             type="button"
-            className="btn btn-ghost min-h-9 px-3 py-1 disabled:opacity-50"
+            className="btn btn-ghost min-h-11 px-4 disabled:opacity-50"
             disabled={page === 0}
             onClick={() => setPage((value) => value - 1)}
           >
             Previous
           </button>
-          <span>
+          <span className="tabular-nums">
             {page + 1} / {pageCount}
           </span>
           <button
             type="button"
-            className="btn btn-ghost min-h-9 px-3 py-1 disabled:opacity-50"
+            className="btn btn-ghost min-h-11 px-4 disabled:opacity-50"
             disabled={page + 1 >= pageCount}
             onClick={() => setPage((value) => value + 1)}
           >

@@ -86,13 +86,13 @@ export function ExecutiveIndicatorTabs({
               : "Complete-year figures for comparison. They are not the current FY 2026 values."}
           </p>
         </div>
-        <div role="tablist" aria-label="Executive indicator period" className="inline-flex flex-wrap rounded-xl bg-muted p-1">
+        <div role="tablist" aria-label="Executive indicator period" className="inline-flex w-full rounded-xl bg-muted p-1 sm:w-auto">
           <button
             type="button"
             role="tab"
             aria-selected={tab === "current"}
             className={cn(
-              "min-h-10 rounded-lg px-4 text-sm font-semibold transition-colors",
+              "min-h-11 flex-1 rounded-lg px-4 text-sm font-semibold transition-colors sm:flex-none",
               tab === "current" ? "bg-navy-900 text-white shadow-sm" : "text-navy-800 hover:bg-white/70",
             )}
             onClick={() => setTab("current")}
@@ -104,7 +104,7 @@ export function ExecutiveIndicatorTabs({
             role="tab"
             aria-selected={tab === "reference"}
             className={cn(
-              "min-h-10 rounded-lg px-4 text-sm font-semibold transition-colors",
+              "min-h-11 flex-1 rounded-lg px-4 text-sm font-semibold transition-colors sm:flex-none",
               tab === "reference" ? "bg-navy-900 text-white shadow-sm" : "text-navy-800 hover:bg-white/70",
             )}
             onClick={() => setTab("reference")}

@@ -47,15 +47,15 @@ export default async function SearchPage({
         <label className="block text-sm font-medium" htmlFor="q">
           Query
         </label>
-        <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+        <div className="mt-2 flex flex-col gap-3 sm:flex-row">
           <input
             id="q"
             name="q"
             defaultValue={query}
-            className="field max-w-xl"
+            className="field w-full max-w-xl"
             placeholder="Program, research title, award or document"
           />
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-primary min-h-12 w-full sm:w-auto">
             Search
           </button>
         </div>
@@ -104,7 +104,7 @@ function ResultGroup({
       <ul className="mt-3 space-y-2">
         {items.map((item) => (
           <li key={item.label}>
-            <Link href={item.href} className="text-sm text-navy-800">
+            <Link href={item.href} className="inline-flex min-h-11 items-center text-sm text-navy-800">
               {item.label}
             </Link>
           </li>

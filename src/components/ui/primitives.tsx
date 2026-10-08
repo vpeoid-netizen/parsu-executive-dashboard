@@ -56,7 +56,7 @@ export function KpiCard({
   const display =
     format === "percent" ? formatPercent(value) : formatNumber(value, 0);
   const inner = (
-    <article className="card card-interactive relative flex h-full flex-col overflow-hidden border-l-[3px] border-l-gold p-5 sm:p-6">
+    <article className="card card-interactive relative flex h-full flex-col overflow-hidden border-l-[3px] border-l-gold p-4 sm:p-6">
       <div className="relative flex items-start justify-between gap-3">
         <div className="min-w-0">
           {group ? (
@@ -78,7 +78,7 @@ export function KpiCard({
       <p
         className={cn(
           "mt-5 font-display font-semibold tabular-nums tracking-tight text-navy-900",
-          emphasizeValue ? "text-[clamp(2rem,4vw,2.75rem)] leading-none" : "text-3xl leading-none",
+          emphasizeValue ? "text-[clamp(1.75rem,6vw,2.75rem)] leading-none" : "text-[1.75rem] leading-none sm:text-3xl",
         )}
       >
         {display}
@@ -181,7 +181,7 @@ export function ModuleHeader({
 }) {
   return (
     <header className="mb-8">
-      <h1 className="font-display text-2xl font-bold tracking-tight text-navy-900 md:text-[2rem]">{title}</h1>
+      <h1 className="font-display text-[1.65rem] font-bold tracking-tight text-navy-900 sm:text-2xl md:text-[2rem]">{title}</h1>
       <span className="accent-rule mt-3" aria-hidden="true" />
       {description ? <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p> : null}
       {(period || asOf) && (

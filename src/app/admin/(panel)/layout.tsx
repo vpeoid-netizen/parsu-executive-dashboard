@@ -39,12 +39,12 @@ export default async function AdminPanelLayout({ children }: { children: React.R
                 <button className="text-sm">Sign out</button>
               </form>
             </div>
-            <nav className="flex gap-1 overflow-x-auto px-3 pb-3" aria-label="Administration">
+            <nav className="flex gap-2 overflow-x-auto overscroll-x-contain px-3 pb-3" aria-label="Administration">
               {adminNavigation.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="btn btn-ghost shrink-0 whitespace-nowrap px-3 text-xs"
+                  className="btn btn-ghost min-h-11 shrink-0 whitespace-nowrap px-3 text-xs"
                 >
                   {item.label}
                 </Link>

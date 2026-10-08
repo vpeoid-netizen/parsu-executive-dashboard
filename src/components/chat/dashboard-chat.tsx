@@ -102,6 +102,15 @@ export function DashboardChat() {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
   }, [messages, pending, open]);
 
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [open]);
+
   async function send(text: string) {
     const content = text.replace(/\s+/g, " ").trim();
     if (!content || pending) return;
@@ -135,14 +144,25 @@ export function DashboardChat() {
   }
 
   return (
-    <div className="pointer-events-none fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-[max(0.75rem,env(safe-area-inset-right))] z-40 flex flex-col items-end gap-3">
+    <>
+      {open ? (
+        <button
+          type="button"
+          className="fixed inset-0 z-[55] bg-navy-950/45 sm:hidden"
+          aria-label="Close Ask Arzi"
+          onClick={() => {
+            setOpen(false);
+            toggleRef.current?.focus();
+          }}
+        />
+      ) : null}
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex flex-col items-stretch sm:inset-x-auto sm:bottom-[max(1rem,env(safe-area-inset-bottom))] sm:right-[max(0.75rem,env(safe-area-inset-right))] sm:items-end sm:gap-3">
       {open ? (
         <section
           role="dialog"
-          aria-modal="false"
+          aria-modal="true"
           aria-labelledby={titleId}
-          className="animate-fade-up pointer-events-auto flex w-[min(24rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-[0_18px_40px_rgba(7,31,70,0.16)]"
-          style={{ maxHeight: "min(32rem, calc(100dvh - 8rem))" }}
+          className="animate-fade-up pointer-events-auto flex h-[min(92dvh,40rem)] w-full flex-col overflow-hidden rounded-t-2xl border border-border bg-white shadow-[0_18px_40px_rgba(7,31,70,0.16)] sm:h-auto sm:max-h-[min(32rem,calc(100dvh-8rem))] sm:w-[min(24rem,calc(100vw-1.5rem))] sm:rounded-2xl"
         >
           <header className="flex items-start gap-3 border-b-2 border-gold bg-navy-950 px-4 py-3 text-white">
             <AssistantPortrait className="mt-0.5 h-11 w-11 shrink-0 rounded-2xl ring-1 ring-gold" sizes="44px" />
@@ -221,7 +241,7 @@ export function DashboardChat() {
             <label htmlFor={inputId} className="sr-only">
               Question about dashboard data
             </label>
-            <div className="flex items-end gap-2">
+            <div className="flex items-end gap-2 pb-[env(safe-area-inset-bottom)] sm:pb-0">
               <textarea
                 id={inputId}
                 ref={inputRef}
@@ -232,7 +252,7 @@ export function DashboardChat() {
                 aria-describedby={error ? errorId : undefined}
                 aria-invalid={error ? true : undefined}
                 placeholder="Ask me about a dashboard figure"
-                className="field min-h-11 flex-1 resize-none py-2.5"
+                className="field min-h-12 flex-1 resize-none py-2.5 text-base"
                 onChange={(event) => setDraft(event.target.value)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" && !event.shiftKey) {
@@ -266,13 +286,16 @@ export function DashboardChat() {
       <button
         ref={toggleRef}
         type="button"
-        className="pointer-events-auto relative h-24 w-24 overflow-visible bg-transparent p-0 shadow-none ring-0 transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:h-28 sm:w-28"
+        className={cn(
+          "pointer-events-auto relative mb-[max(0.75rem,env(safe-area-inset-bottom))] mr-[max(0.75rem,env(safe-area-inset-right))] ml-auto h-16 w-16 overflow-visible bg-transparent p-0 shadow-none ring-0 transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:mb-0 sm:mr-0 sm:h-24 sm:w-24 lg:h-28 lg:w-28",
+          open && "hidden sm:block",
+        )}
         aria-label={open ? "Close Ask Arzi" : "Ask Arzi"}
         aria-expanded={open}
         aria-haspopup="dialog"
         onClick={() => setOpen((current) => !current)}
       >
-        <AssistantPortrait className="h-full w-full overflow-visible" sizes="112px" />
+        <AssistantPortrait className="h-full w-full overflow-visible" sizes="(max-width: 640px) 64px, 112px" />
         {open ? (
           <span className="absolute right-1 top-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-navy-950 text-white ring-1 ring-gold">
             <X className="h-4 w-4" />
@@ -280,5 +303,6 @@ export function DashboardChat() {
         ) : null}
       </button>
     </div>
+    </>
   );
 }

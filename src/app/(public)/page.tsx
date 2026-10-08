@@ -116,7 +116,7 @@ export default async function DashboardPage() {
           className="absolute inset-0 bg-[linear-gradient(105deg,rgba(7,31,70,0.86)_0%,rgba(7,31,70,0.62)_52%,rgba(7,31,70,0.48)_100%)]"
           aria-hidden="true"
         />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-6 px-4 py-12 sm:gap-8 sm:px-6 sm:py-16 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-12 lg:px-8 lg:py-20">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-5 px-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] py-8 sm:gap-8 sm:px-6 sm:py-16 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-12 lg:px-8 lg:py-20">
           <div className="order-1 mx-auto flex justify-center lg:order-2 lg:mx-0 lg:justify-end">
             <Image
               src="/parsu-logo.png"
@@ -133,17 +133,17 @@ export default async function DashboardPage() {
               <span className="hidden h-px w-8 bg-gold sm:inline-block" aria-hidden="true" />
               Partido State University
             </p>
-            <h1 className="font-display text-[clamp(2.2rem,7vw,4.6rem)] font-bold leading-[0.96] text-white">
+            <h1 className="font-display text-[clamp(1.85rem,8vw,4.6rem)] font-bold leading-[0.98] text-white">
               Executive Dashboard
             </h1>
             <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-white/78 sm:text-[15px] lg:mx-0">
               Published institutional figures for campuses, academics, personnel, students, research, and performance.
             </p>
-            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
-              <a href="#executive-indicators" className="btn btn-gold min-h-12 min-w-52 px-6 text-[15px]">
+            <div className="mt-6 flex w-full flex-col items-stretch gap-3 sm:mt-8 sm:w-auto sm:flex-row sm:items-center sm:justify-center lg:justify-start">
+              <a href="#executive-indicators" className="btn btn-gold min-h-12 w-full px-6 text-[15px] sm:w-auto sm:min-w-52">
                 Explore indicators
               </a>
-              <Link href="/performance" className="btn min-h-12 min-w-52 border border-white/25 bg-white/5 px-6 text-[15px] text-white hover:bg-white/12">
+              <Link href="/performance" className="btn min-h-12 w-full border border-white/25 bg-white/5 px-6 text-[15px] text-white hover:bg-white/12 sm:w-auto sm:min-w-52">
                 University performance
               </Link>
             </div>
@@ -398,7 +398,7 @@ export default async function DashboardPage() {
           </div>
           <div className="card p-5">
             <h2 className="text-lg font-semibold tracking-tight text-navy-900">Quick links</h2>
-            <ul className="mt-4 grid grid-cols-2 gap-3 text-sm">
+            <ul className="mt-4 grid grid-cols-1 gap-2 text-sm sm:grid-cols-2 sm:gap-3">
               {[
                 ["/academics/programs", "Academic programs"],
                 ["/students/enrollment", "Enrollment"],
@@ -409,7 +409,7 @@ export default async function DashboardPage() {
                 ["/documents", "Documents"],
               ].map(([href, label]) => (
                 <li key={href}>
-                  <Link href={href} className="text-navy-800">
+                  <Link href={href} className="inline-flex min-h-11 items-center text-navy-800">
                     {label}
                   </Link>
                 </li>

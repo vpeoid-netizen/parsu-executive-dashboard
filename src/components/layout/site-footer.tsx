@@ -5,7 +5,7 @@ import { UNIVERSITY_NAME } from "@/lib/constants";
 export function SiteFooter() {
   return (
     <footer className="mt-auto border-t-2 border-gold bg-navy-950 text-white">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-14">
+      <div className="mx-auto max-w-7xl px-4 py-10 pb-[max(6.5rem,calc(2.5rem+env(safe-area-inset-bottom)))] sm:px-6 sm:py-12 sm:pb-12 lg:px-8 lg:py-14">
         <div className="grid gap-10 border-b border-white/10 pb-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:gap-16">
           <div className="flex gap-4">
             <Image

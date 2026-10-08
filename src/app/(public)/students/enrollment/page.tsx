@@ -187,7 +187,7 @@ export default async function EnrollmentPage({
                     </caption>
                     <thead>
                       <tr className="border-b border-border text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                        <th scope="col" className="py-2 pr-3">
+                        <th scope="col" className="sticky left-0 z-10 bg-white py-2 pr-3">
                           Program
                         </th>
                         {periods.map((period) => (
@@ -200,7 +200,7 @@ export default async function EnrollmentPage({
                     <tbody>
                       {college.programs.map((program) => (
                         <tr key={program.key} className="border-b border-border last:border-0">
-                          <th scope="row" className="py-2 pr-3 font-medium text-navy-900">
+                          <th scope="row" className="sticky left-0 z-[1] bg-white py-2 pr-3 font-medium text-navy-900">
                             {program.name}
                             <span className="mt-0.5 block text-[11px] font-normal text-muted-foreground">{program.campus}</span>
                           </th>

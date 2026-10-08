@@ -5,6 +5,18 @@ import type { ComparisonBars, DonutChart, StackedPercentBars, TrendChart } from 
 
 type ChartsModule = typeof import("./charts");
 
+function useIsNarrow() {
+  const [narrow, setNarrow] = useState(false);
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 639px)");
+    const sync = () => setNarrow(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
+  return narrow;
+}
+
 function ChartPlaceholder({ height }: { height: number }) {
   return <div className="animate-pulse rounded-xl bg-muted" style={{ height }} aria-hidden="true" />;
 }
@@ -43,14 +55,18 @@ function useLazyChart<K extends keyof ChartsModule>(name: K) {
 
 export function LazyTrendChart(props: ComponentProps<typeof TrendChart>) {
   const { ref, Chart } = useLazyChart("TrendChart");
-  return <div ref={ref}>{Chart ? <Chart {...props} /> : <ChartPlaceholder height={props.height ?? 256} />}</div>;
+  const narrow = useIsNarrow();
+  const height = narrow ? Math.min(props.height ?? 320, 220) : (props.height ?? 320);
+  return <div ref={ref}>{Chart ? <Chart {...props} height={height} /> : <ChartPlaceholder height={height} />}</div>;
 }
 
 export function LazyDonutChart(props: ComponentProps<typeof DonutChart>) {
   const { ref, Chart } = useLazyChart("DonutChart");
+  const narrow = useIsNarrow();
+  const compact = props.compact || narrow;
   return (
     <div ref={ref} className="h-full">
-      {Chart ? <Chart {...props} /> : <ChartPlaceholder height={props.compact ? 256 : 288} />}
+      {Chart ? <Chart {...props} compact={compact} /> : <ChartPlaceholder height={compact ? 208 : 288} />}
     </div>
   );
 }

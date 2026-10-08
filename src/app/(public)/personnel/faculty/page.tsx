@@ -57,6 +57,7 @@ function CollegeDonutColumn({
     <div className="flex min-w-0 flex-col">
       <p className="mb-3 flex min-h-10 items-end text-xs font-semibold leading-5 text-muted-foreground">{title}</p>
       <LazyDonutChart
+        compact
         data={data}
         hideSliceLabels
         centerLabel={{ primary: formatNumber(total) }}
@@ -156,7 +157,7 @@ export default async function FacultyPage() {
                 <h3 className="mt-1 text-sm font-semibold leading-snug tracking-tight text-navy-900 sm:text-base">
                   {row.college}
                 </h3>
-                <div className="mt-5 grid items-start gap-x-6 gap-y-8 sm:grid-cols-3">
+                <div className="mt-5 grid items-start gap-x-6 gap-y-6 sm:grid-cols-3 sm:gap-y-8">
                   <CollegeDonutColumn
                     title="By academic rank"
                     data={countSlices(ACADEMIC_RANK_GROUPS, row.counts.rank)}

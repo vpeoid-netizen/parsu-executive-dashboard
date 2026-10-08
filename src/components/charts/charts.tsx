@@ -57,6 +57,7 @@ export function TrendChart({
     if (valueFormat === "percent") return `${value}%`;
     return formatNumber(value, 0);
   };
+  const compactAxis = height <= 240;
   return (
     <div className="w-full" style={{ height }}>
       <ResponsiveContainer width="100%" height="100%">
@@ -64,13 +65,13 @@ export function TrendChart({
           <CartesianGrid strokeDasharray="3 3" stroke="#d7e0ec" />
           <XAxis
             dataKey={xKey}
-            tick={{ fontSize: 11 }}
+            tick={{ fontSize: compactAxis ? 10 : 11 }}
             interval={0}
-            angle={-28}
+            angle={compactAxis ? -20 : -28}
             textAnchor="end"
-            height={58}
+            height={compactAxis ? 44 : 58}
           />
-          <YAxis tick={{ fontSize: 12 }} tickFormatter={formatTick} width={valueFormat === "percent" ? 48 : 72} />
+          <YAxis tick={{ fontSize: compactAxis ? 11 : 12 }} tickFormatter={formatTick} width={valueFormat === "percent" ? 44 : compactAxis ? 52 : 72} />
           <Tooltip
             formatter={(value, name) => {
               const numeric = typeof value === "number" ? value : Number(value);
@@ -185,8 +186,8 @@ export function DonutChart({
   compact?: boolean;
 }) {
   const chartBoxClass = compact
-    ? "relative mx-auto h-64 w-full max-w-[20rem] overflow-visible"
-    : "relative mx-auto h-72 w-full max-w-sm overflow-visible";
+    ? "relative mx-auto h-52 w-full max-w-[18rem] overflow-visible sm:h-64 sm:max-w-[20rem]"
+    : "relative mx-auto h-60 w-full max-w-sm overflow-visible sm:h-72";
   const total = data.reduce((sum, item) => sum + item.value, 0);
   if (!data.length || total <= 0) {
     return (
