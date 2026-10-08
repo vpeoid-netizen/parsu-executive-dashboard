@@ -13,6 +13,39 @@ export const NEWS_URLS = [
   `${SITE}/component/content/category/news?Itemid=0&start=20`,
 ];
 
+const NEWS_IMAGE_OVERRIDES: { match: string; image: string }[] = [
+  {
+    match: "parsu brings global expertise, local knowledge together",
+    image: `${SITE}/images/2026/iccr/ICCR%208.jpg`,
+  },
+  {
+    match: "parsu receives dual sikap recognition",
+    image: `${SITE}/images/2026/September/sikap%202.jpg`,
+  },
+  {
+    match: "parsu engages in ched-dap elite-phe",
+    image: `${SITE}/images/2026/September/elite%201.jpg`,
+  },
+  {
+    match: "parsu advances innovation protection through ip and patent",
+    image: `${SITE}/images/2026/August/Aug5-7_Patent%201.jpg`,
+  },
+  {
+    match: "parsu joins 3rd sucs executive forum",
+    image: `${SITE}/images/2026/September/3rd%20SUCs%20Executive%20Forum/e6df656e-52b1-4758-b551-086564eee6e8.jpg`,
+  },
+  {
+    match: "parsu elevate 2026 strengthens faculty capacity",
+    image: `${SITE}/images/2026/July/elevate/elevate%2010.jpg`,
+  },
+];
+
+function newsImageFor(title: string, fallback: string | null) {
+  const key = title.normalize("NFKC").toLowerCase();
+  const override = NEWS_IMAGE_OVERRIDES.find((row) => key.includes(row.match));
+  return override?.image ?? fallback;
+}
+
 function decodeEntities(text: string) {
   return text
     .replace(/&nbsp;/gi, " ")
@@ -60,7 +93,7 @@ export function parseParsuNews(html: string): ParsuNewsItem[] {
       title,
       href: absoluteUrl(link[1] ?? "/"),
       publishedLabel: timeLabel ? stripTags(timeLabel[1] ?? "") : null,
-      image: image ? absoluteUrl(image[1] ?? "") : null,
+      image: newsImageFor(title, image ? absoluteUrl(image[1] ?? "") : null),
       excerpt,
     });
   }

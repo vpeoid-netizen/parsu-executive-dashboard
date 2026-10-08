@@ -55,4 +55,20 @@ describe("ParSU news parser", () => {
     ]);
     expect(merged.map((entry) => entry.title)).toEqual(["A", "B", "C"]);
   });
+
+  it("uses the selected background photo for named news stories", () => {
+    const html = `
+      <div class="article-header">
+        <h2><a href="/component/content/article/climate">𝐏𝐚𝐫𝐒𝐔 𝐁𝐫𝐢𝐧𝐠𝐬 𝐆𝐥𝐨𝐛𝐚𝐥 𝐄𝐱𝐩𝐞𝐫𝐭𝐢𝐬𝐞, 𝐋𝐨𝐜𝐚𝐥 𝐊𝐧𝐨𝐰𝐥𝐞𝐝𝐠𝐞 𝐓𝐨𝐠𝐞𝐭𝐡𝐞𝐫 𝐟𝐨𝐫 𝐂𝐥𝐢𝐦𝐚𝐭𝐞-𝐑𝐞𝐬𝐢𝐥𝐢𝐞𝐧𝐭 𝐅𝐮𝐭𝐮𝐫𝐞𝐬</a></h2>
+        <img src="/images/2026/iccr/ICCR%2010.jpg" />
+      </div>
+      <div class="article-header">
+        <h2><a href="/component/content/article/sikap">ParSU Receives Dual SIKAP Recognition, Scholar Delivers Doctorate-Level Testimonial</a></h2>
+        <img src="/images/2026/September/sikap%201.jpg" />
+      </div>
+    `;
+    const items = parseParsuNews(html);
+    expect(items[0]?.image).toBe("https://parsu.edu.ph/images/2026/iccr/ICCR%208.jpg");
+    expect(items[1]?.image).toBe("https://parsu.edu.ph/images/2026/September/sikap%202.jpg");
+  });
 });
