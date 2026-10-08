@@ -1,6 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ChartPanel } from "@/components/charts/chart-panel";
-import { HeroLaptop } from "@/components/dashboard/hero-laptop";
 import { LazyDonutChart, LazyTrendChart } from "@/components/charts/lazy-charts";
 import { PerformanceIndicatorCard } from "@/components/performance/indicator-card";
 import { ExecutiveIndicatorTabs } from "@/components/dashboard/executive-indicator-tabs";
@@ -101,45 +101,62 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <section className="relative min-h-[100svh] overflow-hidden bg-navy-950 text-cream">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(247,185,24,0.12),transparent_42%)]" aria-hidden="true" />
-        <div className="relative mx-auto flex min-h-[100svh] max-w-7xl flex-col px-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] pt-24 sm:px-6 lg:px-8">
-          <div className="flex flex-1 items-center justify-center">
-            <HeroLaptop />
+      <section className="relative overflow-hidden bg-navy-950 text-white">
+        <Image
+          src="/hero-campus.jpg"
+          alt=""
+          fill
+          priority
+          quality={70}
+          sizes="100vw"
+          className="object-cover object-center"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute inset-0 bg-[linear-gradient(105deg,rgba(7,31,70,0.86)_0%,rgba(7,31,70,0.62)_52%,rgba(7,31,70,0.48)_100%)]"
+          aria-hidden="true"
+        />
+        <div className="relative mx-auto grid max-w-7xl items-center gap-5 px-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] py-8 sm:gap-8 sm:px-6 sm:py-16 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-12 lg:px-8 lg:py-20">
+          <div className="order-1 mx-auto flex justify-center lg:order-2 lg:mx-0 lg:justify-end">
+            <Image
+              src="/parsu-logo.png"
+              alt="Partido State University official seal"
+              width={360}
+              height={360}
+              priority
+              sizes="(max-width: 640px) 112px, (max-width: 1024px) 160px, 256px"
+              className="h-24 w-24 object-contain drop-shadow-[0_12px_28px_rgba(7,31,70,0.45)] sm:h-36 sm:w-36 lg:h-56 lg:w-56"
+            />
           </div>
-          <div className="flex flex-col gap-6 pb-8 pt-6 sm:flex-row sm:items-end sm:justify-between sm:pb-10">
-            <div className="max-w-3xl">
-              <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-gold">Partido State University</p>
-              <h1 className="font-display text-[clamp(2.4rem,9vw,5.6rem)] font-semibold leading-[0.92] tracking-[-0.04em] text-cream">
-                Official
-                <br />
-                executive
-                <br />
-                figures.
-              </h1>
-              <p className="mt-4 max-w-md text-sm leading-6 text-cream/70">
-                Published institutional figures for campuses, academics, personnel, students, research, and performance.
-              </p>
-              {latestPublish ? (
-                <p className="mt-3 text-xs font-semibold text-cream/55">Last system update: {formatDate(latestPublish)}</p>
-              ) : null}
-            </div>
-            <div className="flex flex-col gap-3 sm:items-end">
-              <a href="#executive-indicators" className="inline-flex min-h-12 items-center justify-center rounded-full bg-cream px-6 text-[15px] font-semibold text-navy-950 hover:bg-gold">
+          <div className="order-2 min-w-0 text-center lg:order-1 lg:text-left">
+            <p className="mb-4 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-gold sm:text-xs">
+              <span className="hidden h-px w-8 bg-gold sm:inline-block" aria-hidden="true" />
+              Partido State University
+            </p>
+            <h1 className="font-display text-[clamp(1.85rem,8vw,4.6rem)] font-bold leading-[0.98] text-white">
+              Executive Dashboard
+            </h1>
+            <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-white/78 sm:text-[15px] lg:mx-0">
+              Published institutional figures for campuses, academics, personnel, students, research, and performance.
+            </p>
+            <div className="mt-6 flex w-full flex-col items-stretch gap-3 sm:mt-8 sm:w-auto sm:flex-row sm:items-center sm:justify-center lg:justify-start">
+              <a href="#executive-indicators" className="btn btn-gold min-h-12 w-full px-6 text-[15px] sm:w-auto sm:min-w-52">
                 Explore indicators
               </a>
-              <Link
-                href="/performance"
-                className="inline-flex min-h-12 items-center justify-center rounded-full border border-cream/30 px-6 text-[15px] font-semibold text-cream hover:bg-white/8"
-              >
+              <Link href="/performance" className="btn min-h-12 w-full border border-white/25 bg-white/5 px-6 text-[15px] text-white hover:bg-white/12 sm:w-auto sm:min-w-52">
                 University performance
               </Link>
+            </div>
+            <div className="mt-6 flex flex-wrap justify-center gap-2 text-xs font-semibold lg:justify-start">
+              <span className="rounded-full border border-white/15 bg-white/8 px-3 py-1.5 text-white/85">
+                Last system update: {latestPublish ? formatDate(latestPublish) : "Data not yet available"}
+              </span>
             </div>
           </div>
         </div>
       </section>
 
-      <PageShell className="!pt-8 sm:!pt-10 lg:!pt-12">
+      <PageShell>
         <section id="executive-indicators" className="mb-8 scroll-mt-24">
           <ExecutiveIndicatorTabs currentYear={homepageKpis.currentYear} current={homepageKpis.current} reference={homepageKpis.reference} />
         </section>

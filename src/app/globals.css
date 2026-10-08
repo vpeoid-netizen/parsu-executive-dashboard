@@ -14,8 +14,7 @@
   --warning-soft: #fbf6e8;
   --danger: #b91c1c;
   --danger-soft: #fdf2f2;
-  --cream: #f4f1e6;
-  --background: #f4f2ec;
+  --background: #f2f5f8;
   --foreground: #152033;
   --muted: #e8eef5;
   --muted-foreground: #55637a;
@@ -33,7 +32,6 @@
   --color-navy-900: var(--navy-900);
   --color-navy-800: var(--navy-800);
   --color-navy-700: var(--navy-700);
-  --color-cream: var(--cream);
   --color-gold: var(--gold);
   --color-gold-soft: var(--gold-soft);
   --color-gold-dark: var(--gold-dark);
@@ -51,7 +49,7 @@
   --font-sans: var(--font-plus-jakarta);
   --font-serif: var(--font-outfit);
   --font-display: var(--font-outfit);
-  --radius-card: 1.25rem;
+  --radius-card: 1rem;
 }
 
 * {
@@ -72,7 +70,9 @@ body {
 body {
   font-family: var(--font-plus-jakarta), "Plus Jakarta Sans", sans-serif;
   min-height: 100%;
-  background-image: linear-gradient(180deg, #f7f4ec 0%, var(--background) 22%);
+  background-image:
+    radial-gradient(1200px 420px at 50% -12%, color-mix(in srgb, var(--gold) 16%, transparent), transparent 58%),
+    linear-gradient(180deg, #f7f9fc 0%, var(--background) 28%);
 }
 
 button,
@@ -126,19 +126,19 @@ button:disabled {
     margin-inline: auto;
     width: 100%;
     max-width: 80rem;
-    padding: 5.75rem max(1rem, env(safe-area-inset-right)) 6.25rem max(1rem, env(safe-area-inset-left));
+    padding: 1rem max(1rem, env(safe-area-inset-right)) 6.25rem max(1rem, env(safe-area-inset-left));
     overflow-x: clip;
   }
 
   @media (min-width: 640px) {
     .page-shell {
-      padding: 6rem max(1rem, env(safe-area-inset-right)) 3rem max(1rem, env(safe-area-inset-left));
+      padding: 1.75rem max(1rem, env(safe-area-inset-right)) 3rem max(1rem, env(safe-area-inset-left));
     }
   }
 
   @media (min-width: 1024px) {
     .page-shell {
-      padding: 6.25rem max(1.5rem, env(safe-area-inset-right)) 4rem max(1.5rem, env(safe-area-inset-left));
+      padding: 2.25rem max(1.5rem, env(safe-area-inset-right)) 4rem max(1.5rem, env(safe-area-inset-left));
     }
   }
 
@@ -198,8 +198,8 @@ button:disabled {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border-radius: 999px;
-    padding: 0.5rem 1.15rem;
+    border-radius: 0.75rem;
+    padding: 0.5rem 1rem;
     font-size: 0.875rem;
     font-weight: 600;
     letter-spacing: 0.01em;
