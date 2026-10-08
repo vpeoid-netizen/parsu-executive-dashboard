@@ -1,6 +1,7 @@
 import { DeferredDashboardChat } from "@/components/chat/deferred-dashboard-chat";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { SiteMusic } from "@/components/layout/site-music";
 import { NewsScreensaver } from "@/components/news/news-screensaver";
 
 export const revalidate = 300;
@@ -17,6 +18,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       </main>
       <SiteFooter />
       <DeferredDashboardChat />
+      <SiteMusic />
       <NewsScreensaver />
     </div>
   );
