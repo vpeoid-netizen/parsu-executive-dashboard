@@ -117,7 +117,7 @@ export default async function DashboardPage() {
           className="absolute inset-0 bg-[linear-gradient(105deg,rgba(7,31,70,0.86)_0%,rgba(7,31,70,0.62)_52%,rgba(7,31,70,0.48)_100%)] max-md:bg-[linear-gradient(180deg,rgba(7,31,70,0.72)_0%,rgba(7,31,70,0.82)_42%,rgba(7,31,70,0.94)_100%)]"
           aria-hidden="true"
         />
-        <div className="relative flex min-h-[100svh] flex-1 flex-col px-[max(1.25rem,env(safe-area-inset-left))] pr-[max(1.25rem,env(safe-area-inset-right))] md:hidden">
+        <div className="relative z-10 flex min-h-[100svh] flex-1 flex-col px-[max(1.25rem,env(safe-area-inset-left))] pr-[max(1.25rem,env(safe-area-inset-right))] md:hidden">
           <div className="flex flex-1 flex-col items-center justify-center text-center">
             <Image
               src="/parsu-logo.png"

@@ -59,9 +59,11 @@ export function SiteHeader() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 border-b border-border/80 bg-white/88 shadow-[0_1px_0_rgba(247,185,24,0.85)] backdrop-blur-xl pt-[env(safe-area-inset-top)]",
+        "sticky top-0 z-50 pt-[env(safe-area-inset-top)]",
         isHome && "max-md:fixed max-md:inset-x-0 max-md:top-0",
-        homeSplash && "max-md:border-transparent max-md:bg-transparent max-md:shadow-none max-md:backdrop-blur-none",
+        homeSplash
+          ? "border-b border-transparent bg-transparent shadow-none md:border-border/80 md:bg-white/88 md:shadow-[0_1px_0_rgba(247,185,24,0.85)] md:backdrop-blur-xl"
+          : "border-b border-border/80 bg-white/88 shadow-[0_1px_0_rgba(247,185,24,0.85)] backdrop-blur-xl",
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-6 lg:px-8">
@@ -78,16 +80,16 @@ export function SiteHeader() {
           <span className="min-w-0 leading-tight">
             <span
               className={cn(
-                "font-display block text-[13px] font-semibold text-navy-900 sm:whitespace-nowrap sm:text-[15px]",
-                homeSplash && "max-md:text-white",
+                "font-display block text-[13px] font-semibold sm:whitespace-nowrap sm:text-[15px]",
+                homeSplash ? "text-white md:text-navy-900" : "text-navy-900",
               )}
             >
               Executive Dashboard
             </span>
             <span
               className={cn(
-                "block text-[11px] font-medium text-muted-foreground sm:whitespace-nowrap sm:text-xs",
-                homeSplash && "max-md:text-white/75",
+                "block text-[11px] font-medium sm:whitespace-nowrap sm:text-xs",
+                homeSplash ? "text-white/75 md:text-muted-foreground" : "text-muted-foreground",
               )}
             >
               Partido State University
@@ -132,8 +134,10 @@ export function SiteHeader() {
         <Link
           href="/search"
           className={cn(
-            "ml-auto inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-white text-navy-900 hover:bg-muted xl:ml-2",
-            homeSplash && "max-md:border-white/30 max-md:bg-white/10 max-md:text-white max-md:hover:bg-white/20",
+            "ml-auto inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg xl:ml-2",
+            homeSplash
+              ? "border border-white/30 bg-white/10 text-white hover:bg-white/20 md:border-border md:bg-white md:text-navy-900 md:hover:bg-muted"
+              : "border border-border bg-white text-navy-900 hover:bg-muted",
           )}
           aria-label="Search the dashboard"
         >
@@ -142,8 +146,10 @@ export function SiteHeader() {
         <button
           type="button"
           className={cn(
-            "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-white text-navy-900 hover:bg-muted xl:hidden",
-            homeSplash && "max-md:border-white/30 max-md:bg-white/10 max-md:text-white max-md:hover:bg-white/20",
+            "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg xl:hidden",
+            homeSplash
+              ? "border border-white/30 bg-white/10 text-white hover:bg-white/20 md:border-border md:bg-white md:text-navy-900 md:hover:bg-muted"
+              : "border border-border bg-white text-navy-900 hover:bg-muted",
           )}
           aria-expanded={open}
           aria-controls="mobile-nav"
