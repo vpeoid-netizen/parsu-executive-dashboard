@@ -18,7 +18,7 @@ export function SiteFooter() {
             />
             <div>
               <p className="font-display max-w-md text-lg font-semibold leading-snug">{UNIVERSITY_NAME}</p>
-              <p className="mt-1 text-sm text-white/65">Official executive analytics platform</p>
+              <p className="mt-1 text-sm text-white/65">Executive Analytics Platform</p>
             </div>
           </div>
           <div>
