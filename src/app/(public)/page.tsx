@@ -117,21 +117,31 @@ export default async function DashboardPage() {
           className="absolute inset-0 bg-[linear-gradient(105deg,rgba(7,31,70,0.86)_0%,rgba(7,31,70,0.62)_52%,rgba(7,31,70,0.48)_100%)] max-md:bg-[linear-gradient(180deg,rgba(7,31,70,0.72)_0%,rgba(7,31,70,0.82)_42%,rgba(7,31,70,0.94)_100%)]"
           aria-hidden="true"
         />
-        <div className="relative z-10 flex min-h-[100svh] flex-1 flex-col px-[max(1.25rem,env(safe-area-inset-left))] pr-[max(1.25rem,env(safe-area-inset-right))] md:hidden">
+        <div className="relative z-10 flex min-h-[100svh] flex-1 flex-col px-[max(1.25rem,env(safe-area-inset-left))] pr-[max(1.25rem,env(safe-area-inset-right))] pt-[max(4.75rem,calc(env(safe-area-inset-top)+3.5rem))] md:hidden">
           <div className="flex flex-1 flex-col items-center justify-center text-center">
             <Image
               src="/parsu-logo.png"
               alt="Partido State University official seal"
-              width={220}
-              height={220}
+              width={280}
+              height={280}
               priority
-              sizes="160px"
-              className="h-36 w-36 object-contain drop-shadow-[0_12px_28px_rgba(7,31,70,0.45)]"
+              sizes="200px"
+              className="h-44 w-44 object-contain drop-shadow-[0_12px_28px_rgba(7,31,70,0.45)]"
             />
-            <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.22em] text-gold">Partido State University</p>
-            <h1 className="font-display mt-3 max-w-[14ch] text-[clamp(2.35rem,12vw,3.5rem)] font-bold leading-[0.95] text-white">
-              Executive Dashboard
+            <h1 className="font-display mt-6 max-w-[16ch] text-white">
+              <span className="block text-[clamp(1.35rem,6.4vw,1.85rem)] font-semibold leading-[1.15] tracking-tight">
+                Partido State University
+              </span>
+              <span className="mt-2 block text-[clamp(2.15rem,11vw,3.15rem)] font-bold leading-[0.95]">
+                Executive Dashboard
+              </span>
             </h1>
+            <p className="mt-4 max-w-sm text-[15px] leading-6 text-white/80">
+              Published institutional figures for campuses, academics, personnel, students, research, and performance.
+            </p>
+            <p className="mt-5 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white/90">
+              Last system update: {latestPublish ? formatDate(latestPublish) : "Data not yet available"}
+            </p>
           </div>
           <a
             href="#dashboard-content"
