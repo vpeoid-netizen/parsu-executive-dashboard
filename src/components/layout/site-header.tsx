@@ -17,8 +17,9 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const [portrait, setPortrait] = useState(false);
   const isHome = pathname === "/";
-  const hideMobileHeader = isHome && !scrolled && !open;
+  const hideSplashHeader = isHome && portrait && !scrolled && !open;
 
   useEffect(() => {
     setOpen(false);
@@ -27,12 +28,20 @@ export function SiteHeader() {
   useEffect(() => {
     if (!isHome) {
       setScrolled(false);
+      setPortrait(false);
       return;
     }
+    const media = window.matchMedia("(orientation: portrait)");
+    const onOrientation = () => setPortrait(media.matches);
     const onScroll = () => setScrolled(window.scrollY > 12);
+    onOrientation();
     onScroll();
+    media.addEventListener("change", onOrientation);
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      media.removeEventListener("change", onOrientation);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, [isHome]);
 
   useEffect(() => {
@@ -58,18 +67,18 @@ export function SiteHeader() {
 
   return (
     <header
-      aria-hidden={hideMobileHeader ? true : undefined}
+      aria-hidden={hideSplashHeader ? true : undefined}
       className={cn(
         "sticky top-0 z-50 border-b border-border/80 bg-white/88 shadow-[0_1px_0_rgba(247,185,24,0.85)] backdrop-blur-xl pt-[env(safe-area-inset-top)]",
-        isHome && "max-md:fixed max-md:inset-x-0 max-md:top-0 motion-safe:max-md:transition-[transform,opacity] motion-safe:max-md:duration-300",
-        hideMobileHeader && "max-md:pointer-events-none max-md:invisible max-md:-translate-y-full max-md:opacity-0",
+        isHome && "portrait:fixed portrait:inset-x-0 portrait:top-0 motion-safe:portrait:transition-[transform,opacity] motion-safe:portrait:duration-300",
+        isHome && !scrolled && !open && "portrait:pointer-events-none portrait:invisible portrait:-translate-y-full portrait:opacity-0",
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-6 lg:px-8">
         <Link
           href="/"
           className="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg sm:gap-3 xl:flex-none xl:shrink-0"
-          tabIndex={hideMobileHeader ? -1 : undefined}
+          tabIndex={hideSplashHeader ? -1 : undefined}
         >
           <Image
             src="/parsu-logo.png"
@@ -128,14 +137,14 @@ export function SiteHeader() {
           href="/search"
           className="ml-auto inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-white text-navy-900 hover:bg-muted xl:ml-2"
           aria-label="Search the dashboard"
-          tabIndex={hideMobileHeader ? -1 : undefined}
+          tabIndex={hideSplashHeader ? -1 : undefined}
         >
           <Search className="h-5 w-5" />
         </Link>
         <button
           type="button"
           className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-white text-navy-900 hover:bg-muted xl:hidden"
-          tabIndex={hideMobileHeader ? -1 : undefined}
+          tabIndex={hideSplashHeader ? -1 : undefined}
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((value) => !value)}
