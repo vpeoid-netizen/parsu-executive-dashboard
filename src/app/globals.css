@@ -317,6 +317,26 @@ button:disabled {
   }
 }
 
+@keyframes news-slide {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.news-slide-progress {
+  animation: news-slide 15s linear forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .news-slide-progress {
+    animation: none;
+    transform: scaleX(1);
+  }
+}
+
 @keyframes fade-up {
   from {
     opacity: 0;
