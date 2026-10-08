@@ -162,7 +162,7 @@ export function StatusBadge({
     partial: "bg-gold-soft text-gold-dark",
   }[tone];
   return (
-    <span className={cn("inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide", classes)}>
+    <span className={cn("inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide", classes)}>
       {label}
     </span>
   );

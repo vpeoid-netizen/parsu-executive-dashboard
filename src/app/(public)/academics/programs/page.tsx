@@ -148,28 +148,26 @@ export default async function ProgramsPage() {
                 <ul className="mt-4 space-y-3">
                   {college.programs.map((item) => {
                     const indicators = programStatusIndicators(item);
+                    if (isRrpaOnly(item.copcNumber)) {
+                      indicators.push({ label: "RRPA only — no COPC yet", tone: "neutral" });
+                    }
                     const statusShownAsBadge = indicators.some(
                       (badge) => badge.label.toLowerCase() === (item.programStatus ?? "").toLowerCase(),
                     );
                     const statusDetail = item.accreditationLevel ?? (statusShownAsBadge ? null : item.programStatus);
                     return (
                       <li key={item.id} className="border-t border-border pt-3 first:border-0 first:pt-0">
-                        <div className="flex flex-wrap items-start justify-between gap-2">
-                          <p className="text-sm font-semibold leading-snug text-navy-900">
-                            {item.name}
-                            {item.phaseOut ? <span className="text-warning"> *</span> : null}
-                          </p>
-                          {indicators.length || isRrpaOnly(item.copcNumber) ? (
-                            <span className="flex flex-wrap justify-end gap-1.5">
-                              {indicators.map((badge) => (
-                                <StatusBadge key={badge.label} label={badge.label} tone={badge.tone} />
-                              ))}
-                              {isRrpaOnly(item.copcNumber) ? (
-                                <StatusBadge label="RRPA only — no COPC yet" tone="neutral" />
-                              ) : null}
-                            </span>
-                          ) : null}
-                        </div>
+                        <p className="text-sm font-semibold leading-snug text-navy-900">
+                          {item.name}
+                          {item.phaseOut ? <span className="text-warning"> *</span> : null}
+                        </p>
+                        {indicators.length ? (
+                          <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                            {indicators.map((badge) => (
+                              <StatusBadge key={badge.label} label={badge.label} tone={badge.tone} />
+                            ))}
+                          </div>
+                        ) : null}
                         <p className="mt-1 text-xs leading-5 text-muted-foreground">
                           {[item.programType, item.campus?.name, formatProgramAuthority(item.copcNumber)]
                             .filter(Boolean)
