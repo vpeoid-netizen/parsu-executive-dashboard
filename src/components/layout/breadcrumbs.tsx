@@ -7,7 +7,7 @@ export function Breadcrumbs({
   items: { href?: string; label: string }[];
 }) {
   return (
-    <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
+    <nav aria-label="Breadcrumb" className="mb-6 text-[13px] text-muted-foreground">
       <ol className="flex flex-wrap items-center gap-1">
         <li>
           <Link href="/" className="hover:text-navy-800">

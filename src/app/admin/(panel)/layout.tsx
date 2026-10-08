@@ -13,7 +13,7 @@ export default async function AdminPanelLayout({ children }: { children: React.R
   return (
     <div className="min-h-screen bg-background">
       <div className="flex min-h-screen">
-        <aside className="hidden w-64 shrink-0 border-r border-border bg-white p-4 md:block">
+        <aside className="hidden w-64 shrink-0 border-r border-border bg-white p-4 shadow-[inset_-1px_0_0_rgba(247,185,24,0.7)] md:block">
           <p className="font-display text-sm font-semibold tracking-tight text-navy-900">ParSU Admin</p>
           <p className="mt-1 text-xs text-muted-foreground">{admin.email}</p>
           <nav className="mt-6 space-y-0.5" aria-label="Administration">

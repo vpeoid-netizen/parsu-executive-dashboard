@@ -86,16 +86,16 @@ export function ClientDataTable({
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full text-left text-sm">
-          <thead className="bg-muted/70 text-navy-900">
+          <thead className="bg-navy-950 text-white">
             <tr>
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className={cn("px-4 py-3 font-medium", column.hideOnMobile && "hidden md:table-cell")}
+                  className={cn("px-4 py-3 text-xs font-semibold uppercase tracking-[0.04em]", column.hideOnMobile && "hidden md:table-cell")}
                 >
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1"
+                    className="inline-flex items-center gap-1 text-white"
                     onClick={() => {
                       if (sortKey === column.key) {
                         setSortDir((value) => (value === "asc" ? "desc" : "asc"));
@@ -120,7 +120,7 @@ export function ClientDataTable({
               </tr>
             ) : (
               current.map((row, index) => (
-                <tr key={index} className="border-t border-border">
+                <tr key={index} className="border-t border-border even:bg-muted/35 hover:bg-gold-soft/40">
                   {columns.map((column) => (
                     <td
                       key={column.key}

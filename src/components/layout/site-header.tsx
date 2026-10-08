@@ -13,9 +13,9 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-white">
-      <div className="mx-auto flex max-w-7xl items-center gap-2 px-3 py-3 sm:gap-3 sm:px-6 lg:px-8">
-        <Link href="/" className="flex min-w-0 flex-1 items-center gap-2 rounded-xl sm:gap-3 xl:flex-none xl:shrink-0">
+    <header className="sticky top-0 z-50 border-b border-border/80 bg-white/88 shadow-[0_1px_0_rgba(247,185,24,0.85)] backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-6 lg:px-8">
+        <Link href="/" className="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg sm:gap-3 xl:flex-none xl:shrink-0">
           <Image
             src="/parsu-logo.png"
             alt="Partido State University official seal"
@@ -26,7 +26,7 @@ export function SiteHeader() {
             priority
           />
           <span className="min-w-0 leading-tight">
-            <span className="font-display block text-[13px] font-semibold text-navy-900 sm:whitespace-nowrap sm:text-base">
+            <span className="font-display block text-[13px] font-semibold text-navy-900 sm:whitespace-nowrap sm:text-[15px]">
               Executive Dashboard
             </span>
             <span className="block text-[11px] font-medium text-muted-foreground sm:whitespace-nowrap sm:text-xs">
@@ -41,8 +41,8 @@ export function SiteHeader() {
                 ? pathname === "/"
                 : pathname === item.href || pathname.startsWith(`${item.href}/`);
             const linkClass = cn(
-              "inline-flex min-h-11 items-center gap-1 rounded-xl px-2.5 py-2.5 text-sm font-semibold text-navy-700 transition-colors hover:bg-muted hover:text-navy-900",
-              active && "bg-muted text-navy-900",
+              "relative inline-flex min-h-11 items-center gap-1 rounded-lg px-2.5 py-2 text-[13px] font-semibold text-navy-700 transition-colors hover:bg-muted hover:text-navy-900",
+              active && "bg-muted text-navy-900 after:absolute after:inset-x-2.5 after:bottom-1 after:h-0.5 after:rounded-full after:bg-gold",
             );
             if (!item.children) {
               return (
@@ -57,7 +57,7 @@ export function SiteHeader() {
                   {item.label}
                   <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
                 </Link>
-                <div className="invisible absolute left-0 top-full z-20 min-w-56 rounded-3xl border border-border bg-white py-2 opacity-0 shadow-[0_10px_24px_rgba(7,31,70,0.12)] transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
+                <div className="invisible absolute left-0 top-full z-20 min-w-56 rounded-xl border border-border bg-white py-2 opacity-0 shadow-[0_16px_40px_rgba(7,31,70,0.12)] transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
                   {item.children.map((child) => (
                     <Link
                       key={child.href}
@@ -74,14 +74,14 @@ export function SiteHeader() {
         </nav>
         <Link
           href="/search"
-          className="ml-auto inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border bg-white text-navy-900 shadow-[0_1px_2px_rgba(7,31,70,0.06)] hover:bg-muted xl:ml-2"
+          className="ml-auto inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-white text-navy-900 hover:bg-muted xl:ml-2"
           aria-label="Search the dashboard"
         >
           <Search className="h-5 w-5" />
         </Link>
         <button
           type="button"
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border bg-white text-navy-900 shadow-[0_1px_2px_rgba(7,31,70,0.06)] hover:bg-muted xl:hidden"
+          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-white text-navy-900 hover:bg-muted xl:hidden"
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((value) => !value)}
@@ -96,7 +96,7 @@ export function SiteHeader() {
             <div key={item.href} className="py-1">
               <Link
                 href={item.href}
-                className="block rounded-xl px-3 py-3 text-base font-semibold text-navy-900"
+                className="block rounded-lg px-3 py-3 text-base font-semibold text-navy-900"
                 onClick={() => setOpen(false)}
               >
                 {item.label}
@@ -105,7 +105,7 @@ export function SiteHeader() {
                 <Link
                   key={child.href}
                   href={child.href}
-                  className="block rounded-xl py-2 pl-6 text-sm text-muted-foreground"
+                  className="block rounded-lg py-2 pl-6 text-sm text-muted-foreground"
                   onClick={() => setOpen(false)}
                 >
                   {child.label}

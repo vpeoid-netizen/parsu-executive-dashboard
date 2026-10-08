@@ -113,10 +113,10 @@ export default async function DashboardPage() {
           aria-hidden="true"
         />
         <div
-          className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,31,70,0.38)_0%,rgba(7,31,70,0.22)_55%,rgba(7,31,70,0.28)_100%)]"
+          className="absolute inset-0 bg-[linear-gradient(105deg,rgba(7,31,70,0.86)_0%,rgba(7,31,70,0.62)_52%,rgba(7,31,70,0.48)_100%)]"
           aria-hidden="true"
         />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-6 px-4 py-10 sm:gap-8 sm:px-6 sm:py-14 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-12 lg:px-8 lg:py-16">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-6 px-4 py-12 sm:gap-8 sm:px-6 sm:py-16 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-12 lg:px-8 lg:py-20">
           <div className="order-1 mx-auto flex justify-center lg:order-2 lg:mx-0 lg:justify-end">
             <Image
               src="/parsu-logo.png"
@@ -125,26 +125,30 @@ export default async function DashboardPage() {
               height={360}
               priority
               sizes="(max-width: 640px) 112px, (max-width: 1024px) 160px, 256px"
-              className="h-28 w-28 object-contain drop-shadow-[0_12px_28px_rgba(7,31,70,0.45)] sm:h-40 sm:w-40 lg:h-64 lg:w-64"
+              className="h-24 w-24 object-contain drop-shadow-[0_12px_28px_rgba(7,31,70,0.45)] sm:h-36 sm:w-36 lg:h-56 lg:w-56"
             />
           </div>
           <div className="order-2 min-w-0 text-center lg:order-1 lg:text-left">
-            <p className="mb-5 text-xs font-bold uppercase tracking-[0.14em] text-gold sm:text-[13px]">
+            <p className="mb-4 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-gold sm:text-xs">
+              <span className="hidden h-px w-8 bg-gold sm:inline-block" aria-hidden="true" />
               Partido State University
             </p>
-            <h1 className="font-display text-[clamp(2.35rem,8vw,5.25rem)] font-bold leading-[0.95] text-white">
+            <h1 className="font-display text-[clamp(2.2rem,7vw,4.6rem)] font-bold leading-[0.96] text-white">
               Executive Dashboard
             </h1>
+            <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-white/78 sm:text-[15px] lg:mx-0">
+              Published institutional figures for campuses, academics, personnel, students, research, and performance.
+            </p>
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
-              <a href="#executive-indicators" className="btn btn-gold min-h-12 min-w-56 rounded-2xl px-7 text-[15px]">
+              <a href="#executive-indicators" className="btn btn-gold min-h-12 min-w-52 px-6 text-[15px]">
                 Explore indicators
               </a>
-              <Link href="/performance" className="btn min-h-12 min-w-56 rounded-2xl border border-white/30 bg-transparent px-7 text-[15px] text-white hover:bg-white/10">
+              <Link href="/performance" className="btn min-h-12 min-w-52 border border-white/25 bg-white/5 px-6 text-[15px] text-white hover:bg-white/12">
                 University performance
               </Link>
             </div>
             <div className="mt-6 flex flex-wrap justify-center gap-2 text-xs font-semibold lg:justify-start">
-              <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5">
+              <span className="rounded-full border border-white/15 bg-white/8 px-3 py-1.5 text-white/85">
                 Last system update: {latestPublish ? formatDate(latestPublish) : "Data not yet available"}
               </span>
             </div>

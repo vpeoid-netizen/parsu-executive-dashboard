@@ -56,45 +56,37 @@ export function KpiCard({
   const display =
     format === "percent" ? formatPercent(value) : formatNumber(value, 0);
   const inner = (
-    <article className="card card-interactive relative flex h-full flex-col overflow-hidden p-5 sm:p-6">
-      {Icon ? (
-        <Icon
-          className="pointer-events-none absolute -bottom-4 -right-3 h-32 w-32 text-navy-900/[0.08]"
-          strokeWidth={1.1}
-          aria-hidden="true"
-        />
-      ) : null}
-      {group ? (
-        <p className="section-kicker relative">
-          <ParSuText text={group} />
-        </p>
-      ) : null}
-      <h3 className={cn("relative text-sm font-medium text-muted-foreground", group && "mt-3")}>{title}</h3>
-      <div className="relative z-10 mt-4 flex min-w-0 items-end gap-3">
-        <p
-          className={cn(
-            "min-w-0 flex-1 font-display font-bold tabular-nums tracking-tight text-navy-900",
-            emphasizeValue ? "text-[clamp(2.15rem,4.6vw,3.35rem)] leading-none" : "text-3xl",
-          )}
-        >
-          {display}
-        </p>
+    <article className="card card-interactive relative flex h-full flex-col overflow-hidden border-l-[3px] border-l-gold p-5 sm:p-6">
+      <div className="relative flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          {group ? (
+            <p className="section-kicker">
+              <ParSuText text={group} />
+            </p>
+          ) : null}
+          <h3 className={cn("text-sm font-medium leading-5 text-muted-foreground", group && "mt-2")}>{title}</h3>
+        </div>
         {Icon ? (
           <span
-            className={cn(
-              "mb-0.5 flex shrink-0 items-center justify-center rounded-2xl bg-gold-soft text-navy-900 ring-1 ring-[rgba(247,185,24,0.4)]",
-              emphasizeValue ? "h-12 w-12" : "h-14 w-14",
-            )}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gold-soft text-navy-900"
             aria-hidden="true"
           >
-            <Icon className={emphasizeValue ? "h-6 w-6" : "h-7 w-7"} strokeWidth={1.7} />
+            <Icon className="h-5 w-5" strokeWidth={1.75} />
           </span>
         ) : null}
       </div>
-      {period ? <p className="relative mt-2 text-xs leading-5 text-muted-foreground">{period}</p> : null}
-      {note ? <p className="relative mt-1 text-xs text-muted-foreground">{note}</p> : null}
+      <p
+        className={cn(
+          "mt-5 font-display font-semibold tabular-nums tracking-tight text-navy-900",
+          emphasizeValue ? "text-[clamp(2rem,4vw,2.75rem)] leading-none" : "text-3xl leading-none",
+        )}
+      >
+        {display}
+      </p>
+      {period ? <p className="mt-2 text-xs leading-5 text-muted-foreground">{period}</p> : null}
+      {note ? <p className="mt-1 text-xs text-muted-foreground">{note}</p> : null}
       {href ? (
-        <span className="relative mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-navy-900 px-4 text-sm font-semibold text-white transition-colors group-hover:bg-navy-800">
+        <span className="mt-5 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-navy-800 transition-colors group-hover:text-navy-950">
           View details <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
         </span>
       ) : null}
@@ -102,7 +94,7 @@ export function KpiCard({
   );
   if (!href) return inner;
   return (
-    <Link href={href} className="group block h-full rounded-3xl focus-visible:outline-none">
+    <Link href={href} className="group block h-full rounded-[var(--radius-card)] focus-visible:outline-none">
       {inner}
     </Link>
   );
@@ -121,26 +113,11 @@ export function NavCard({
 }) {
   return (
     <Link href={href} className="card card-interactive group flex h-full flex-col overflow-hidden">
-      <div
-        className={cn(
-          "relative h-24 overflow-hidden",
-          accent === "gold"
-            ? "bg-[linear-gradient(145deg,#FFF6D6_0%,#F7B918_120%)]"
-            : "bg-[linear-gradient(145deg,#E8F0FA_0%,#A8C0DC_100%)]",
-        )}
-      >
-        <span
-          className={cn(
-            "illust-blob -right-4 -top-6 h-28 w-28",
-            accent === "gold" ? "bg-[rgba(247,185,24,0.35)]" : "bg-[rgba(48,78,112,0.2)]",
-          )}
-          aria-hidden="true"
-        />
-      </div>
+      <div className={cn("h-1.5", accent === "gold" ? "bg-gold" : "bg-navy-900")} />
       <div className="flex flex-1 flex-col p-5 sm:p-6">
-        <h2 className="font-display text-[1.15rem] font-semibold leading-snug text-navy-900">{title}</h2>
+        <h2 className="font-display text-[1.1rem] font-semibold leading-snug text-navy-900">{title}</h2>
         <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">{description}</p>
-        <span className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-navy-900 px-4 text-sm font-semibold text-white transition-colors group-hover:bg-navy-800">
+        <span className="mt-5 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-navy-800 transition-colors group-hover:text-navy-950">
           Open <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
         </span>
       </div>
@@ -204,8 +181,9 @@ export function ModuleHeader({
 }) {
   return (
     <header className="mb-8">
-      <h1 className="font-display text-2xl font-bold tracking-tight text-navy-900 md:text-3xl">{title}</h1>
-      {description ? <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p> : null}
+      <h1 className="font-display text-2xl font-bold tracking-tight text-navy-900 md:text-[2rem]">{title}</h1>
+      <span className="accent-rule mt-3" aria-hidden="true" />
+      {description ? <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p> : null}
       {(period || asOf) && (
         <div className="mt-4 flex flex-wrap gap-2 text-xs text-navy-800">
           {period ? (
@@ -230,8 +208,11 @@ export function SectionTitle({
   action?: { href: string; label: string };
 }) {
   return (
-    <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-      <h2 className="font-display text-lg font-bold tracking-tight text-navy-900">{title}</h2>
+    <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <h2 className="font-display text-lg font-bold tracking-tight text-navy-900">{title}</h2>
+        <span className="accent-rule mt-2" aria-hidden="true" />
+      </div>
       {action ? (
         <Link href={action.href} className="text-sm font-semibold text-navy-800">
           {action.label}

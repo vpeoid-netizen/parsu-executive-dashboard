@@ -79,20 +79,21 @@ export function ExecutiveIndicatorTabs({
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="font-display text-lg font-bold tracking-tight text-navy-900">Executive Indicators</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <span className="accent-rule mt-2" aria-hidden="true" />
+          <p className="mt-2 text-sm text-muted-foreground">
             {tab === "current"
               ? `FY ${currentYear} as of June 30, 2026. Earlier years are in Reference.`
               : "Complete-year figures for comparison. They are not the current FY 2026 values."}
           </p>
         </div>
-        <div role="tablist" aria-label="Executive indicator period" className="flex flex-wrap gap-2">
+        <div role="tablist" aria-label="Executive indicator period" className="inline-flex flex-wrap rounded-xl bg-muted p-1">
           <button
             type="button"
             role="tab"
             aria-selected={tab === "current"}
             className={cn(
-              "min-h-11 rounded-full px-4 text-sm font-semibold",
-              tab === "current" ? "bg-navy-900 text-white" : "bg-white text-navy-800 ring-1 ring-border hover:bg-muted",
+              "min-h-10 rounded-lg px-4 text-sm font-semibold transition-colors",
+              tab === "current" ? "bg-navy-900 text-white shadow-sm" : "text-navy-800 hover:bg-white/70",
             )}
             onClick={() => setTab("current")}
           >
@@ -103,8 +104,8 @@ export function ExecutiveIndicatorTabs({
             role="tab"
             aria-selected={tab === "reference"}
             className={cn(
-              "min-h-11 rounded-full px-4 text-sm font-semibold",
-              tab === "reference" ? "bg-navy-900 text-white" : "bg-white text-navy-800 ring-1 ring-border hover:bg-muted",
+              "min-h-10 rounded-lg px-4 text-sm font-semibold transition-colors",
+              tab === "reference" ? "bg-navy-900 text-white shadow-sm" : "text-navy-800 hover:bg-white/70",
             )}
             onClick={() => setTab("reference")}
           >

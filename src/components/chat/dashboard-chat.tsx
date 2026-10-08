@@ -141,10 +141,10 @@ export function DashboardChat() {
           role="dialog"
           aria-modal="false"
           aria-labelledby={titleId}
-          className="animate-fade-up pointer-events-auto flex w-[min(24rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-3xl border border-border bg-white shadow-[0_10px_28px_rgba(7,31,70,0.18)]"
+          className="animate-fade-up pointer-events-auto flex w-[min(24rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-[0_18px_40px_rgba(7,31,70,0.16)]"
           style={{ maxHeight: "min(32rem, calc(100dvh - 8rem))" }}
         >
-          <header className="flex items-start gap-3 bg-navy-950 px-4 py-3 text-white">
+          <header className="flex items-start gap-3 border-b-2 border-gold bg-navy-950 px-4 py-3 text-white">
             <AssistantPortrait className="mt-0.5 h-11 w-11 shrink-0 rounded-2xl ring-1 ring-gold" sizes="44px" />
             <div className="min-w-0 flex-1">
               <h2 id={titleId} className="font-display text-base font-semibold tracking-tight">

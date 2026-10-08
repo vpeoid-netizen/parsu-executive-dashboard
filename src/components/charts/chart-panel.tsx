@@ -16,7 +16,8 @@ export function ChartPanel({
       <div className="mb-4 flex min-h-[4.75rem] flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="font-display text-lg font-semibold tracking-tight text-navy-900">{title}</h2>
-          {period ? <p className="mt-1 text-sm text-muted-foreground">{period}</p> : null}
+          <span className="accent-rule mt-2" aria-hidden="true" />
+          {period ? <p className="mt-2 text-sm text-muted-foreground">{period}</p> : null}
         </div>
         {action ? (
           <Link href={action.href} className="shrink-0 text-sm font-semibold text-navy-800">

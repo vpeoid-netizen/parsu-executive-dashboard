@@ -9,7 +9,9 @@ export default function AdminLoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <form action={action} className="card w-full max-w-md p-8">
+      <form action={action} className="card w-full max-w-md overflow-hidden">
+        <div className="h-1.5 bg-gold" />
+        <div className="p-8">
         <Image
           src="/parsu-logo.png"
           alt="Partido State University official seal"
@@ -48,6 +50,7 @@ export default function AdminLoginPage() {
         <button disabled={pending} className="btn btn-gold mt-6 w-full disabled:opacity-60">
           {pending ? "Signing in…" : "Sign in"}
         </button>
+        </div>
       </form>
     </div>
   );
