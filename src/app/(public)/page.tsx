@@ -102,7 +102,7 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-navy-950 text-white portrait:flex portrait:min-h-[100svh] portrait:flex-col">
+      <section className="relative overflow-hidden bg-navy-950 text-white portrait:flex portrait:h-[100svh] portrait:min-h-[100svh] portrait:flex-col">
         <Image
           src="/hero-campus.jpg"
           alt=""
@@ -114,7 +114,7 @@ export default async function DashboardPage() {
           aria-hidden="true"
         />
         <div className="absolute inset-0 bg-navy-950 landscape:hidden" aria-hidden="true" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[46%] landscape:hidden" aria-hidden="true">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] landscape:hidden" aria-hidden="true">
           <Image
             src="/hero-admin-silhouette.png"
             alt=""
@@ -128,32 +128,33 @@ export default async function DashboardPage() {
           className="absolute inset-0 hidden bg-[linear-gradient(105deg,rgba(7,31,70,0.86)_0%,rgba(7,31,70,0.62)_52%,rgba(7,31,70,0.48)_100%)] landscape:block"
           aria-hidden="true"
         />
-        <div className="relative z-10 flex min-h-[100svh] flex-1 flex-col px-[max(1.25rem,env(safe-area-inset-left))] pr-[max(1.25rem,env(safe-area-inset-right))] pt-[max(1.75rem,env(safe-area-inset-top))] landscape:hidden">
-          <div className="flex flex-1 flex-col items-center text-center">
+        <div className="relative z-10 flex h-full min-h-[100svh] flex-1 flex-col px-[max(1.25rem,env(safe-area-inset-left))] pr-[max(1.25rem,env(safe-area-inset-right))] pt-[max(1.25rem,env(safe-area-inset-top))] landscape:hidden">
+          <div className="flex flex-1 flex-col items-center justify-center text-center">
             <Image
               src="/parsu-logo.png"
               alt="Partido State University official seal"
-              width={280}
-              height={280}
+              width={320}
+              height={320}
               priority
-              sizes="(min-width: 1024px) 176px, (min-width: 640px) 144px, 112px"
-              className="h-28 w-28 object-contain drop-shadow-[0_12px_28px_rgba(7,31,70,0.45)] sm:h-36 sm:w-36 lg:h-44 lg:w-44"
+              sizes="(min-width: 1024px) 220px, (min-width: 640px) 168px, 128px"
+              className="h-[clamp(6.5rem,22vmin,13rem)] w-[clamp(6.5rem,22vmin,13rem)] object-contain drop-shadow-[0_12px_28px_rgba(7,31,70,0.45)]"
             />
-            <p className="mt-5 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-gold sm:text-xs">
+            <p className="mt-[clamp(1rem,2.5vh,1.75rem)] inline-flex items-center gap-2 text-[clamp(0.7rem,1.7vmin,0.9rem)] font-bold uppercase tracking-[0.18em] text-gold">
               <span className="h-px w-8 bg-gold" aria-hidden="true" />
               Partido State University
               <span className="h-px w-8 bg-gold" aria-hidden="true" />
             </p>
-            <h1 className="font-display mt-3 max-w-[12ch] text-[clamp(2.1rem,8vw,3.6rem)] font-bold leading-[0.98] text-white">
-              Executive Dashboard
+            <h1 className="font-display mt-[clamp(0.5rem,1.6vh,1rem)] w-full text-[clamp(2.6rem,16vmin,7rem)] font-bold leading-[0.9] tracking-tight text-white">
+              <span className="block">Executive</span>
+              <span className="block">Dashboard</span>
             </h1>
-            <p className="mt-5 rounded-full border border-white/15 bg-white/8 px-3 py-1.5 text-xs font-semibold text-white/85">
+            <p className="mt-[clamp(1rem,2.4vh,1.75rem)] rounded-full border border-white/15 bg-white/8 px-3 py-1.5 text-[clamp(0.7rem,1.5vmin,0.85rem)] font-semibold text-white/85">
               Last system update: {latestPublish ? formatDate(latestPublish) : "Data not yet available"}
             </p>
           </div>
           <a
             href="#dashboard-content"
-            className="relative z-10 mb-[max(5.25rem,calc(env(safe-area-inset-bottom)+4.5rem))] inline-flex min-h-12 flex-col items-center justify-center gap-1 text-sm font-semibold text-white/90"
+            className="relative z-10 mb-[max(1.5rem,env(safe-area-inset-bottom))] inline-flex min-h-12 flex-col items-center justify-center gap-1 pb-16 text-sm font-semibold text-white/90 sm:pb-0"
           >
             Scroll down
             <ChevronDown className="h-5 w-5 motion-safe:animate-bounce" aria-hidden="true" />
