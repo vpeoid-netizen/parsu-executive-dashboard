@@ -16,10 +16,24 @@ export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const isHome = pathname === "/";
+  const homeSplash = isHome && !scrolled && !open;
 
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (!isHome) {
+      setScrolled(false);
+      return;
+    }
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isHome]);
 
   useEffect(() => {
     const match = publicNavigation.find(
@@ -43,7 +57,13 @@ export function SiteHeader() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/80 bg-white/88 shadow-[0_1px_0_rgba(247,185,24,0.85)] backdrop-blur-xl pt-[env(safe-area-inset-top)]">
+    <header
+      className={cn(
+        "sticky top-0 z-50 border-b border-border/80 bg-white/88 shadow-[0_1px_0_rgba(247,185,24,0.85)] backdrop-blur-xl pt-[env(safe-area-inset-top)]",
+        isHome && "max-md:fixed max-md:inset-x-0 max-md:top-0",
+        homeSplash && "max-md:border-transparent max-md:bg-transparent max-md:shadow-none max-md:backdrop-blur-none",
+      )}
+    >
       <div className="mx-auto flex max-w-7xl items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-6 lg:px-8">
         <Link href="/" className="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg sm:gap-3 xl:flex-none xl:shrink-0">
           <Image
@@ -56,10 +76,20 @@ export function SiteHeader() {
             priority
           />
           <span className="min-w-0 leading-tight">
-            <span className="font-display block text-[13px] font-semibold text-navy-900 sm:whitespace-nowrap sm:text-[15px]">
+            <span
+              className={cn(
+                "font-display block text-[13px] font-semibold text-navy-900 sm:whitespace-nowrap sm:text-[15px]",
+                homeSplash && "max-md:text-white",
+              )}
+            >
               Executive Dashboard
             </span>
-            <span className="block text-[11px] font-medium text-muted-foreground sm:whitespace-nowrap sm:text-xs">
+            <span
+              className={cn(
+                "block text-[11px] font-medium text-muted-foreground sm:whitespace-nowrap sm:text-xs",
+                homeSplash && "max-md:text-white/75",
+              )}
+            >
               Partido State University
             </span>
           </span>
@@ -101,14 +131,20 @@ export function SiteHeader() {
         </nav>
         <Link
           href="/search"
-          className="ml-auto inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-white text-navy-900 hover:bg-muted xl:ml-2"
+          className={cn(
+            "ml-auto inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-white text-navy-900 hover:bg-muted xl:ml-2",
+            homeSplash && "max-md:border-white/30 max-md:bg-white/10 max-md:text-white max-md:hover:bg-white/20",
+          )}
           aria-label="Search the dashboard"
         >
           <Search className="h-5 w-5" />
         </Link>
         <button
           type="button"
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-white text-navy-900 hover:bg-muted xl:hidden"
+          className={cn(
+            "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-white text-navy-900 hover:bg-muted xl:hidden",
+            homeSplash && "max-md:border-white/30 max-md:bg-white/10 max-md:text-white max-md:hover:bg-white/20",
+          )}
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((value) => !value)}

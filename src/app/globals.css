@@ -327,7 +327,7 @@ button:disabled {
 }
 
 .news-slide-progress {
-  animation: news-slide 15s linear forwards;
+  animation: news-slide 30s linear forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {

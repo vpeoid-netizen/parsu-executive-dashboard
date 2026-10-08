@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseParsuNews } from "../src/lib/parsu-news";
+import { mergeParsuNews, parseParsuNews } from "../src/lib/parsu-news";
 
 const SAMPLE = `
 <div class="article-header">
@@ -39,5 +39,20 @@ describe("ParSU news parser", () => {
     expect(items[0]?.excerpt).toMatch(/International Conference/);
     expect(items[1]?.title).toBe("Second Story Title Here For Excerpt");
     expect(items[1]?.excerpt).toMatch(/SIKAP Recognition Rites/);
+  });
+
+  it("keeps unique articles when listing pages overlap", () => {
+    const item = (title: string, slug: string, query = "") => ({
+      title,
+      href: `https://parsu.edu.ph/component/content/article/${slug}${query}`,
+      publishedLabel: null,
+      image: null,
+      excerpt: null,
+    });
+    const merged = mergeParsuNews([
+      [item("A", "a"), item("B", "b")],
+      [item("B duplicate", "b", "?Itemid=0"), item("C", "c")],
+    ]);
+    expect(merged.map((entry) => entry.title)).toEqual(["A", "B", "C"]);
   });
 });

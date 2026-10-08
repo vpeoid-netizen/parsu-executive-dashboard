@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 import { ChartPanel } from "@/components/charts/chart-panel";
 import { LazyDonutChart, LazyTrendChart } from "@/components/charts/lazy-charts";
 import { PerformanceIndicatorCard } from "@/components/performance/indicator-card";
@@ -101,7 +102,7 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-navy-950 text-white">
+      <section className="relative overflow-hidden bg-navy-950 text-white max-md:flex max-md:min-h-[100svh] max-md:flex-col">
         <Image
           src="/hero-campus.jpg"
           alt=""
@@ -113,10 +114,34 @@ export default async function DashboardPage() {
           aria-hidden="true"
         />
         <div
-          className="absolute inset-0 bg-[linear-gradient(105deg,rgba(7,31,70,0.86)_0%,rgba(7,31,70,0.62)_52%,rgba(7,31,70,0.48)_100%)]"
+          className="absolute inset-0 bg-[linear-gradient(105deg,rgba(7,31,70,0.86)_0%,rgba(7,31,70,0.62)_52%,rgba(7,31,70,0.48)_100%)] max-md:bg-[linear-gradient(180deg,rgba(7,31,70,0.72)_0%,rgba(7,31,70,0.82)_42%,rgba(7,31,70,0.94)_100%)]"
           aria-hidden="true"
         />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-5 px-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] py-8 sm:gap-8 sm:px-6 sm:py-16 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-12 lg:px-8 lg:py-20">
+        <div className="relative flex min-h-[100svh] flex-1 flex-col px-[max(1.25rem,env(safe-area-inset-left))] pr-[max(1.25rem,env(safe-area-inset-right))] md:hidden">
+          <div className="flex flex-1 flex-col items-center justify-center text-center">
+            <Image
+              src="/parsu-logo.png"
+              alt="Partido State University official seal"
+              width={220}
+              height={220}
+              priority
+              sizes="160px"
+              className="h-36 w-36 object-contain drop-shadow-[0_12px_28px_rgba(7,31,70,0.45)]"
+            />
+            <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.22em] text-gold">Partido State University</p>
+            <h1 className="font-display mt-3 max-w-[14ch] text-[clamp(2.35rem,12vw,3.5rem)] font-bold leading-[0.95] text-white">
+              Executive Dashboard
+            </h1>
+          </div>
+          <a
+            href="#dashboard-content"
+            className="mb-[max(5.5rem,calc(env(safe-area-inset-bottom)+4.75rem))] inline-flex min-h-12 flex-col items-center justify-center gap-1 text-sm font-semibold text-white/90"
+          >
+            Scroll down
+            <ChevronDown className="h-5 w-5 motion-safe:animate-bounce" aria-hidden="true" />
+          </a>
+        </div>
+        <div className="relative mx-auto hidden max-w-7xl items-center gap-5 px-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] py-8 sm:gap-8 sm:px-6 sm:py-16 md:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-12 lg:px-8 lg:py-20">
           <div className="order-1 mx-auto flex justify-center lg:order-2 lg:mx-0 lg:justify-end">
             <Image
               src="/parsu-logo.png"
@@ -124,8 +149,8 @@ export default async function DashboardPage() {
               width={360}
               height={360}
               priority
-              sizes="(max-width: 640px) 112px, (max-width: 1024px) 160px, 256px"
-              className="h-24 w-24 object-contain drop-shadow-[0_12px_28px_rgba(7,31,70,0.45)] sm:h-36 sm:w-36 lg:h-56 lg:w-56"
+              sizes="(max-width: 1024px) 160px, 256px"
+              className="h-36 w-36 object-contain drop-shadow-[0_12px_28px_rgba(7,31,70,0.45)] lg:h-56 lg:w-56"
             />
           </div>
           <div className="order-2 min-w-0 text-center lg:order-1 lg:text-left">
@@ -156,6 +181,7 @@ export default async function DashboardPage() {
         </div>
       </section>
 
+      <div id="dashboard-content" className="scroll-mt-[calc(3.75rem+env(safe-area-inset-top))]">
       <PageShell>
         <section id="executive-indicators" className="mb-8 scroll-mt-24">
           <ExecutiveIndicatorTabs currentYear={homepageKpis.currentYear} current={homepageKpis.current} reference={homepageKpis.reference} />
@@ -418,6 +444,7 @@ export default async function DashboardPage() {
           </div>
         </section>
       </PageShell>
+      </div>
     </>
   );
 }

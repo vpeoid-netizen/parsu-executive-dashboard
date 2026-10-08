@@ -4,8 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import type { ParsuNewsItem } from "@/lib/parsu-news";
 
-const IDLE_MS = 15_000;
-const SLIDE_MS = 15_000;
+const IDLE_MS = 60_000;
+const SLIDE_MS = 30_000;
 
 export function NewsScreensaver() {
   const [items, setItems] = useState<ParsuNewsItem[]>([]);

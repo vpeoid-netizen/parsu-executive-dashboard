@@ -6,8 +6,12 @@ export type ParsuNewsItem = {
   excerpt: string | null;
 };
 
-const NEWS_URL = "https://parsu.edu.ph/component/content/category/news";
 const SITE = "https://parsu.edu.ph";
+export const NEWS_URLS = [
+  `${SITE}/component/content/category/news`,
+  `${SITE}/component/content/category/news?Itemid=0&start=10`,
+  `${SITE}/component/content/category/news?Itemid=0&start=20`,
+];
 
 function decodeEntities(text: string) {
   return text
@@ -63,15 +67,45 @@ export function parseParsuNews(html: string): ParsuNewsItem[] {
   return items;
 }
 
+function newsKey(item: ParsuNewsItem) {
+  try {
+    return new URL(item.href).pathname;
+  } catch {
+    return item.href;
+  }
+}
+
+export function mergeParsuNews(pages: ParsuNewsItem[][]) {
+  const seen = new Set<string>();
+  const items: ParsuNewsItem[] = [];
+  for (const page of pages) {
+    for (const item of page) {
+      const key = newsKey(item);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      items.push(item);
+    }
+  }
+  return items;
+}
+
+async function fetchNewsPage(url: string): Promise<ParsuNewsItem[]> {
+  try {
+    const response = await fetch(url, {
+      headers: { Accept: "text/html", "User-Agent": "ParSU-Executive-Dashboard/1.0" },
+      next: { revalidate: 300 },
+      signal: AbortSignal.timeout(12_000),
+    });
+    if (!response.ok) return [];
+    return parseParsuNews(await response.text());
+  } catch {
+    return [];
+  }
+}
+
 export async function fetchParsuNews(): Promise<ParsuNewsItem[]> {
-  const response = await fetch(NEWS_URL, {
-    headers: { Accept: "text/html", "User-Agent": "ParSU-Executive-Dashboard/1.0" },
-    next: { revalidate: 300 },
-    signal: AbortSignal.timeout(12_000),
-  });
-  if (!response.ok) return [];
-  const html = await response.text();
-  return parseParsuNews(html);
+  const pages = await Promise.all(NEWS_URLS.map(fetchNewsPage));
+  return mergeParsuNews(pages);
 }
 
 export function newsImageProxyPath(imageUrl: string) {
