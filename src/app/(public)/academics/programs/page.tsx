@@ -6,7 +6,7 @@ import { CollegeAbbrevKey } from "@/components/ui/college-abbrev-key";
 import { EmptyState, KpiCard, ModuleHeader, StatusBadge } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
 import { formatDate, formatNumber } from "@/lib/format";
-import { formatProgramAuthority, programStatusIndicators } from "@/lib/program-coverage";
+import { formatProgramAuthority, hasCopcNumber, isRrpaOnly, programStatusIndicators } from "@/lib/program-coverage";
 import { collegeAbbrev, collegeChartPoint, collegeFullName, collegeSortIndex } from "@/lib/import/normalize";
 
 export const dynamic = "force-static";
@@ -75,11 +75,11 @@ export default async function ProgramsPage() {
       <Breadcrumbs items={[{ label: "Academic Programs" }]} />
       <ModuleHeader
         title="Academic Programs"
-        description="Program inventory grouped by college, with COPC coverage and accreditation status."
+        description="Program inventory grouped by college, with COPC coverage and accreditation status. Bachelor of Public Administration in the College of Arts and Humanities has received RRPA only and has not yet received COPC."
       />
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard title="Total programs" value={programs.length} />
-        <KpiCard title="With COPC/RRPA" value={programs.filter((item) => item.copcNumber).length} />
+        <KpiCard title="With COPC" value={programs.filter((item) => hasCopcNumber(item.copcNumber)).length} />
         <KpiCard title="Accreditable" value={programs.filter((item) => item.accreditable).length} />
         <KpiCard title="Accredited" value={programs.filter((item) => item.accredited).length} />
       </div>
@@ -159,11 +159,14 @@ export default async function ProgramsPage() {
                             {item.name}
                             {item.phaseOut ? <span className="text-warning"> *</span> : null}
                           </p>
-                          {indicators.length ? (
+                          {indicators.length || isRrpaOnly(item.copcNumber) ? (
                             <span className="flex flex-wrap justify-end gap-1.5">
                               {indicators.map((badge) => (
                                 <StatusBadge key={badge.label} label={badge.label} tone={badge.tone} />
                               ))}
+                              {isRrpaOnly(item.copcNumber) ? (
+                                <StatusBadge label="RRPA only — no COPC yet" tone="neutral" />
+                              ) : null}
                             </span>
                           ) : null}
                         </div>
@@ -172,6 +175,9 @@ export default async function ProgramsPage() {
                             .filter(Boolean)
                             .join(" · ")}
                         </p>
+                        {isRrpaOnly(item.copcNumber) ? (
+                          <p className="mt-1 text-xs leading-5 text-navy-800">Has not yet received COPC.</p>
+                        ) : null}
                         {statusDetail || item.validityRaw ? (
                           <p className="mt-1 text-xs leading-5 text-navy-800">
                             {[statusDetail, item.validityRaw].filter(Boolean).join(" · ")}

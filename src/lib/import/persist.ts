@@ -23,6 +23,7 @@ import {
 } from "@/lib/about/content";
 import officialsSeed from "@/lib/about/officials.json";
 import { awardFiscalYear, enrollmentPeriodFiscalYear, EXECUTIVE_CURRENT_YEAR, EXECUTIVE_KPI_YEARS } from "@/lib/kpi-years";
+import { hasCopcNumber } from "@/lib/program-coverage";
 
 const METRICS = [
   { code: "CAMPUSES_TOTAL", title: "Number of Campuses", shortTitle: "Number of Campuses", unit: "count", format: "integer", groupName: "About ParSU", detailsHref: "/about/campuses", displayOrder: 1, homepageVisible: true },
@@ -560,9 +561,9 @@ export async function rebuildMetrics(status: DatasetStatus = "PUBLISHED") {
     sourceNote: "Current published academic program snapshot",
   });
   await observe("PROGRAMS_WITH_COPC", {
-    value: programs.filter((item) => item.copcNumber).length,
+    value: programs.filter((item) => hasCopcNumber(item.copcNumber)).length,
     periodId: currentPeriod.id,
-    sourceNote: "Programs with a COPC or equivalent authority reference",
+    sourceNote: "Programs with COPC. RRPA-only authority is not counted as COPC.",
   });
   await observe("ACCREDITABLE_PROGRAMS", {
     value: programs.filter((item) => item.accreditable).length,

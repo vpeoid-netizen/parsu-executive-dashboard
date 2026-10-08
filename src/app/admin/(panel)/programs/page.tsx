@@ -14,7 +14,7 @@ export default async function ProgramsAdminPage() {
     <div className="space-y-6">
       <AdminModuleIntro
         title="Academic programs"
-        description="Edit program names, campuses, COPC, and accreditation. Saving publishes to Academics and updates the program-count KPI."
+        description="Edit program names, campuses, COPC or RRPA, and accreditation. Saving publishes to Academics and updates the program-count KPI. RRPA-only programs are not counted as COPC."
       />
       <WorkbookEditor
         title="Program inventory"
@@ -28,7 +28,7 @@ export default async function ProgramsAdminPage() {
           { key: "name", header: "Program", type: "text", required: true, width: "18rem" },
           { key: "programType", header: "Type", type: "text", hint: "Baccalaureate, Master’s…", width: "10rem" },
           { key: "specializedMajor", header: "Major / specialization", type: "text", width: "12rem" },
-          { key: "copcNumber", header: "COPC number", type: "text", width: "10rem" },
+          { key: "copcNumber", header: "COPC / RRPA", type: "text", width: "12rem" },
           { key: "accreditationLevel", header: "Accreditation", type: "text", width: "12rem" },
           { key: "programStatus", header: "Status", type: "text", width: "10rem" },
           { key: "accreditable", header: "Accreditable", type: "checkbox", width: "7rem" },

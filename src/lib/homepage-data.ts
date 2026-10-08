@@ -1,6 +1,8 @@
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/db";
 import { PERFORMANCE_FOCUS_YEAR } from "@/lib/performance-display";
+import { sumStaffCounts } from "@/lib/personnel-counts";
+import { hasCopcNumber } from "@/lib/program-coverage";
 import { getEnrollmentSeries, getHomepageKpisByYear, getPerformanceByIndicator, latestDatasetDates } from "@/lib/queries";
 
 async function loadHomepageData() {
@@ -74,8 +76,24 @@ async function loadHomepageData() {
     }),
   ]);
 
+  const ntpTotal = sumStaffCounts(staff).total;
+  const programsWithCopc = programs.filter((program) => hasCopcNumber(program.copcNumber)).length;
+
   return {
-    kpis,
+    kpis: {
+      ...kpis,
+      current: kpis.current.map((kpi) => {
+        if (kpi.code === "NTP_TOTAL") return { ...kpi, value: ntpTotal };
+        if (kpi.code === "PROGRAMS_WITH_COPC") {
+          return {
+            ...kpi,
+            value: programsWithCopc,
+            sourceNote: "COPC only. RRPA-only programs are not counted.",
+          };
+        }
+        return kpi;
+      }),
+    },
     enrollment,
     performance,
     latestPublish: versions[0]?.publishedAt ?? null,

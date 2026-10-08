@@ -20,6 +20,8 @@ describe("program coverage", () => {
     expect(slices.find((item) => item.code === "CECS")?.value).toBe(2);
     expect(hasCopcNumber("COPC-1")).toBe(true);
     expect(hasCopcNumber("  ")).toBe(false);
+    expect(hasCopcNumber("RRPA No. 02, Series of 2026")).toBe(false);
+    expect(hasCopcNumber("COPC RRPA No. 02")).toBe(true);
     expect(formatProgramAuthority("RRPA No. 02,")).toBe("RRPA No. 02,");
     expect(formatProgramAuthority("COPC RRPA No. 02,")).toBe("RRPA No. 02,");
     expect(formatProgramAuthority("123")).toBe("COPC 123");

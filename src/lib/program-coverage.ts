@@ -1,8 +1,14 @@
 import { collegeAbbrev, collegeFullName, collegeSortIndex } from "@/lib/import/normalize";
 import { formatNumber } from "@/lib/format";
 
+export function isRrpaOnly(value: string | null | undefined) {
+  const text = value?.replace(/\s+/g, " ").trim() ?? "";
+  return text.length > 0 && /RRPA/i.test(text) && !/\bCOPC\b/i.test(text);
+}
+
 export function hasCopcNumber(value: string | null | undefined) {
-  return Boolean(value?.trim());
+  const text = value?.trim() ?? "";
+  return text.length > 0 && !isRrpaOnly(text);
 }
 
 export function formatProgramAuthority(value: string | null | undefined) {

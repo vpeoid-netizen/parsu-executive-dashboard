@@ -164,7 +164,7 @@ export default async function DashboardPage() {
         <div className="mb-10 grid gap-4 xl:grid-cols-2">
           <ChartPanel
             title="Programs with COPC"
-            period="Programs with Certificate of Program Compliance, by college"
+            period="Certificate of Program Compliance only. RRPA is not counted as COPC."
             action={{ href: "/academics/programs", label: "View programs" }}
           >
             <p className="sr-only">

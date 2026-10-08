@@ -17,7 +17,7 @@ import {
   isPercentMeasure,
   yearLabel,
 } from "@/lib/performance-display";
-import { formatProgramAuthority, hasCopcNumber } from "@/lib/program-coverage";
+import { formatProgramAuthority, hasCopcNumber, isRrpaOnly } from "@/lib/program-coverage";
 import { type ChatFact, FY_2026_PARTIAL_NOTE, factsToBriefingText } from "@/lib/chat/facts";
 import { staffFactsFromGrouped } from "@/lib/chat/staff-facts";
 import { sumFacultyCounts, sumStaffCounts } from "@/lib/personnel-counts";
@@ -331,16 +331,17 @@ async function loadPublishedFacts() {
   addFact(facts, {
     id: "programs-summary",
     title: "Academic programs",
-    body: `${formatNumber(programs.length, 0)} published academic programs. With COPC/RRPA: ${formatNumber(copcCount, 0)}. Accredited: ${formatNumber(accreditedCount, 0)}. Program authority uses COPC or RRPA labels; Bachelor of Public Administration uses RRPA No. 02.`,
+    body: `${formatNumber(programs.length, 0)} published academic programs. With COPC: ${formatNumber(copcCount, 0)}. Accredited: ${formatNumber(accreditedCount, 0)}. Bachelor of Public Administration in the College of Arts and Humanities has received RRPA only and has not yet received COPC.`,
     href: "/academics/programs",
-    keywords: "programs copc rrpa accredited accreditable bpa",
+    keywords: "programs copc rrpa accredited accreditable bpa public administration",
   });
   for (const program of programs) {
     const authority = formatProgramAuthority(program.copcNumber);
+    const rrpaOnly = isRrpaOnly(program.copcNumber);
     addFact(facts, {
       id: `program-${program.name}`,
       title: program.name,
-      body: `${program.programType ?? "Program"} at ${collegeFullName(program.college?.code)} (${collegeAbbrev(program.college?.code)}), ${program.campus?.name ?? "campus not specified"}.${authority ? ` Authority: ${authority}.` : ""}${program.accreditationLevel ? ` Accreditation: ${program.accreditationLevel}.` : ""} Accreditable: ${program.accreditable ? "yes" : "no"}. Accredited: ${program.accredited ? "yes" : "no"}.`,
+      body: `${program.programType ?? "Program"} at ${collegeFullName(program.college?.code)} (${collegeAbbrev(program.college?.code)}), ${program.campus?.name ?? "campus not specified"}.${authority ? ` Authority: ${authority}.` : ""}${rrpaOnly ? " COPC has not yet been received." : ""}${program.accreditationLevel ? ` Accreditation: ${program.accreditationLevel}.` : ""} Accreditable: ${program.accreditable ? "yes" : "no"}. Accredited: ${program.accredited ? "yes" : "no"}.`,
       href: "/academics/programs",
       keywords: `${program.name} ${collegeAbbrev(program.college?.code)} ${program.campus?.name ?? ""}`,
     });
