@@ -18,7 +18,7 @@ export function SiteHeader() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const isHome = pathname === "/";
-  const homeSplash = isHome && !scrolled && !open;
+  const hideMobileHeader = isHome && !scrolled && !open;
 
   useEffect(() => {
     setOpen(false);
@@ -58,16 +58,19 @@ export function SiteHeader() {
 
   return (
     <header
+      aria-hidden={hideMobileHeader ? true : undefined}
       className={cn(
-        "sticky top-0 z-50 pt-[env(safe-area-inset-top)]",
-        isHome && "max-md:fixed max-md:inset-x-0 max-md:top-0",
-        homeSplash
-          ? "border-b border-transparent bg-transparent shadow-none md:border-border/80 md:bg-white/88 md:shadow-[0_1px_0_rgba(247,185,24,0.85)] md:backdrop-blur-xl"
-          : "border-b border-border/80 bg-white/88 shadow-[0_1px_0_rgba(247,185,24,0.85)] backdrop-blur-xl",
+        "sticky top-0 z-50 border-b border-border/80 bg-white/88 shadow-[0_1px_0_rgba(247,185,24,0.85)] backdrop-blur-xl pt-[env(safe-area-inset-top)]",
+        isHome && "max-md:fixed max-md:inset-x-0 max-md:top-0 motion-safe:max-md:transition-[transform,opacity] motion-safe:max-md:duration-300",
+        hideMobileHeader && "max-md:pointer-events-none max-md:invisible max-md:-translate-y-full max-md:opacity-0",
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-6 lg:px-8">
-        <Link href="/" className="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg sm:gap-3 xl:flex-none xl:shrink-0">
+        <Link
+          href="/"
+          className="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg sm:gap-3 xl:flex-none xl:shrink-0"
+          tabIndex={hideMobileHeader ? -1 : undefined}
+        >
           <Image
             src="/parsu-logo.png"
             alt="Partido State University official seal"
@@ -78,20 +81,10 @@ export function SiteHeader() {
             priority
           />
           <span className="min-w-0 leading-tight">
-            <span
-              className={cn(
-                "font-display block text-[13px] font-semibold sm:whitespace-nowrap sm:text-[15px]",
-                homeSplash ? "text-white md:text-navy-900" : "text-navy-900",
-              )}
-            >
+            <span className="font-display block text-[13px] font-semibold text-navy-900 sm:whitespace-nowrap sm:text-[15px]">
               Executive Dashboard
             </span>
-            <span
-              className={cn(
-                "block text-[11px] font-medium sm:whitespace-nowrap sm:text-xs",
-                homeSplash ? "text-white/75 md:text-muted-foreground" : "text-muted-foreground",
-              )}
-            >
+            <span className="block text-[11px] font-medium text-muted-foreground sm:whitespace-nowrap sm:text-xs">
               Partido State University
             </span>
           </span>
@@ -133,24 +126,16 @@ export function SiteHeader() {
         </nav>
         <Link
           href="/search"
-          className={cn(
-            "ml-auto inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg xl:ml-2",
-            homeSplash
-              ? "border border-white/30 bg-white/10 text-white hover:bg-white/20 md:border-border md:bg-white md:text-navy-900 md:hover:bg-muted"
-              : "border border-border bg-white text-navy-900 hover:bg-muted",
-          )}
+          className="ml-auto inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-white text-navy-900 hover:bg-muted xl:ml-2"
           aria-label="Search the dashboard"
+          tabIndex={hideMobileHeader ? -1 : undefined}
         >
           <Search className="h-5 w-5" />
         </Link>
         <button
           type="button"
-          className={cn(
-            "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg xl:hidden",
-            homeSplash
-              ? "border border-white/30 bg-white/10 text-white hover:bg-white/20 md:border-border md:bg-white md:text-navy-900 md:hover:bg-muted"
-              : "border border-border bg-white text-navy-900 hover:bg-muted",
-          )}
+          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-white text-navy-900 hover:bg-muted xl:hidden"
+          tabIndex={hideMobileHeader ? -1 : undefined}
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((value) => !value)}
