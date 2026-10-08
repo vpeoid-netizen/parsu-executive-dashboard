@@ -147,9 +147,6 @@ export default async function DashboardPage() {
             <h1 className="font-display mt-3 max-w-[12ch] text-[clamp(2.1rem,10vw,3.1rem)] font-bold leading-[0.98] text-white">
               Executive Dashboard
             </h1>
-            <p className="mt-4 max-w-sm text-sm leading-6 text-white/78">
-              Published institutional figures for campuses, academics, personnel, students, research, and performance.
-            </p>
             <p className="mt-5 rounded-full border border-white/15 bg-white/8 px-3 py-1.5 text-xs font-semibold text-white/85">
               Last system update: {latestPublish ? formatDate(latestPublish) : "Data not yet available"}
             </p>
@@ -182,9 +179,6 @@ export default async function DashboardPage() {
             <h1 className="font-display text-[clamp(1.85rem,8vw,4.6rem)] font-bold leading-[0.98] text-white">
               Executive Dashboard
             </h1>
-            <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-white/78 sm:text-[15px] lg:mx-0">
-              Published institutional figures for campuses, academics, personnel, students, research, and performance.
-            </p>
             <div className="mt-6 flex w-full flex-col items-stretch gap-3 sm:mt-8 sm:w-auto sm:flex-row sm:items-center sm:justify-center lg:justify-start">
               <a href="#executive-indicators" className="btn btn-gold min-h-12 w-full px-6 text-[15px] sm:w-auto sm:min-w-52">
                 Explore indicators
