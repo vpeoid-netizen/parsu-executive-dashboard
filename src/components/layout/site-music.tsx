@@ -5,7 +5,6 @@ import { Volume2, VolumeX } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const PLAYLIST_ID = "PLS846jDKD1qG8qhdxFnCK7CMbD07ME-D_";
-const START_VIDEO_ID = "8-mFpTHcDZ8";
 const VOLUME = 40;
 const STORAGE_KEY = "parsu-site-music";
 const ENDED = 0;
@@ -16,12 +15,16 @@ type YtPlayer = {
   pauseVideo: () => void;
   nextVideo: () => void;
   playVideoAt: (index: number) => void;
+  loadPlaylist: (options: { listType: string; list: string; index?: number }) => void;
   mute: () => void;
   unMute: () => void;
   isMuted: () => boolean;
   setLoop: (loopPlaylists: boolean) => void;
+  setShuffle: (shufflePlaylist: boolean) => void;
   setVolume: (volume: number) => void;
   getPlayerState: () => number;
+  getPlaylist: () => string[] | undefined;
+  getPlaylistIndex: () => number;
   destroy: () => void;
 };
 
@@ -87,6 +90,7 @@ export function SiteMusic() {
 
     let cancelled = false;
     let player: YtPlayer | null = null;
+    let advanceTimer: number | undefined;
 
     try {
       pausedByUser.current = sessionStorage.getItem(STORAGE_KEY) === "paused";
@@ -121,7 +125,6 @@ export function SiteMusic() {
         player = new YT.Player(mount, {
           width: 320,
           height: 180,
-          videoId: START_VIDEO_ID,
           host: "https://www.youtube-nocookie.com",
           playerVars: {
             autoplay: 1,
@@ -133,24 +136,41 @@ export function SiteMusic() {
             modestbranding: 1,
             playsinline: 1,
             rel: 0,
-            loop: 1,
             listType: "playlist",
             list: PLAYLIST_ID,
+            index: 0,
             origin: window.location.origin,
           },
           events: {
             onReady: (event) => {
               if (cancelled) return;
               playerRef.current = event.target;
+              event.target.setShuffle(false);
               event.target.setLoop(true);
               event.target.setVolume(VOLUME);
               event.target.mute();
-              if (!pausedByUser.current) event.target.playVideo();
+              event.target.loadPlaylist({ listType: "playlist", list: PLAYLIST_ID, index: 0 });
+              if (pausedByUser.current) event.target.pauseVideo();
             },
             onStateChange: (event) => {
               if (event.data === ENDED) {
                 event.target.setLoop(true);
-                event.target.playVideoAt(0);
+                window.clearTimeout(advanceTimer);
+                advanceTimer = window.setTimeout(() => {
+                  if (cancelled) return;
+                  try {
+                    if (event.target.getPlayerState() !== ENDED) return;
+                    const list = event.target.getPlaylist() ?? [];
+                    const index = event.target.getPlaylistIndex();
+                    if (list.length === 0 || index >= list.length - 1) {
+                      event.target.playVideoAt(0);
+                    } else {
+                      event.target.nextVideo();
+                    }
+                  } catch {
+                    /* Player may already have been destroyed. */
+                  }
+                }, 250);
                 return;
               }
               if (event.data === PLAYING) {
@@ -172,6 +192,7 @@ export function SiteMusic() {
 
     return () => {
       cancelled = true;
+      window.clearTimeout(advanceTimer);
       window.removeEventListener("pointerdown", unlock);
       window.removeEventListener("keydown", unlock);
       playerRef.current = null;
