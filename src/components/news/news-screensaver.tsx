@@ -176,7 +176,6 @@ export function NewsScreensaver() {
         ref={videoRef}
         src={VIDEO_SRC}
         muted
-        defaultMuted
         preload="auto"
         playsInline
         onEnded={() => {
