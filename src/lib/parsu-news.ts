@@ -108,6 +108,21 @@ function newsKey(item: ParsuNewsItem) {
   }
 }
 
+export const NEWS_SCREENSAVER_BATCH = 5;
+export const KIOSK_VIDEO_EVENT = "parsu-kiosk-video";
+
+export function newsScreensaverBatch<T>(items: T[], start: number, size = NEWS_SCREENSAVER_BATCH) {
+  if (items.length === 0) return [];
+  const begin = ((start % items.length) + items.length) % items.length;
+  return items.slice(begin, begin + size);
+}
+
+export function nextNewsScreensaverBatchStart(start: number, total: number, size = NEWS_SCREENSAVER_BATCH) {
+  if (total <= 0) return 0;
+  const next = start + size;
+  return next >= total ? 0 : next;
+}
+
 export function mergeParsuNews(pages: ParsuNewsItem[][]) {
   const seen = new Set<string>();
   const items: ParsuNewsItem[] = [];

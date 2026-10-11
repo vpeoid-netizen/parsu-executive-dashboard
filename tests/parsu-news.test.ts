@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mergeParsuNews, parseParsuNews } from "../src/lib/parsu-news";
+import { mergeParsuNews, newsScreensaverBatch, nextNewsScreensaverBatchStart, parseParsuNews } from "../src/lib/parsu-news";
 
 const SAMPLE = `
 <div class="article-header">
@@ -70,5 +70,15 @@ describe("ParSU news parser", () => {
     const items = parseParsuNews(html);
     expect(items[0]?.image).toBe("https://parsu.edu.ph/images/2026/iccr/ICCR%208.jpg");
     expect(items[1]?.image).toBe("https://parsu.edu.ph/images/2026/September/sikap%202.jpg");
+  });
+
+  it("groups news bits into fives and wraps after the last batch", () => {
+    const items = Array.from({ length: 15 }, (_, index) => index + 1);
+    expect(newsScreensaverBatch(items, 0)).toEqual([1, 2, 3, 4, 5]);
+    expect(newsScreensaverBatch(items, 5)).toEqual([6, 7, 8, 9, 10]);
+    expect(newsScreensaverBatch(items, 10)).toEqual([11, 12, 13, 14, 15]);
+    expect(nextNewsScreensaverBatchStart(0, 15)).toBe(5);
+    expect(nextNewsScreensaverBatchStart(5, 15)).toBe(10);
+    expect(nextNewsScreensaverBatchStart(10, 15)).toBe(0);
   });
 });
