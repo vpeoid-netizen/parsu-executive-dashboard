@@ -153,6 +153,7 @@ export function NewsScreensaver() {
       return;
     }
     video.muted = true;
+    video.volume = 0;
     video.currentTime = 0;
     void video.play().catch(() => finishBatch());
   }, [active, finishBatch, phase]);
