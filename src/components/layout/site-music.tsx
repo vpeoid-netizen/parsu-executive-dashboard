@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
-import { KIOSK_VIDEO_EVENT } from "@/lib/parsu-news";
 import { cn } from "@/lib/utils";
 
 const PLAYLIST_ID = "PLS846jDKD1qG8qhdxFnCK7CMbD07ME-D_";
@@ -188,32 +187,14 @@ export function SiteMusic() {
         /* Music control stays available; playback is skipped if YouTube is blocked. */
       });
 
-    const onKioskVideo = (event: Event) => {
-      const playing = Boolean((event as CustomEvent<{ playing?: boolean }>).detail?.playing);
-      const current = playerRef.current;
-      if (!current) return;
-      if (playing) {
-        current.pauseVideo();
-        setAudible(false);
-        return;
-      }
-      if (pausedByUser.current) return;
-      current.unMute();
-      current.setVolume(VOLUME);
-      current.playVideo();
-      setAudible(true);
-    };
-
     window.addEventListener("pointerdown", unlock);
     window.addEventListener("keydown", unlock);
-    window.addEventListener(KIOSK_VIDEO_EVENT, onKioskVideo);
 
     return () => {
       cancelled = true;
       window.clearTimeout(advanceTimer);
       window.removeEventListener("pointerdown", unlock);
       window.removeEventListener("keydown", unlock);
-      window.removeEventListener(KIOSK_VIDEO_EVENT, onKioskVideo);
       playerRef.current = null;
       player?.destroy();
       mount.remove();

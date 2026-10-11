@@ -109,7 +109,6 @@ function newsKey(item: ParsuNewsItem) {
 }
 
 export const NEWS_SCREENSAVER_BATCH = 5;
-export const KIOSK_VIDEO_EVENT = "parsu-kiosk-video";
 
 export function newsScreensaverBatch<T>(items: T[], start: number, size = NEWS_SCREENSAVER_BATCH) {
   if (items.length === 0) return [];

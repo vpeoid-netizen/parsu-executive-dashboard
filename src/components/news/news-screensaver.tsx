@@ -3,26 +3,18 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  KIOSK_VIDEO_EVENT,
-  newsScreensaverBatch,
-  nextNewsScreensaverBatchStart,
-  type ParsuNewsItem,
-} from "@/lib/parsu-news";
+import { newsScreensaverBatch, nextNewsScreensaverBatchStart, type ParsuNewsItem } from "@/lib/parsu-news";
 
 const IDLE_MS = 60_000;
 const SLIDE_MS = 30_000;
 const VIDEO_SRC = "/video/welcome-banner-kiosk.mp4";
-
-function setKioskVideoPlaying(playing: boolean) {
-  window.dispatchEvent(new CustomEvent(KIOSK_VIDEO_EVENT, { detail: { playing } }));
-}
 
 export function NewsScreensaver() {
   const router = useRouter();
   const pathname = usePathname();
   const [items, setItems] = useState<ParsuNewsItem[]>([]);
   const [active, setActive] = useState(false);
+  const [landingHold, setLandingHold] = useState(false);
   const [phase, setPhase] = useState<"news" | "video">("news");
   const [index, setIndex] = useState(0);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -55,7 +47,7 @@ export function NewsScreensaver() {
       setPhase("news");
       setIndex(0);
       setActive(false);
-      setKioskVideoPlaying(false);
+      setLandingHold(advanceBatch);
       if (pathname !== "/") router.push("/");
       window.scrollTo(0, 0);
     },
@@ -66,7 +58,7 @@ export function NewsScreensaver() {
   const finishBatch = useCallback(() => returnToLanding(true), [returnToLanding]);
 
   useEffect(() => {
-    if (items.length === 0) return;
+    if (items.length === 0 || landingHold) return;
     let timer: number | undefined;
     const arm = () => {
       window.clearTimeout(timer);
@@ -97,7 +89,31 @@ export function NewsScreensaver() {
       window.removeEventListener("scroll", onActivity);
       document.removeEventListener("visibilitychange", onActivity);
     };
-  }, [active, items.length]);
+  }, [active, items.length, landingHold]);
+
+  useEffect(() => {
+    if (!landingHold) return;
+    const timer = window.setTimeout(() => {
+      completingRef.current = false;
+      setLandingHold(false);
+      setPhase("news");
+      setIndex(0);
+      setActive(true);
+    }, SLIDE_MS);
+    const cancelHold = () => {
+      window.clearTimeout(timer);
+      setLandingHold(false);
+    };
+    window.addEventListener("pointerdown", cancelHold);
+    window.addEventListener("keydown", cancelHold);
+    window.addEventListener("wheel", cancelHold, { passive: true });
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("pointerdown", cancelHold);
+      window.removeEventListener("keydown", cancelHold);
+      window.removeEventListener("wheel", cancelHold);
+    };
+  }, [landingHold]);
 
   const batch = newsScreensaverBatch(items, batchStartRef.current);
   const item = batch[index] ?? batch[0];
@@ -132,18 +148,13 @@ export function NewsScreensaver() {
   useEffect(() => {
     if (!active || phase !== "video") return;
     const video = videoRef.current;
-    setKioskVideoPlaying(true);
     if (!video) {
       finishBatch();
       return;
     }
+    video.muted = true;
     video.currentTime = 0;
-    video.muted = false;
-    void video.play().catch(() => {
-      video.muted = true;
-      void video.play().catch(() => finishBatch());
-    });
-    return () => setKioskVideoPlaying(false);
+    void video.play().catch(() => finishBatch());
   }, [active, finishBatch, phase]);
 
   if (!active || items.length === 0) return null;
@@ -164,6 +175,8 @@ export function NewsScreensaver() {
       <video
         ref={videoRef}
         src={VIDEO_SRC}
+        muted
+        defaultMuted
         preload="auto"
         playsInline
         onEnded={() => {
