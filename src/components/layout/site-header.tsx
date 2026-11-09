@@ -3,13 +3,41 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { ChevronDown, Menu, Search, X } from "lucide-react";
 import { publicNavigation } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
 function isActivePath(pathname: string, href: string) {
+  if (href.startsWith("http")) return false;
   return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function NavAnchor({
+  href,
+  external,
+  className,
+  onClick,
+  children,
+}: {
+  href: string;
+  external?: boolean;
+  className?: string;
+  onClick?: () => void;
+  children: ReactNode;
+}) {
+  if (external || href.startsWith("http")) {
+    return (
+      <a href={href} className={className} target="_blank" rel="noopener noreferrer" onClick={onClick}>
+        {children}
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className={className} onClick={onClick}>
+      {children}
+    </Link>
+  );
 }
 
 export function SiteHeader() {
@@ -120,13 +148,14 @@ export function SiteHeader() {
                 </Link>
                 <div className="invisible absolute left-0 top-full z-20 min-w-56 rounded-xl border border-border bg-white py-2 opacity-0 shadow-[0_16px_40px_rgba(7,31,70,0.12)] transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
                   {item.children.map((child) => (
-                    <Link
+                    <NavAnchor
                       key={child.href}
                       href={child.href}
+                      external={child.external}
                       className="block px-4 py-2.5 text-sm font-medium text-navy-800 hover:bg-muted"
                     >
                       {child.label}
-                    </Link>
+                    </NavAnchor>
                   ))}
                 </div>
               </div>
@@ -201,9 +230,10 @@ export function SiteHeader() {
                   {sectionOpen ? (
                     <div className="pb-1">
                       {item.children.map((child) => (
-                        <Link
+                        <NavAnchor
                           key={child.href}
                           href={child.href}
+                          external={child.external}
                           className={cn(
                             "block min-h-11 rounded-lg py-2.5 pl-6 pr-3 text-sm font-medium text-navy-800",
                             isActivePath(pathname, child.href) && "bg-gold-soft text-navy-900",
@@ -211,7 +241,7 @@ export function SiteHeader() {
                           onClick={() => setOpen(false)}
                         >
                           {child.label}
-                        </Link>
+                        </NavAnchor>
                       ))}
                     </div>
                   ) : null}

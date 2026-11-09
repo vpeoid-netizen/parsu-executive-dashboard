@@ -11,6 +11,7 @@ import {
 } from "@/lib/performance-display";
 import { FY2026_AS_OF_LABEL } from "@/lib/reporting-as-of";
 import { classifyAchievement } from "@/lib/metrics";
+import { PHYSICAL_TARGET_ANALYTICS } from "@/lib/navigation";
 import { getPerformanceByIndicator } from "@/lib/queries";
 
 export const dynamic = "force-static";
@@ -60,6 +61,21 @@ export default async function PerformancePage() {
         FY 2026 is year-to-date as of {FY2026_AS_OF_LABEL}. It is labelled Partial Period and is not classified as a missed
         annual target.
       </p>
+      <a
+        href={PHYSICAL_TARGET_ANALYTICS.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="card card-interactive mb-8 flex flex-col gap-2 p-5 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div>
+          <p className="section-kicker">By college</p>
+          <h2 className="font-display mt-2 text-lg font-bold tracking-tight text-navy-900">
+            {PHYSICAL_TARGET_ANALYTICS.label}
+          </h2>
+          <p className="mt-1 text-sm leading-6 text-muted-foreground">{PHYSICAL_TARGET_ANALYTICS.description}</p>
+        </div>
+        <span className="text-sm font-semibold text-navy-800">Open</span>
+      </a>
       {indicators.length === 0 ? (
         <EmptyState />
       ) : (

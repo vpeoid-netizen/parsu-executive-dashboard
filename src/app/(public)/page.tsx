@@ -10,6 +10,7 @@ import { EmptyState, PageShell, SectionTitle } from "@/components/ui/primitives"
 import { FACULTY_APPOINTMENT_COLORS, FACULTY_EDUCATION_COLORS } from "@/lib/chart-colors";
 import { formatDate, formatNumber } from "@/lib/format";
 import { getHomepageData } from "@/lib/homepage-data";
+import { PHYSICAL_TARGET_ANALYTICS } from "@/lib/navigation";
 import { EDUCATION_LEVELS } from "@/lib/constants";
 import { ACADEMIC_RANK_GROUPS } from "@/lib/import/normalize";
 import { sumFacultyCounts, sumStaffCounts } from "@/lib/personnel-counts";
@@ -227,6 +228,17 @@ export default async function DashboardPage() {
 
         <section id="university-performance" className="mb-10 scroll-mt-24">
           <SectionTitle title="University Performance" action={{ href: "/performance", label: "View details" }} />
+          <p className="-mt-2 mb-4 text-sm text-muted-foreground">
+            <a
+              href={PHYSICAL_TARGET_ANALYTICS.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-navy-800 underline-offset-2 hover:underline"
+            >
+              {PHYSICAL_TARGET_ANALYTICS.label}
+            </a>{" "}
+            shows the performance of each college per indicator.
+          </p>
           {performanceGroups.length ? (
             <div className="space-y-8">
               {performanceGroups.map((group) => (

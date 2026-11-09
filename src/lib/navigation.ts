@@ -1,8 +1,20 @@
+export type NavChild = {
+  href: string;
+  label: string;
+  external?: boolean;
+};
+
 export type NavItem = {
   href: string;
   label: string;
-  children?: { href: string; label: string }[];
+  children?: NavChild[];
 };
+
+export const PHYSICAL_TARGET_ANALYTICS = {
+  href: "https://parsu-physical-target-ms.vercel.app/",
+  label: "Physical Target Performance Analytics",
+  description: "Performance of each college per indicator.",
+} as const;
 
 export const publicNavigation: NavItem[] = [
   { href: "/", label: "Dashboard" },
@@ -36,7 +48,18 @@ export const publicNavigation: NavItem[] = [
       { href: "/students/awards", label: "Awards" },
     ],
   },
-  { href: "/performance", label: "Performance" },
+  {
+    href: "/performance",
+    label: "Performance",
+    children: [
+      { href: "/performance", label: "University Performance" },
+      {
+        href: PHYSICAL_TARGET_ANALYTICS.href,
+        label: PHYSICAL_TARGET_ANALYTICS.label,
+        external: true,
+      },
+    ],
+  },
   {
     href: "/research",
     label: "Research",
