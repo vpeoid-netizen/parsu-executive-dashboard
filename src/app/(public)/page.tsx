@@ -8,7 +8,7 @@ import { ExecutiveIndicatorTabs } from "@/components/dashboard/executive-indicat
 import { DocumentLink } from "@/components/ui/document-link";
 import { EmptyState, PageShell, SectionTitle } from "@/components/ui/primitives";
 import { FACULTY_APPOINTMENT_COLORS, FACULTY_EDUCATION_COLORS } from "@/lib/chart-colors";
-import { formatDate, formatNumber } from "@/lib/format";
+import { formatNumber } from "@/lib/format";
 import { getHomepageData } from "@/lib/homepage-data";
 import { PHYSICAL_TARGET_ANALYTICS } from "@/lib/navigation";
 import { EDUCATION_LEVELS } from "@/lib/constants";
@@ -28,7 +28,6 @@ export default async function DashboardPage() {
     kpis,
     enrollment,
     performance,
-    latestPublish,
     programs,
     faculty,
     staff,
@@ -139,9 +138,6 @@ export default async function DashboardPage() {
               <span className="block">Executive</span>
               <span className="block">Dashboard</span>
             </h1>
-            <p className="mt-[clamp(1rem,2.4vh,1.75rem)] rounded-full border border-white/15 bg-white/8 px-3 py-1.5 text-[clamp(0.7rem,1.5vmin,0.85rem)] font-semibold text-white/85">
-              Last system update: {latestPublish ? formatDate(latestPublish) : "Data not yet available"}
-            </p>
           </div>
           <a
             href="#dashboard-content"
@@ -178,11 +174,6 @@ export default async function DashboardPage() {
               <Link href="/performance" className="btn min-h-12 w-full border border-white/25 bg-white/5 px-6 text-[15px] text-white hover:bg-white/12 sm:w-auto sm:min-w-52">
                 University performance
               </Link>
-            </div>
-            <div className="mt-6 flex flex-wrap justify-center gap-2 text-xs font-semibold lg:justify-start">
-              <span className="rounded-full border border-white/15 bg-white/8 px-3 py-1.5 text-white/85">
-                Last system update: {latestPublish ? formatDate(latestPublish) : "Data not yet available"}
-              </span>
             </div>
           </div>
         </div>
