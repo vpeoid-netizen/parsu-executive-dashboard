@@ -9,11 +9,13 @@ import {
   createSession,
   destroySession,
   getCurrentAdmin,
+  hashPassword,
   recordLoginAttempt,
   sessionCookieOptions,
   tooManyLoginAttempts,
   verifyPassword,
 } from "@/lib/auth";
+import type { SaveResult } from "@/lib/admin/editor";
 import { prisma } from "@/lib/db";
 import { parseWorkbook } from "@/lib/import/parse-workbook";
 import { persistWorkbook } from "@/lib/import/persist";
@@ -75,6 +77,70 @@ export async function logoutAction() {
     });
   }
   redirect("/admin/login");
+}
+
+export async function updateAdminProfileAction(
+  _prev: SaveResult | null,
+  formData: FormData,
+): Promise<SaveResult> {
+  const admin = await getCurrentAdmin();
+  if (!admin) redirect("/admin/login");
+  const name = String(formData.get("name") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  if (!name) return { ok: false, error: "Enter your name." };
+  if (!email.includes("@")) return { ok: false, error: "Enter a valid email address." };
+  const taken = await prisma.adminUser.findFirst({ where: { email, NOT: { id: admin.id } } });
+  if (taken) return { ok: false, error: "That email is already used by another account." };
+  const previous = { name: admin.name, email: admin.email };
+  await prisma.adminUser.update({ where: { id: admin.id }, data: { name, email } });
+  await writeAuditLog({
+    userId: admin.id,
+    action: "UPDATE",
+    entityType: "AdminUser",
+    entityId: admin.id,
+    summary: "Updated administrator name or email",
+    previousJson: previous,
+    nextJson: { name, email },
+  });
+  revalidatePath("/admin/account");
+  revalidatePath("/admin", "layout");
+  return { ok: true, message: "Account details saved." };
+}
+
+export async function changeAdminPasswordAction(
+  _prev: SaveResult | null,
+  formData: FormData,
+): Promise<SaveResult> {
+  const admin = await getCurrentAdmin();
+  if (!admin) redirect("/admin/login");
+  const currentPassword = String(formData.get("currentPassword") ?? "");
+  const newPassword = String(formData.get("newPassword") ?? "");
+  const confirmPassword = String(formData.get("confirmPassword") ?? "");
+  if (!(await verifyPassword(currentPassword, admin.passwordHash))) {
+    return { ok: false, error: "Current password is incorrect." };
+  }
+  if (newPassword.length < 10) {
+    return { ok: false, error: "New password must be at least 10 characters." };
+  }
+  if (newPassword !== confirmPassword) {
+    return { ok: false, error: "New password and confirmation do not match." };
+  }
+  if (currentPassword === newPassword) {
+    return { ok: false, error: "Choose a password that is different from the current one." };
+  }
+  await prisma.adminUser.update({
+    where: { id: admin.id },
+    data: { passwordHash: await hashPassword(newPassword) },
+  });
+  await writeAuditLog({
+    userId: admin.id,
+    action: "UPDATE",
+    entityType: "AdminUser",
+    entityId: admin.id,
+    summary: "Changed administrator password",
+  });
+  revalidatePath("/admin/account");
+  return { ok: true, message: "Password updated." };
 }
 
 export async function importWorkbookAction(

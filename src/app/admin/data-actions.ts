@@ -11,6 +11,7 @@ import {
   type EditorRow,
   type SaveResult,
 } from "@/lib/admin/editor";
+import { Prisma } from "@prisma/client";
 import { applyDeletedIds, finishDatasetSave, forSavedRows, requireAdmin, requirePayload } from "@/lib/admin/save";
 import { prisma } from "@/lib/db";
 import { getOrCreatePeriod } from "@/lib/import/persist";
@@ -506,6 +507,27 @@ export async function saveResearchGrantsAction(_prev: SaveResult | null, formDat
   });
 }
 
+function uniqueConstraintError(error: unknown): SaveResult | null {
+  if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+    return { ok: false, error: "A code is already in use. Use a different campus or college code." };
+  }
+  return null;
+}
+
+function slugCode(name: string, fallbackPrefix: string) {
+  const slug = name.replace(/[^a-zA-Z0-9]+/g, "_").replace(/^_|_$/g, "").toUpperCase().slice(0, 24);
+  return slug || `${fallbackPrefix}_${Date.now().toString(36).toUpperCase()}`;
+}
+
+function splitKindId(id: string | null) {
+  if (!id) return { kind: null, recordId: null };
+  if (id.includes(":")) {
+    const [kind, recordId] = id.split(":");
+    return { kind, recordId: recordId || null };
+  }
+  return { kind: null, recordId: id };
+}
+
 export async function saveExtensionAction(_prev: SaveResult | null, formData: FormData): Promise<SaveResult> {
   const admin = await requireAdmin();
   const payload = payloadOrError(formData);
@@ -535,6 +557,36 @@ export async function saveExtensionAction(_prev: SaveResult | null, formData: Fo
     summary: "Updated extension programs",
     paths: ["/admin/extension", "/extension"],
     rebuildKpis: true,
+  });
+}
+
+export async function saveExtensionPartnersAction(_prev: SaveResult | null, formData: FormData): Promise<SaveResult> {
+  const admin = await requireAdmin();
+  const payload = payloadOrError(formData);
+  if (!isPayload(payload)) return payload;
+  await applyDeletedIds(payload.deletedIds, (id) =>
+    prisma.extensionPartner.updateMany({ where: { id }, data: { status: "ARCHIVED" } }),
+  );
+  await forSavedRows(payload.rows, (row) => !blankToNull(row.organization), async (row, id) => {
+    const data = {
+      organization: String(blankToNull(row.organization)),
+      organizationType: blankToNull(row.organizationType),
+      location: blankToNull(row.location),
+      startedAt: toDate(row.startedAt),
+      endedAt: toDate(row.endedAt),
+      agreement: blankToNull(row.agreement),
+      partnerStatus: blankToNull(row.partnerStatus),
+      status: toBool(row.published) ? ("PUBLISHED" as const) : ("DRAFT" as const),
+      datasetVersionId: MANUAL_DATASET_VERSION,
+    };
+    if (id) await prisma.extensionPartner.update({ where: { id }, data });
+    else await prisma.extensionPartner.create({ data });
+  });
+  return finishDatasetSave({
+    adminId: admin.id,
+    entityType: "ExtensionPartner",
+    summary: "Updated extension partners",
+    paths: ["/admin/extension", "/extension"],
   });
 }
 
@@ -720,22 +772,53 @@ export async function savePartnersTableAction(_prev: SaveResult | null, formData
   });
 }
 
+export async function saveMembershipsTableAction(_prev: SaveResult | null, formData: FormData): Promise<SaveResult> {
+  const admin = await requireAdmin();
+  const payload = payloadOrError(formData);
+  if (!isPayload(payload)) return payload;
+  await applyDeletedIds(payload.deletedIds, (id) =>
+    prisma.internationalMembership.updateMany({ where: { id }, data: { status: "ARCHIVED" } }),
+  );
+  await forSavedRows(payload.rows, (row) => !blankToNull(row.organization), async (row, id) => {
+    const data = {
+      organization: String(blankToNull(row.organization)),
+      countryOrRegion: blankToNull(row.countryOrRegion),
+      membershipType: blankToNull(row.membershipType),
+      startYear: toInt(row.startYear),
+      validity: blankToNull(row.validity),
+      membershipStatus: blankToNull(row.membershipStatus),
+      status: toBool(row.published) ? ("PUBLISHED" as const) : ("DRAFT" as const),
+      datasetVersionId: MANUAL_DATASET_VERSION,
+    };
+    if (id) await prisma.internationalMembership.update({ where: { id }, data });
+    else await prisma.internationalMembership.create({ data });
+  });
+  return finishDatasetSave({
+    adminId: admin.id,
+    entityType: "InternationalMembership",
+    summary: "Updated international memberships",
+    paths: ["/admin/internationalization", "/internationalization"],
+  });
+}
+
 export async function saveAssetsTableAction(_prev: SaveResult | null, formData: FormData): Promise<SaveResult> {
   const admin = await requireAdmin();
   const payload = payloadOrError(formData);
   if (!isPayload(payload)) return payload;
   for (const id of payload.deletedIds) {
-    const recordId = realId(id);
+    const { kind, recordId } = splitKindId(realId(id));
     if (!recordId) continue;
-    const [kind, real] = recordId.includes(":") ? recordId.split(":") : ["building", recordId];
-    if (kind === "land") await prisma.landAsset.updateMany({ where: { id: real }, data: { status: "ARCHIVED" } });
-    else if (kind === "vehicle") await prisma.vehicleAsset.updateMany({ where: { id: real }, data: { status: "ARCHIVED" } });
-    else await prisma.buildingAsset.updateMany({ where: { id: real }, data: { status: "ARCHIVED" } });
+    const archive = { status: "ARCHIVED" as const };
+    if (kind === "land") await prisma.landAsset.updateMany({ where: { id: recordId }, data: archive });
+    else if (kind === "vehicle") await prisma.vehicleAsset.updateMany({ where: { id: recordId }, data: archive });
+    else if (kind === "lab") await prisma.laboratoryAsset.updateMany({ where: { id: recordId }, data: archive });
+    else if (kind === "stay") await prisma.accommodationAsset.updateMany({ where: { id: recordId }, data: archive });
+    else await prisma.buildingAsset.updateMany({ where: { id: recordId }, data: archive });
   }
   await forSavedRows(payload.rows, (row) => !blankToNull(row.name), async (row, id) => {
     const kind = blankToNull(row.kind) ?? "building";
     const published = toBool(row.published) ? ("PUBLISHED" as const) : ("DRAFT" as const);
-    const recordId = id?.includes(":") ? id.split(":")[1] : id;
+    const recordId = splitKindId(id).recordId;
     if (kind === "land") {
       const data = {
         location: String(blankToNull(row.name)),
@@ -756,6 +839,26 @@ export async function saveAssetsTableAction(_prev: SaveResult | null, formData: 
       };
       if (recordId) await prisma.vehicleAsset.update({ where: { id: recordId }, data });
       else await prisma.vehicleAsset.create({ data });
+    } else if (kind === "lab") {
+      const data = {
+        name: String(blankToNull(row.name)),
+        labType: blankToNull(row.detail),
+        capabilitySummary: blankToNull(row.statusNote),
+        status: published,
+        datasetVersionId: MANUAL_DATASET_VERSION,
+      };
+      if (recordId) await prisma.laboratoryAsset.update({ where: { id: recordId }, data });
+      else await prisma.laboratoryAsset.create({ data });
+    } else if (kind === "stay") {
+      const data = {
+        name: String(blankToNull(row.name)),
+        kind: blankToNull(row.detail) ?? "Dormitory",
+        accommodationStatus: blankToNull(row.statusNote),
+        status: published,
+        datasetVersionId: MANUAL_DATASET_VERSION,
+      };
+      if (recordId) await prisma.accommodationAsset.update({ where: { id: recordId }, data });
+      else await prisma.accommodationAsset.create({ data });
     } else {
       const data = {
         name: String(blankToNull(row.name)),
@@ -773,5 +876,65 @@ export async function saveAssetsTableAction(_prev: SaveResult | null, formData: 
     entityType: "Asset",
     summary: "Updated physical assets",
     paths: ["/admin/assets", "/assets"],
+  });
+}
+
+export async function saveCampusesAction(_prev: SaveResult | null, formData: FormData): Promise<SaveResult> {
+  const admin = await requireAdmin();
+  const payload = payloadOrError(formData);
+  if (!isPayload(payload)) return payload;
+  await applyDeletedIds(payload.deletedIds, (id) => prisma.campus.update({ where: { id }, data: { active: false } }));
+  try {
+    await forSavedRows(payload.rows, (row) => !blankToNull(row.name), async (row, id) => {
+      const name = String(blankToNull(row.name));
+      const data = {
+        name,
+        code: blankToNull(row.code) ?? slugCode(name, "CAMPUS"),
+        shortName: blankToNull(row.shortName),
+        active: toBool(row.active),
+      };
+      if (id) await prisma.campus.update({ where: { id }, data });
+      else await prisma.campus.create({ data });
+    });
+  } catch (error) {
+    const unique = uniqueConstraintError(error);
+    if (unique) return unique;
+    throw error;
+  }
+  return finishDatasetSave({
+    adminId: admin.id,
+    entityType: "Campus",
+    summary: "Updated campuses",
+    paths: ["/admin/account", "/admin/programs", "/admin/faculty", "/admin/staff", "/admin/students"],
+  });
+}
+
+export async function saveCollegesAction(_prev: SaveResult | null, formData: FormData): Promise<SaveResult> {
+  const admin = await requireAdmin();
+  const payload = payloadOrError(formData);
+  if (!isPayload(payload)) return payload;
+  await applyDeletedIds(payload.deletedIds, (id) => prisma.college.update({ where: { id }, data: { active: false } }));
+  try {
+    await forSavedRows(payload.rows, (row) => !blankToNull(row.name), async (row, id) => {
+      const name = String(blankToNull(row.name));
+      const data = {
+        name,
+        code: blankToNull(row.code) ?? slugCode(name, "COLLEGE"),
+        campusId: blankToNull(row.campusId),
+        active: toBool(row.active),
+      };
+      if (id) await prisma.college.update({ where: { id }, data });
+      else await prisma.college.create({ data });
+    });
+  } catch (error) {
+    const unique = uniqueConstraintError(error);
+    if (unique) return unique;
+    throw error;
+  }
+  return finishDatasetSave({
+    adminId: admin.id,
+    entityType: "College",
+    summary: "Updated colleges",
+    paths: ["/admin/account", "/admin/programs", "/admin/faculty", "/admin/students"],
   });
 }

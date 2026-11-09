@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
+import { adminDataModules } from "@/lib/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -26,20 +27,18 @@ export default async function AdminHomePage() {
         <p className="mt-1 text-sm text-muted-foreground">
           Edit published dashboard tables in each module, or upload a full workbook. Changes are recorded in the audit log.
         </p>
+        <p className="mt-2 text-sm">
+          <Link href="/admin/account" className="font-semibold text-navy-800">
+            Open the administrator account
+          </Link>{" "}
+          to change sign-in details or jump to every dataset.
+        </p>
       </header>
-      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          ["/admin/faculty", "Edit faculty"],
-          ["/admin/staff", "Edit non-teaching"],
-          ["/admin/students", "Edit students"],
-          ["/admin/performance", "Edit performance"],
-          ["/admin/programs", "Edit programs"],
-          ["/admin/research", "Edit research"],
-          ["/admin/content", "Manage content"],
-          ["/admin/import", "Upload workbook"],
-        ].map(([href, label]) => (
-          <Link key={href} href={href} className="card card-interactive px-4 py-4 text-sm font-medium text-navy-900">
-            {label}
+      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {adminDataModules.map((item) => (
+          <Link key={item.href} href={item.href} className="card card-interactive p-4">
+            <p className="text-sm font-semibold text-navy-900">{item.title}</p>
+            <p className="mt-1 text-sm leading-6 text-muted-foreground">{item.description}</p>
           </Link>
         ))}
       </section>

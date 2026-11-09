@@ -58,8 +58,28 @@ export const publicNavigation: NavItem[] = [
   },
 ];
 
+export const adminDataModules = [
+  { href: "/admin/programs", title: "Academic programs", description: "Program names, campus, COPC, and accreditation" },
+  { href: "/admin/faculty", title: "Faculty", description: "Headcount by college, rank, and appointment" },
+  { href: "/admin/staff", title: "Non-teaching personnel", description: "Office, unit, and appointment counts" },
+  { href: "/admin/students", title: "Students", description: "Enrollment, licensure, awards, and employability" },
+  { href: "/admin/performance", title: "Performance", description: "MFO indicators and accomplishments" },
+  { href: "/admin/research", title: "Research", description: "Completed work, publications, utilization, and grants" },
+  { href: "/admin/extension", title: "Extension", description: "BOR-approved programs and partners" },
+  { href: "/admin/assets", title: "Physical assets", description: "Land, buildings, laboratories, accommodations, and vehicles" },
+  { href: "/admin/infrastructure", title: "Infrastructure", description: "Projects, status, and accomplishment" },
+  { href: "/admin/budget", title: "Budget", description: "Fiscal year allotments and obligations" },
+  { href: "/admin/internationalization", title: "Internationalization", description: "Partners and memberships" },
+  { href: "/admin/content", title: "Content", description: "About pages and flagship programs" },
+  { href: "/admin/documents", title: "Documents", description: "Public documents and orders" },
+  { href: "/admin/officials", title: "Officials", description: "University officials directory" },
+  { href: "/admin/import", title: "Import workbook", description: "Upload a full Excel or CSV dataset" },
+  { href: "/admin/audit", title: "Audit log", description: "Who changed what, and when" },
+] as const;
+
 export const adminNavigation: NavItem[] = [
   { href: "/admin", label: "Overview" },
+  { href: "/admin/account", label: "Account" },
   { href: "/admin/import", label: "Import datasets" },
   { href: "/admin/programs", label: "Academic programs" },
   { href: "/admin/faculty", label: "Faculty" },
