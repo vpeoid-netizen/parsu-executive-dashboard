@@ -640,7 +640,7 @@ function parsePerformance(workbook: ExcelJS.Workbook, result: ParsedWorkbook) {
       targetCol: 6,
       valueCol: 7,
       partial: true,
-      asOf: new Date("2026-06-30T00:00:00"),
+      asOf: new Date("2026-09-30T00:00:00"),
     },
   ];
   ws.eachRow((row, rowNumber) => {

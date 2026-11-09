@@ -46,13 +46,19 @@ describe("dashboard chat facts", () => {
     expect(reply.toLowerCase()).toContain("published figure");
   });
 
-  it("does not repeat the June 30, 2026 as-of note in replies", () => {
+  it("does not repeat the as-of date in replies", () => {
     const reply = answerFromFacts("What is the licensure passing rate?", facts);
     expect(reply).toContain("66.43%");
     expect(reply).not.toMatch(/june\s*30/i);
+    expect(reply).not.toMatch(/september\s*30/i);
     expect(
       stripChatDateDisclaimer(
         "There are 29 personnel under Executive Operations. This figure is based on the latest data as of June 30, 2026.",
+      ),
+    ).toBe("There are 29 personnel under Executive Operations.");
+    expect(
+      stripChatDateDisclaimer(
+        "There are 29 personnel under Executive Operations. This figure is based on the latest data as of September 30, 2026.",
       ),
     ).toBe("There are 29 personnel under Executive Operations.");
   });

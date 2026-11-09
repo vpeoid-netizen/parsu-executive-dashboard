@@ -16,16 +16,11 @@ import { sumFacultyCounts, sumStaffCounts } from "@/lib/personnel-counts";
 import { coverageCenterLabel, hasCopcNumber, programsByCollegeSlices } from "@/lib/program-coverage";
 import { PERFORMANCE_FOCUS_YEAR, groupByProgramMfo } from "@/lib/performance-display";
 import { shortChartPeriodLabel } from "@/lib/periods";
-import { contributionByRankAndYear } from "@/lib/research";
+import { FY2026_AS_OF_LABEL } from "@/lib/reporting-as-of";
+import { RESEARCH_TITLES_AWAITING, researchCountsFromIndicators } from "@/lib/research-performance";
 
 export const dynamic = "force-static";
 export const revalidate = 300;
-
-function researchRankSlices(records: { fiscalYear: number; authorsJson: string }[], fallbackName: string, total: number) {
-  const share = contributionByRankAndYear(records);
-  if (share.hasData) return share.latestSlices;
-  return total > 0 ? [{ name: fallbackName, value: total }] : [];
-}
 
 export default async function DashboardPage() {
   const {
@@ -36,9 +31,6 @@ export default async function DashboardPage() {
     programs,
     faculty,
     staff,
-    completions,
-    publications,
-    utilizations,
     licensureTotals,
     extensionPrograms,
     extensionPartners,
@@ -82,9 +74,7 @@ export default async function DashboardPage() {
     value: staffCounts.appointment[name] ?? 0,
   })).filter((item) => item.value > 0);
   const performanceGroups = groupByProgramMfo(performance);
-  const fyCompletions = completions.filter((row) => row.fiscalYear === PERFORMANCE_FOCUS_YEAR);
-  const fyPublications = publications.filter((row) => row.fiscalYear === PERFORMANCE_FOCUS_YEAR);
-  const fyUtilizations = utilizations.filter((row) => row.fiscalYear === PERFORMANCE_FOCUS_YEAR);
+  const fyResearch = researchCountsFromIndicators(performance).get(PERFORMANCE_FOCUS_YEAR);
   const partnerTypeSlices = Object.entries(
     extensionPartners.reduce<Record<string, number>>((acc, partner) => {
       const key = partner.organizationType?.trim() || "Unspecified";
@@ -347,50 +337,38 @@ export default async function DashboardPage() {
         <section id="research" className="mb-10 scroll-mt-24">
           <SectionTitle title="Research" action={{ href: "/research", label: "View details" }} />
           <p className="-mt-2 mb-4 text-sm text-muted-foreground">
-            Donut colors show percent contribution by academic rank.
+            Counts match university performance, year-to-date as of {FY2026_AS_OF_LABEL}.
           </p>
           <div className="grid gap-4 xl:grid-cols-3">
             <ChartPanel
               title="Completed research"
-              period="FY 2026 · Percent contribution by academic rank"
+              period={`FY ${PERFORMANCE_FOCUS_YEAR} · Year-to-date as of ${FY2026_AS_OF_LABEL}`}
               action={{ href: "/research/completed", label: "Details" }}
             >
-              <p className="sr-only">
-                Colors in this donut are the percent contribution of each academic rank to completed research.
+              <p className="font-display text-4xl font-bold tabular-nums tracking-tight text-navy-900">
+                {formatNumber(fyResearch?.completed ?? 0)}
               </p>
-              <LazyDonutChart
-                data={researchRankSlices(fyCompletions, "Completed research", fyCompletions.length)}
-                hideSliceLabels
-                centerLabel={{ primary: formatNumber(fyCompletions.length) }}
-              />
+              <p className="mt-3 text-sm text-navy-800">{RESEARCH_TITLES_AWAITING}</p>
             </ChartPanel>
             <ChartPanel
               title="Publication"
-              period="FY 2026 · Percent contribution by academic rank"
+              period={`FY ${PERFORMANCE_FOCUS_YEAR} · Year-to-date as of ${FY2026_AS_OF_LABEL}`}
               action={{ href: "/research/publications", label: "Details" }}
             >
-              <p className="sr-only">
-                Colors in this donut are the percent contribution of each academic rank to publications.
+              <p className="font-display text-4xl font-bold tabular-nums tracking-tight text-navy-900">
+                {formatNumber(fyResearch?.publications ?? 0)}
               </p>
-              <LazyDonutChart
-                data={researchRankSlices(fyPublications, "Publications", fyPublications.length)}
-                hideSliceLabels
-                centerLabel={{ primary: formatNumber(fyPublications.length) }}
-              />
+              <p className="mt-3 text-sm text-navy-800">{RESEARCH_TITLES_AWAITING}</p>
             </ChartPanel>
             <ChartPanel
               title="Utilization"
-              period="FY 2026 · Percent contribution by academic rank"
+              period={`FY ${PERFORMANCE_FOCUS_YEAR} · Year-to-date as of ${FY2026_AS_OF_LABEL}`}
               action={{ href: "/research/utilization", label: "Details" }}
             >
-              <p className="sr-only">
-                Colors in this donut are the percent contribution of each academic rank to utilization.
+              <p className="font-display text-4xl font-bold tabular-nums tracking-tight text-navy-900">
+                {formatNumber(fyResearch?.utilized ?? 0)}
               </p>
-              <LazyDonutChart
-                data={researchRankSlices(fyUtilizations, "Utilization", fyUtilizations.length)}
-                hideSliceLabels
-                centerLabel={{ primary: formatNumber(fyUtilizations.length) }}
-              />
+              <p className="mt-3 text-sm text-navy-800">{RESEARCH_TITLES_AWAITING}</p>
             </ChartPanel>
           </div>
         </section>

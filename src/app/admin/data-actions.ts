@@ -366,7 +366,7 @@ export async function savePerformanceAction(_prev: SaveResult | null, formData: 
       denominator: fraction.denominator,
       isPartial,
       remarks: blankToNull(row.remarks),
-      asOfDate: isPartial && fiscalYear === 2026 ? new Date("2026-06-30T00:00:00") : null,
+      asOfDate: isPartial && fiscalYear === 2026 ? new Date("2026-09-30T00:00:00") : null,
       status: "PUBLISHED" as const,
       datasetVersionId: MANUAL_DATASET_VERSION,
     };

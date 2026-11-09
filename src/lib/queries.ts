@@ -3,6 +3,8 @@ import { headers } from "next/headers";
 import { prisma } from "@/lib/db";
 import { EXECUTIVE_CURRENT_YEAR, EXECUTIVE_KPI_YEARS, type HomepageKpiCard } from "@/lib/kpi-years";
 import { sortByMfoAndTitle } from "@/lib/performance-display";
+import { withCurrentAsOf } from "@/lib/reporting-as-of";
+import { researchCountsByYear, type ResearchCountKind } from "@/lib/research-performance";
 
 const PUBLIC_CACHE: { revalidate: number; tags: string[] } = { revalidate: 300, tags: ["public-data"] };
 
@@ -29,8 +31,8 @@ function toHomepageCard(definition: {
     format: definition.format,
     detailsHref: definition.detailsHref,
     value: observation.value,
-    periodLabel: observation.period?.label ?? null,
-    sourceNote: observation.sourceNote,
+    periodLabel: withCurrentAsOf(observation.period?.label),
+    sourceNote: withCurrentAsOf(observation.sourceNote),
   };
 }
 
@@ -59,37 +61,69 @@ export async function getHomepageKpis() {
   return all.filter((item) => item.homepageVisible);
 }
 
+const RESEARCH_KPI_KIND: Record<string, ResearchCountKind> = {
+  RESEARCH_COMPLETED: "completed",
+  RESEARCH_PUBLICATIONS: "publications",
+  RESEARCH_UTILIZED: "utilized",
+};
+
 async function loadHomepageKpisByYear() {
-  const definitions = await prisma.metricDefinition.findMany({
-    where: { homepageVisible: true },
-    orderBy: { displayOrder: "asc" },
-    select: {
-      id: true,
-      code: true,
-      shortTitle: true,
-      groupName: true,
-      format: true,
-      detailsHref: true,
-      observations: {
-        where: {
-          status: "PUBLISHED",
-          period: { fiscalYear: { in: [...EXECUTIVE_KPI_YEARS] } },
-        },
-        orderBy: { createdAt: "desc" },
-        select: {
-          value: true,
-          sourceNote: true,
-          period: { select: { label: true, fiscalYear: true } },
+  const [definitions, performanceRows] = await Promise.all([
+    prisma.metricDefinition.findMany({
+      where: { homepageVisible: true },
+      orderBy: { displayOrder: "asc" },
+      select: {
+        id: true,
+        code: true,
+        shortTitle: true,
+        groupName: true,
+        format: true,
+        detailsHref: true,
+        observations: {
+          where: {
+            status: "PUBLISHED",
+            period: { fiscalYear: { in: [...EXECUTIVE_KPI_YEARS] } },
+          },
+          orderBy: { createdAt: "desc" },
+          select: {
+            value: true,
+            sourceNote: true,
+            period: { select: { label: true, fiscalYear: true } },
+          },
         },
       },
-    },
-  });
+    }),
+    prisma.performanceObservation.findMany({
+      where: { status: "PUBLISHED" },
+      select: {
+        fiscalYear: true,
+        accomplishmentValue: true,
+        accomplishmentRaw: true,
+        numerator: true,
+        indicator: { select: { title: true, programMfo: true } },
+      },
+    }),
+  ]);
+  const researchCounts = researchCountsByYear(
+    performanceRows.map((row) => ({
+      programMfo: row.indicator.programMfo,
+      title: row.indicator.title,
+      fiscalYear: row.fiscalYear,
+      accomplishmentValue: row.accomplishmentValue,
+      accomplishmentRaw: row.accomplishmentRaw,
+      numerator: row.numerator,
+    })),
+  );
   const byYear: Record<number, HomepageKpiCard[]> = {};
   for (const year of EXECUTIVE_KPI_YEARS) {
     byYear[year] = definitions
       .map((definition) => {
         const yearObservation = definition.observations.find((item) => item.period?.fiscalYear === year);
-        return toHomepageCard({ ...definition, observations: yearObservation ? [yearObservation] : [] });
+        const card = toHomepageCard({ ...definition, observations: yearObservation ? [yearObservation] : [] });
+        if (!card) return null;
+        const kind = RESEARCH_KPI_KIND[definition.code];
+        const official = kind ? researchCounts.get(year)?.[kind] : null;
+        return official == null ? card : { ...card, value: official };
       })
       .filter((item): item is HomepageKpiCard => item !== null);
   }
@@ -168,6 +202,7 @@ async function loadPerformanceByIndicator() {
           targetValue: true,
           accomplishmentRaw: true,
           accomplishmentValue: true,
+          numerator: true,
           isPartial: true,
           asOfDate: true,
         },

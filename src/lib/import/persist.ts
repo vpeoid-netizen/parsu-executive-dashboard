@@ -24,6 +24,8 @@ import {
 import officialsSeed from "@/lib/about/officials.json";
 import { awardFiscalYear, enrollmentPeriodFiscalYear, EXECUTIVE_CURRENT_YEAR, EXECUTIVE_KPI_YEARS } from "@/lib/kpi-years";
 import { hasCopcNumber } from "@/lib/program-coverage";
+import { FY2026_AS_OF_DATE, FY2026_AS_OF_LABEL } from "@/lib/reporting-as-of";
+import { researchCountsByYear } from "@/lib/research-performance";
 
 const METRICS = [
   { code: "CAMPUSES_TOTAL", title: "Number of Campuses", shortTitle: "Number of Campuses", unit: "count", format: "integer", groupName: "About ParSU", detailsHref: "/about/campuses", displayOrder: 1, homepageVisible: true },
@@ -361,7 +363,7 @@ export async function persistWorkbook(parsed: ParsedWorkbook, options: {
     "University Performance",
     "7 University Performance",
     "FY 2024–FY 2026",
-    new Date("2026-06-30"),
+    FY2026_AS_OF_DATE,
   );
   if (options.publish) {
     await prisma.performanceObservation.updateMany({ data: { status: "ARCHIVED" }, where: { status: "PUBLISHED" } });
@@ -519,7 +521,7 @@ export async function rebuildMetrics(status: DatasetStatus = "PUBLISHED") {
 
   async function fiscalPeriod(year: number) {
     const isPartial = year === EXECUTIVE_CURRENT_YEAR;
-    const asOfDate = isPartial ? new Date("2026-06-30T00:00:00") : null;
+    const asOfDate = isPartial ? FY2026_AS_OF_DATE : null;
     return getOrCreatePeriod({
       type: "FISCAL_YEAR",
       label: fiscalYearLabel(year, isPartial, asOfDate),
@@ -633,7 +635,7 @@ export async function rebuildMetrics(status: DatasetStatus = "PUBLISHED") {
         sourceNote: fromPerformanceSummary
           ? `FY ${year} first-time takers (university performance summary)`
           : year === EXECUTIVE_CURRENT_YEAR
-            ? `FY ${year} first-time takers, year-to-date as of June 30, 2026`
+            ? `FY ${year} first-time takers, year-to-date as of ${FY2026_AS_OF_LABEL}`
             : `FY ${year} first-time takers (detailed worksheet total)`,
       });
     }
@@ -649,7 +651,7 @@ export async function rebuildMetrics(status: DatasetStatus = "PUBLISHED") {
         periodId: period.id,
         sourceNote:
           year === EXECUTIVE_CURRENT_YEAR
-            ? `University performance employability indicator, FY ${year} (partial, as of June 30, 2026)`
+            ? `University performance employability indicator, FY ${year} (partial, as of ${FY2026_AS_OF_LABEL})`
             : `University performance employability indicator, FY ${year}`,
       });
     }
@@ -663,7 +665,7 @@ export async function rebuildMetrics(status: DatasetStatus = "PUBLISHED") {
         periodId: period.id,
         sourceNote:
           year === EXECUTIVE_CURRENT_YEAR
-            ? `University performance extension programs indicator, FY ${year} (as of June 30, 2026)`
+            ? `University performance extension programs indicator, FY ${year} (as of ${FY2026_AS_OF_LABEL})`
             : `University performance extension programs indicator, FY ${year}`,
       });
     }
@@ -699,20 +701,40 @@ export async function rebuildMetrics(status: DatasetStatus = "PUBLISHED") {
       });
     }
 
+    const researchOfficial = researchCountsByYear(
+      performanceRows.map((row) => ({
+        programMfo: row.indicator.programMfo,
+        title: row.indicator.title,
+        fiscalYear: row.fiscalYear,
+        accomplishmentValue: row.accomplishmentValue,
+        accomplishmentRaw: row.accomplishmentRaw,
+        numerator: row.numerator,
+      })),
+    ).get(year);
+    const researchNote =
+      year === EXECUTIVE_CURRENT_YEAR
+        ? `University performance, FY ${year} (as of ${FY2026_AS_OF_LABEL})`
+        : `University performance, FY ${year}`;
     await observe("RESEARCH_COMPLETED", {
-      value: await prisma.researchCompletion.count({ where: { status, fiscalYear: year } }),
+      value:
+        researchOfficial?.completed ??
+        (await prisma.researchCompletion.count({ where: { status, fiscalYear: year } })),
       periodId: period.id,
-      sourceNote: year === EXECUTIVE_CURRENT_YEAR ? `FY ${year} (as of June 30, 2026)` : `FY ${year}`,
+      sourceNote: researchNote,
     });
     await observe("RESEARCH_PUBLICATIONS", {
-      value: await prisma.researchPublication.count({ where: { status, fiscalYear: year } }),
+      value:
+        researchOfficial?.publications ??
+        (await prisma.researchPublication.count({ where: { status, fiscalYear: year } })),
       periodId: period.id,
-      sourceNote: year === EXECUTIVE_CURRENT_YEAR ? `FY ${year} (as of June 30, 2026)` : `FY ${year}`,
+      sourceNote: researchNote,
     });
     await observe("RESEARCH_UTILIZED", {
-      value: await prisma.researchUtilization.count({ where: { status, fiscalYear: year } }),
+      value:
+        researchOfficial?.utilized ??
+        (await prisma.researchUtilization.count({ where: { status, fiscalYear: year } })),
       periodId: period.id,
-      sourceNote: `FY ${year}`,
+      sourceNote: researchNote,
     });
   }
 }

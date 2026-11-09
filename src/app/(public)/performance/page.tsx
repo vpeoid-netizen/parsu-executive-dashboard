@@ -9,6 +9,7 @@ import {
   isPercentMeasure,
   slugifyMfo,
 } from "@/lib/performance-display";
+import { FY2026_AS_OF_LABEL } from "@/lib/reporting-as-of";
 import { classifyAchievement } from "@/lib/metrics";
 import { getPerformanceByIndicator } from "@/lib/queries";
 
@@ -38,16 +39,16 @@ export default async function PerformancePage() {
       <Breadcrumbs items={[{ label: "University Performance" }]} />
       <ModuleHeader
         title="University Performance"
-        description="FY 2026 accomplishment as of June 30, 2026, grouped by major program. FY 2024 and FY 2025 are shown for historical comparison."
+        description={`FY 2026 accomplishment as of ${FY2026_AS_OF_LABEL}, grouped by major program. FY 2024 and FY 2025 are shown for historical comparison.`}
         period="FY 2026"
-        asOf="June 30, 2026"
+        asOf={FY2026_AS_OF_LABEL}
       />
       <div className="mb-8 grid gap-4 sm:grid-cols-3">
         <KpiCard title="FY 2026 indicators" value={fy2026.length} period="Current reporting year" />
         <KpiCard
           title="FY 2026 with accomplishment"
           value={withAccomplishment}
-          period="As of June 30, 2026"
+          period={`As of ${FY2026_AS_OF_LABEL}`}
         />
         <KpiCard
           title="Historical complete years"
@@ -56,7 +57,7 @@ export default async function PerformancePage() {
         />
       </div>
       <p className="mb-8 rounded-2xl bg-gold-soft/70 px-4 py-3 text-sm leading-6 text-navy-800 ring-1 ring-gold/25">
-        FY 2026 is year-to-date as of June 30, 2026. It is labelled Partial Period and is not classified as a missed
+        FY 2026 is year-to-date as of {FY2026_AS_OF_LABEL}. It is labelled Partial Period and is not classified as a missed
         annual target.
       </p>
       {indicators.length === 0 ? (

@@ -19,6 +19,7 @@ import {
 } from "@/lib/performance-display";
 import { formatProgramAuthority, hasCopcNumber, isRrpaOnly } from "@/lib/program-coverage";
 import { type ChatFact, FY_2026_PARTIAL_NOTE, factsToBriefingText } from "@/lib/chat/facts";
+import { RESEARCH_TITLES_AWAITING, researchCountsFromIndicators } from "@/lib/research-performance";
 import { staffFactsFromGrouped } from "@/lib/chat/staff-facts";
 import { sumFacultyCounts, sumStaffCounts } from "@/lib/personnel-counts";
 import {
@@ -447,10 +448,11 @@ async function loadPublishedFacts() {
     });
   }
 
+  const researchOfficial = researchCountsFromIndicators(home.performance).get(PERFORMANCE_FOCUS_YEAR);
   addFact(facts, {
     id: "research-fy2026",
     title: "Research (FY 2026)",
-    body: `FY 2026 published records: completed research ${formatNumber(home.completions.length, 0)}; publications ${formatNumber(home.publications.length, 0)}; utilization ${formatNumber(home.utilizations.length, 0)}. ${FY_2026_PARTIAL_NOTE}`,
+    body: `FY 2026 university performance: completed research ${formatNumber(researchOfficial?.completed ?? home.completions.length, 0)}; publications ${formatNumber(researchOfficial?.publications ?? home.publications.length, 0)}; utilization ${formatNumber(researchOfficial?.utilized ?? home.utilizations.length, 0)}. ${FY_2026_PARTIAL_NOTE}`,
     href: "/research",
     keywords: "research completed publications utilization grants",
   });
@@ -545,9 +547,9 @@ async function loadPublishedFacts() {
       id: "research-records",
       title: "Research records",
       body: [
-        researchTitles.length ? `Completed: ${researchTitles.map((row) => `${row.title} (FY ${row.fiscalYear})`).join("; ")}.` : "",
-        publicationTitles.length ? `Publications: ${publicationTitles.map((row) => `${row.publishedTitle}${row.journal ? ` in ${row.journal}` : ""} (FY ${row.fiscalYear})`).join("; ")}.` : "",
-        utilizationRows.length ? `Utilization: ${utilizationRows.map((row) => `${row.researchTitle || row.productName || "Utilization"} (FY ${row.fiscalYear})`).join("; ")}.` : "",
+        `Completed research titles: ${RESEARCH_TITLES_AWAITING}`,
+        `Publication titles: ${RESEARCH_TITLES_AWAITING}`,
+        `Utilization titles: ${RESEARCH_TITLES_AWAITING}`,
         grantRows.length ? `Grants: ${grantRows.map((row) => `${row.title}${row.fundingAgency ? ` / ${row.fundingAgency}` : ""}${row.amount != null ? ` ${formatPeso(Number(row.amount))}` : ""}`).join("; ")}.` : "",
       ]
         .filter(Boolean)

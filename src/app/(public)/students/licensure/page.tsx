@@ -20,7 +20,7 @@ export default async function LicensurePage() {
   const detail = rows.filter((row) => !row.isTotalRow);
   const current = totals.find((row) => row.fiscalYear === EXECUTIVE_CURRENT_YEAR) ?? totals.at(-1);
   const currentPeriod = `FY ${EXECUTIVE_CURRENT_YEAR}`;
-  const currentAsOf = "June 30, 2026";
+  const currentAsOf = "September 30, 2026";
 
   return (
     <div className="page-shell">

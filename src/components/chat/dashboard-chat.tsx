@@ -24,7 +24,7 @@ const SUGGESTIONS = [
 ];
 
 const WELCOME =
-  "Hi! I can walk you through published figures on this ParSU Executive Dashboard—campuses, programs, enrollment, licensure, personnel, performance, research, budget, assets, infrastructure, and more. FY 2026 is year-to-date as of June 30, 2026. What would you like to know?";
+  "Hi! I can walk you through published figures on this ParSU Executive Dashboard—campuses, programs, enrollment, licensure, personnel, performance, research, budget, assets, infrastructure, and more. FY 2026 is year-to-date as of September 30, 2026. What would you like to know?";
 
 function ChatMarkdown({ content }: { content: string }) {
   return (
@@ -276,7 +276,7 @@ export function DashboardChat() {
               </p>
             ) : (
               <p className="mt-2 text-[11px] leading-4 text-muted-foreground">
-                I’ll stick to published dashboard figures. FY 2026 is as of June 30, 2026.
+                I’ll stick to published dashboard figures. FY 2026 is as of September 30, 2026.
               </p>
             )}
           </form>

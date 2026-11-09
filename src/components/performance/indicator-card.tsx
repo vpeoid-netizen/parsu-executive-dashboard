@@ -1,6 +1,5 @@
 import { LazyTrendChart } from "@/components/charts/lazy-charts";
 import { StatusBadge } from "@/components/ui/primitives";
-import { formatDate } from "@/lib/format";
 import { classifyAchievement } from "@/lib/metrics";
 import {
   achievementTone,
@@ -8,8 +7,10 @@ import {
   displayMeasure,
   indicatorAnchorId,
   partitionPerformanceYears,
+  PERFORMANCE_FOCUS_YEAR,
   type PerformanceYearRow,
 } from "@/lib/performance-display";
+import { FY2026_AS_OF_LABEL } from "@/lib/reporting-as-of";
 import { cn } from "@/lib/utils";
 
 export function PerformanceIndicatorCard({
@@ -36,12 +37,7 @@ export function PerformanceIndicatorCard({
       })
     : null;
   const showStatus = focusStatus && focusStatus !== "Partial Period";
-  const asOf =
-    focus?.asOfDate && focus.isPartial
-      ? formatDate(focus.asOfDate)
-      : focus?.isPartial
-        ? "June 30, 2026"
-        : null;
+  const asOf = focus?.isPartial && focusYear === PERFORMANCE_FOCUS_YEAR ? FY2026_AS_OF_LABEL : null;
 
   return (
     <article

@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { EmptyState, KpiCard } from "@/components/ui/primitives";
 import type { HomepageKpiCard } from "@/lib/kpi-years";
+import { FY2026_AS_OF_LABEL } from "@/lib/reporting-as-of";
 import { cn } from "@/lib/utils";
 
 const KPI_ICONS: Record<string, LucideIcon> = {
@@ -82,7 +83,7 @@ export function ExecutiveIndicatorTabs({
           <span className="accent-rule mt-2" aria-hidden="true" />
           <p className="mt-2 text-sm text-muted-foreground">
             {tab === "current"
-              ? `FY ${currentYear} as of June 30, 2026. Earlier years are in Reference.`
+              ? `FY ${currentYear} as of ${FY2026_AS_OF_LABEL}. Earlier years are in Reference.`
               : "Complete-year figures for comparison. They are not the current FY 2026 values."}
           </p>
         </div>

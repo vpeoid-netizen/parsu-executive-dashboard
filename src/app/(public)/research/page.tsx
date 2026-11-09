@@ -3,41 +3,34 @@ import { ChartPanel } from "@/components/charts/chart-panel";
 import { LazyTrendChart } from "@/components/charts/lazy-charts";
 import { KpiCard, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
+import { getPerformanceByIndicator } from "@/lib/queries";
+import { FY2026_AS_OF_LABEL } from "@/lib/reporting-as-of";
+import { researchCountsFromIndicators, researchYearValues } from "@/lib/research-performance";
 
 export const dynamic = "force-static";
 export const revalidate = 300;
 
-function countByYear(rows: { fiscalYear: number }[]) {
-  const counts: Record<number, number> = {};
-  for (const row of rows) {
-    counts[row.fiscalYear] = (counts[row.fiscalYear] ?? 0) + 1;
-  }
-  return counts;
-}
-
 export default async function ResearchHomePage() {
-  const [completed, publications, utilization, grants] = await Promise.all([
+  const [completed, publications, utilization, grants, indicators] = await Promise.all([
     prisma.researchCompletion.findMany({ where: { status: "PUBLISHED" }, select: { fiscalYear: true } }),
     prisma.researchPublication.findMany({ where: { status: "PUBLISHED" }, select: { fiscalYear: true } }),
     prisma.researchUtilization.findMany({ where: { status: "PUBLISHED" }, select: { fiscalYear: true } }),
     prisma.researchGrant.count({ where: { status: "PUBLISHED" } }),
+    getPerformanceByIndicator(),
   ]);
-  const completedByYear = countByYear(completed);
-  const publicationsByYear = countByYear(publications);
-  const utilizationByYear = countByYear(utilization);
+  const counts = researchCountsFromIndicators(indicators);
+  const completedYears = researchYearValues(counts, "completed", completed);
+  const publicationYears = researchYearValues(counts, "publications", publications);
+  const utilizationYears = researchYearValues(counts, "utilized", utilization);
   const years = [
-    ...new Set([
-      ...completed.map((row) => row.fiscalYear),
-      ...publications.map((row) => row.fiscalYear),
-      ...utilization.map((row) => row.fiscalYear),
-    ]),
+    ...new Set([...completedYears.years, ...publicationYears.years, ...utilizationYears.years]),
   ].sort((a, b) => b - a);
   const chronological = [...years].sort((a, b) => a - b);
   const trend = chronological.map((year) => ({
     year: `FY ${year}`,
-    Completed: completedByYear[year] ?? 0,
-    Publications: publicationsByYear[year] ?? 0,
-    Utilization: utilizationByYear[year] ?? 0,
+    Completed: completedYears.values[year] ?? 0,
+    Publications: publicationYears.values[year] ?? 0,
+    Utilization: utilizationYears.values[year] ?? 0,
   }));
 
   return (
@@ -45,12 +38,12 @@ export default async function ResearchHomePage() {
       <Breadcrumbs items={[{ label: "Research" }]} />
       <ModuleHeader
         title="Research Analytics"
-        description="Completed studies and publications are counted by unique title and shown by fiscal year. Co-authors are not counted as additional records."
+        description={`Completed research, publications, and utilization follow the university performance indicators. FY 2026 is year-to-date as of ${FY2026_AS_OF_LABEL}.`}
       />
       {years.length ? (
         <>
           <div className="mb-8">
-            <ChartPanel title="Research accomplishments by fiscal year" period="Unique titles per year">
+            <ChartPanel title="Research accomplishments by fiscal year" period="University performance">
               <LazyTrendChart
                 data={trend}
                 xKey="year"
@@ -72,11 +65,11 @@ export default async function ResearchHomePage() {
                 <div className="grid gap-4 md:grid-cols-3">
                   <KpiCard
                     title="Completed research"
-                    value={completedByYear[year] ?? 0}
+                    value={completedYears.values[year] ?? 0}
                     href="/research/completed"
                   />
-                  <KpiCard title="Publications" value={publicationsByYear[year] ?? 0} href="/research/publications" />
-                  <KpiCard title="Utilization" value={utilizationByYear[year] ?? 0} href="/research/utilization" />
+                  <KpiCard title="Publications" value={publicationYears.values[year] ?? 0} href="/research/publications" />
+                  <KpiCard title="Utilization" value={utilizationYears.values[year] ?? 0} href="/research/utilization" />
                 </div>
               </section>
             ))}
