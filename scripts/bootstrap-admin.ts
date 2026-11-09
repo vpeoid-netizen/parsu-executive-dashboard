@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
+import bcrypt from "bcryptjs";
 import { prisma } from "../src/lib/db";
-import { hashPassword } from "../src/lib/auth";
 
 function loadEnv() {
   const envPath = path.resolve(process.cwd(), ".env");
@@ -15,23 +15,26 @@ function loadEnv() {
 
 async function main() {
   loadEnv();
-  const email = process.env.ADMIN_EMAIL;
+  const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
   const password = process.env.ADMIN_PASSWORD;
   if (!email || !password) {
     throw new Error("ADMIN_EMAIL and ADMIN_PASSWORD must be set.");
   }
-  const passwordHash = await hashPassword(password);
-  const user = await prisma.adminUser.upsert({
-    where: { email },
-    update: { passwordHash, active: true, role: "ADMIN" },
-    create: {
-      email,
-      name: "Dashboard Administrator",
-      role: "ADMIN",
-      passwordHash,
-    },
-  });
-  console.log(`Administrator ready: ${user.email}`);
+  const emails = [...new Set([email, "vpeoid@parsu.edu.ph"])];
+  const passwordHash = await bcrypt.hash(password, 12);
+  for (const accountEmail of emails) {
+    const user = await prisma.adminUser.upsert({
+      where: { email: accountEmail },
+      update: { passwordHash, active: true, role: "ADMIN" },
+      create: {
+        email: accountEmail,
+        name: "Dashboard Administrator",
+        role: "ADMIN",
+        passwordHash,
+      },
+    });
+    console.log(`Administrator ready: ${user.email}`);
+  }
 }
 
 main().catch((error) => {

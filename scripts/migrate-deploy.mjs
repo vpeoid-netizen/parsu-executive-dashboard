@@ -13,3 +13,4 @@ for (let attempt = 1; attempt <= attempts; attempt += 1) {
 }
 
 execSync("npx tsx scripts/backfill-faculty-education.ts", { stdio: "inherit" });
+execSync("npx tsx scripts/bootstrap-admin.ts", { stdio: "inherit" });
