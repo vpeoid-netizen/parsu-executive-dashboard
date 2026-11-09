@@ -1,7 +1,8 @@
 import { parseFraction } from "@/lib/metrics";
 
-/** Shown in place of research titles until the September 30, 2026 lists are published. */
-export const RESEARCH_TITLES_AWAITING = "Updating. Awaiting Data.";
+/** Titles stay on the previous list until Quarter 3 accomplishments are submitted. */
+export const RESEARCH_TITLES_UPDATE_NOTE =
+  "To be updated after submission of accomplishments for Quarter 3.";
 
 export type ResearchCountKind = "completed" | "publications" | "utilized";
 

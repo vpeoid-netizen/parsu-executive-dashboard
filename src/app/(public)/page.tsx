@@ -17,7 +17,7 @@ import { coverageCenterLabel, hasCopcNumber, programsByCollegeSlices } from "@/l
 import { PERFORMANCE_FOCUS_YEAR, groupByProgramMfo } from "@/lib/performance-display";
 import { shortChartPeriodLabel } from "@/lib/periods";
 import { FY2026_AS_OF_LABEL } from "@/lib/reporting-as-of";
-import { RESEARCH_TITLES_AWAITING, researchCountsFromIndicators } from "@/lib/research-performance";
+import { RESEARCH_TITLES_UPDATE_NOTE, researchCountsFromIndicators } from "@/lib/research-performance";
 
 export const dynamic = "force-static";
 export const revalidate = 300;
@@ -348,7 +348,7 @@ export default async function DashboardPage() {
               <p className="font-display text-4xl font-bold tabular-nums tracking-tight text-navy-900">
                 {formatNumber(fyResearch?.completed ?? 0)}
               </p>
-              <p className="mt-3 text-sm text-navy-800">{RESEARCH_TITLES_AWAITING}</p>
+              <p className="mt-3 text-sm text-navy-800">{RESEARCH_TITLES_UPDATE_NOTE}</p>
             </ChartPanel>
             <ChartPanel
               title="Publication"
@@ -358,7 +358,7 @@ export default async function DashboardPage() {
               <p className="font-display text-4xl font-bold tabular-nums tracking-tight text-navy-900">
                 {formatNumber(fyResearch?.publications ?? 0)}
               </p>
-              <p className="mt-3 text-sm text-navy-800">{RESEARCH_TITLES_AWAITING}</p>
+              <p className="mt-3 text-sm text-navy-800">{RESEARCH_TITLES_UPDATE_NOTE}</p>
             </ChartPanel>
             <ChartPanel
               title="Utilization"
@@ -368,7 +368,7 @@ export default async function DashboardPage() {
               <p className="font-display text-4xl font-bold tabular-nums tracking-tight text-navy-900">
                 {formatNumber(fyResearch?.utilized ?? 0)}
               </p>
-              <p className="mt-3 text-sm text-navy-800">{RESEARCH_TITLES_AWAITING}</p>
+              <p className="mt-3 text-sm text-navy-800">{RESEARCH_TITLES_UPDATE_NOTE}</p>
             </ChartPanel>
           </div>
         </section>

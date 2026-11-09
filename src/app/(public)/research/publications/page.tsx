@@ -1,10 +1,12 @@
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { ResearchYearKpis, ResearchYearTrend } from "@/components/research/year-breakdown";
+import { RankContributionPanel } from "@/components/research/rank-contribution-panel";
+import { ResearchYearKpis, ResearchYearTables, ResearchYearTrend } from "@/components/research/year-breakdown";
 import { EmptyState, ModuleHeader } from "@/components/ui/primitives";
 import { prisma } from "@/lib/db";
 import { getPerformanceByIndicator } from "@/lib/queries";
 import { FY2026_AS_OF_LABEL } from "@/lib/reporting-as-of";
-import { RESEARCH_TITLES_AWAITING, researchCountsFromIndicators, researchYearValues } from "@/lib/research-performance";
+import { formatAuthorNames } from "@/lib/research";
+import { RESEARCH_TITLES_UPDATE_NOTE, researchCountsFromIndicators, researchYearValues } from "@/lib/research-performance";
 
 export const dynamic = "force-static";
 export const revalidate = 300;
@@ -13,7 +15,7 @@ export default async function PublicationsPage() {
   const [rows, indicators] = await Promise.all([
     prisma.researchPublication.findMany({
       where: { status: "PUBLISHED" },
-      select: { fiscalYear: true },
+      orderBy: { fiscalYear: "desc" },
     }),
     getPerformanceByIndicator(),
   ]);
@@ -23,7 +25,7 @@ export default async function PublicationsPage() {
       <Breadcrumbs items={[{ href: "/research", label: "Research" }, { label: "Publications" }]} />
       <ModuleHeader
         title="Research Publications"
-        description={`Counts follow the number of research outputs published in the university performance indicator. FY 2026 is year-to-date as of ${FY2026_AS_OF_LABEL}.`}
+        description={`Each publication is counted once by title. Counts follow university performance. FY 2026 is year-to-date as of ${FY2026_AS_OF_LABEL}. ${RESEARCH_TITLES_UPDATE_NOTE}`}
       />
       {years.length === 0 ? (
         <EmptyState />
@@ -40,10 +42,22 @@ export default async function PublicationsPage() {
               seriesLabel="Publications"
             />
           </div>
-          <section className="card px-5 py-8">
-            <h2 className="font-display text-lg font-semibold tracking-tight text-navy-900">Titles</h2>
-            <p className="mt-2 text-sm leading-6 text-navy-800">{RESEARCH_TITLES_AWAITING}</p>
-          </section>
+          <div className="mb-8">
+            <RankContributionPanel title="Contribution by academic rank" records={rows} />
+          </div>
+          <p className="mb-6 rounded-2xl bg-gold-soft/70 px-4 py-3 text-sm leading-6 text-navy-800 ring-1 ring-gold/25">
+            {RESEARCH_TITLES_UPDATE_NOTE}
+          </p>
+          <ResearchYearTables
+            years={years}
+            rows={rows}
+            exportName="research-publications"
+            columns={[
+              { key: "title", header: "Title", accessor: (row) => row.publishedTitle },
+              { key: "authors", header: "Authors", accessor: (row) => formatAuthorNames(row.authorsJson) },
+              { key: "journal", header: "Journal", accessor: (row) => row.journal },
+            ]}
+          />
         </>
       )}
     </div>

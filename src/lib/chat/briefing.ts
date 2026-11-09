@@ -19,7 +19,7 @@ import {
 } from "@/lib/performance-display";
 import { formatProgramAuthority, hasCopcNumber, isRrpaOnly } from "@/lib/program-coverage";
 import { type ChatFact, FY_2026_PARTIAL_NOTE, factsToBriefingText } from "@/lib/chat/facts";
-import { RESEARCH_TITLES_AWAITING, researchCountsFromIndicators } from "@/lib/research-performance";
+import { RESEARCH_TITLES_UPDATE_NOTE, researchCountsFromIndicators } from "@/lib/research-performance";
 import { staffFactsFromGrouped } from "@/lib/chat/staff-facts";
 import { sumFacultyCounts, sumStaffCounts } from "@/lib/personnel-counts";
 import {
@@ -547,9 +547,10 @@ async function loadPublishedFacts() {
       id: "research-records",
       title: "Research records",
       body: [
-        `Completed research titles: ${RESEARCH_TITLES_AWAITING}`,
-        `Publication titles: ${RESEARCH_TITLES_AWAITING}`,
-        `Utilization titles: ${RESEARCH_TITLES_AWAITING}`,
+        researchTitles.length ? `Completed: ${researchTitles.map((row) => `${row.title} (FY ${row.fiscalYear})`).join("; ")}.` : "",
+        publicationTitles.length ? `Publications: ${publicationTitles.map((row) => `${row.publishedTitle}${row.journal ? ` in ${row.journal}` : ""} (FY ${row.fiscalYear})`).join("; ")}.` : "",
+        utilizationRows.length ? `Utilization: ${utilizationRows.map((row) => `${row.researchTitle || row.productName || "Utilization"} (FY ${row.fiscalYear})`).join("; ")}.` : "",
+        RESEARCH_TITLES_UPDATE_NOTE,
         grantRows.length ? `Grants: ${grantRows.map((row) => `${row.title}${row.fundingAgency ? ` / ${row.fundingAgency}` : ""}${row.amount != null ? ` ${formatPeso(Number(row.amount))}` : ""}`).join("; ")}.` : "",
       ]
         .filter(Boolean)
