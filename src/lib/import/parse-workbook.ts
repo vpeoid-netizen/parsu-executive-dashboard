@@ -12,6 +12,7 @@ import {
   parseLooseDate,
 } from "@/lib/import/excel-cells";
 import { matchCampus, matchCollege } from "@/lib/import/normalize";
+import { normalizePerformanceTitle } from "@/lib/performance-display";
 import { applyNtpOfficePermanentRevision } from "@/lib/staff-offices";
 
 export type ValidationDraft = {
@@ -682,7 +683,7 @@ function parsePerformance(workbook: ExcelJS.Workbook, result: ParsedWorkbook) {
       result.performance.push({
         programMfo,
         indicatorType,
-        title,
+        title: normalizePerformanceTitle(title),
         fiscalYear: year.year,
         targetRaw,
         targetValue,

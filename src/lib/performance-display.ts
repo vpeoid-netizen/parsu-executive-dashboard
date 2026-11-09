@@ -40,6 +40,16 @@ export function slugifyMfo(name: string) {
 export const EMPLOYABILITY_INDICATOR_TITLE =
   "2. Percentage of graduates (2 yrs prior) that are employed";
 
+const GRADUATE_FACULTY_RESEARCH_TITLE =
+  /percentage of graduate school faculty engaged in research work applied in any of the following:?/gi;
+
+export function normalizePerformanceTitle(title: string) {
+  return title.replace(
+    GRADUATE_FACULTY_RESEARCH_TITLE,
+    "Percentage of graduate school faculty engaged in research work",
+  );
+}
+
 export function indicatorAnchorId(title: string) {
   return `indicator-${slugifyMfo(title)}`;
 }

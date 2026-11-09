@@ -2,7 +2,7 @@ import { unstable_cache } from "next/cache";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/db";
 import { EXECUTIVE_CURRENT_YEAR, EXECUTIVE_KPI_YEARS, type HomepageKpiCard } from "@/lib/kpi-years";
-import { sortByMfoAndTitle } from "@/lib/performance-display";
+import { normalizePerformanceTitle, sortByMfoAndTitle } from "@/lib/performance-display";
 import { withCurrentAsOf } from "@/lib/reporting-as-of";
 import { researchCountsByYear, type ResearchCountKind } from "@/lib/research-performance";
 
@@ -175,11 +175,18 @@ export const getEnrollmentSeries = unstable_cache(loadEnrollmentSeries, ["enroll
 export async function getPerformanceByYear(year?: number) {
   return unstable_cache(
     async () =>
-      prisma.performanceObservation.findMany({
-        where: { status: "PUBLISHED", ...(year ? { fiscalYear: year } : {}) },
-        include: { indicator: true },
-        orderBy: [{ fiscalYear: "asc" }, { indicator: { displayOrder: "asc" } }],
-      }),
+      prisma.performanceObservation
+        .findMany({
+          where: { status: "PUBLISHED", ...(year ? { fiscalYear: year } : {}) },
+          include: { indicator: true },
+          orderBy: [{ fiscalYear: "asc" }, { indicator: { displayOrder: "asc" } }],
+        })
+        .then((rows) =>
+          rows.map((row) => ({
+            ...row,
+            indicator: { ...row.indicator, title: normalizePerformanceTitle(row.indicator.title) },
+          })),
+        ),
     ["performance-by-year", String(year ?? "all")],
     PUBLIC_CACHE,
   )();
@@ -209,7 +216,11 @@ async function loadPerformanceByIndicator() {
       },
     },
   });
-  return sortByMfoAndTitle(indicators.filter((item) => item.observations.length > 0));
+  return sortByMfoAndTitle(
+    indicators
+      .filter((item) => item.observations.length > 0)
+      .map((indicator) => ({ ...indicator, title: normalizePerformanceTitle(indicator.title) })),
+  );
 }
 
 export const getPerformanceByIndicator = unstable_cache(

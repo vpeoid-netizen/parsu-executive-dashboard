@@ -2,6 +2,7 @@ import { savePerformanceAction } from "@/app/admin/data-actions";
 import { AdminModuleIntro } from "@/components/admin/module-intro";
 import { WorkbookEditor } from "@/components/admin/workbook-editor";
 import { prisma } from "@/lib/db";
+import { normalizePerformanceTitle } from "@/lib/performance-display";
 
 const INDICATOR_TYPE_OPTIONS = [
   { value: "Outcome Indicator", label: "Outcome Indicator" },
@@ -43,7 +44,7 @@ export default async function PerformanceAdminPage() {
           id: row.id,
           programMfo: row.indicator.programMfo,
           indicatorType: row.indicator.indicatorType,
-          title: row.indicator.title,
+          title: normalizePerformanceTitle(row.indicator.title),
           fiscalYear: row.fiscalYear,
           targetRaw: row.targetRaw ?? "",
           accomplishmentRaw: row.accomplishmentRaw ?? "",

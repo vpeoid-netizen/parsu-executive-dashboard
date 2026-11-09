@@ -3,11 +3,20 @@ import {
   buildHistoryChart,
   displayMeasure,
   isPercentMeasure,
+  normalizePerformanceTitle,
   partitionPerformanceYears,
   toChartNumber,
 } from "../src/lib/performance-display";
 
 describe("performance display helpers", () => {
+  it("shortens the graduate faculty research indicator", () => {
+    expect(
+      normalizePerformanceTitle(
+        "1. Percentage of graduate school faculty engaged in research work applied in any of the following:",
+      ),
+    ).toBe("1. Percentage of graduate school faculty engaged in research work");
+  });
+
   it("treats percentage titles as percent measures even when a count-like year exists", () => {
     expect(
       isPercentMeasure("1. Percentage of first-time licensure exam-takers that pass the licensure exams", [
