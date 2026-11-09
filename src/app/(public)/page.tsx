@@ -18,10 +18,15 @@ import { coverageCenterLabel, hasCopcNumber, programsByCollegeSlices } from "@/l
 import { PERFORMANCE_FOCUS_YEAR, groupByProgramMfo } from "@/lib/performance-display";
 import { shortChartPeriodLabel } from "@/lib/periods";
 import { FY2026_AS_OF_LABEL } from "@/lib/reporting-as-of";
+import { contributionByRankAndYear } from "@/lib/research";
 import { RESEARCH_TITLES_UPDATE_NOTE, researchCountsFromIndicators } from "@/lib/research-performance";
 
 export const dynamic = "force-static";
 export const revalidate = 300;
+
+function researchRankSlices(records: { fiscalYear: number; authorsJson: string }[]) {
+  return contributionByRankAndYear(records).latestSlices;
+}
 
 export default async function DashboardPage() {
   const {
@@ -31,6 +36,9 @@ export default async function DashboardPage() {
     programs,
     faculty,
     staff,
+    completions,
+    publications,
+    utilizations,
     licensureTotals,
     extensionPrograms,
     extensionPartners,
@@ -340,40 +348,54 @@ export default async function DashboardPage() {
         <section id="research" className="mb-10 scroll-mt-24">
           <SectionTitle title="Research" action={{ href: "/research", label: "View details" }} />
           <p className="-mt-2 mb-4 text-sm text-muted-foreground">
-            Counts match university performance, year-to-date as of {FY2026_AS_OF_LABEL}.
+            Donut colors show percent contribution by academic rank. Center counts match university performance,
+            year-to-date as of {FY2026_AS_OF_LABEL}.
           </p>
           <div className="grid gap-4 xl:grid-cols-3">
             <ChartPanel
               title="Completed research"
-              period={`FY ${PERFORMANCE_FOCUS_YEAR} · Year-to-date as of ${FY2026_AS_OF_LABEL}`}
+              period={`FY ${PERFORMANCE_FOCUS_YEAR} · Percent contribution by academic rank`}
               action={{ href: "/research/completed", label: "Details" }}
             >
-              <p className="font-display text-4xl font-bold tabular-nums tracking-tight text-navy-900">
-                {formatNumber(fyResearch?.completed ?? 0)}
+              <p className="sr-only">
+                Colors in this donut are the percent contribution of each academic rank to completed research.
               </p>
-              <p className="mt-3 text-sm text-navy-800">{RESEARCH_TITLES_UPDATE_NOTE}</p>
+              <LazyDonutChart
+                data={researchRankSlices(completions)}
+                hideSliceLabels
+                centerLabel={{ primary: formatNumber(fyResearch?.completed ?? 0) }}
+              />
             </ChartPanel>
             <ChartPanel
               title="Publication"
-              period={`FY ${PERFORMANCE_FOCUS_YEAR} · Year-to-date as of ${FY2026_AS_OF_LABEL}`}
+              period={`FY ${PERFORMANCE_FOCUS_YEAR} · Percent contribution by academic rank`}
               action={{ href: "/research/publications", label: "Details" }}
             >
-              <p className="font-display text-4xl font-bold tabular-nums tracking-tight text-navy-900">
-                {formatNumber(fyResearch?.publications ?? 0)}
+              <p className="sr-only">
+                Colors in this donut are the percent contribution of each academic rank to publications.
               </p>
-              <p className="mt-3 text-sm text-navy-800">{RESEARCH_TITLES_UPDATE_NOTE}</p>
+              <LazyDonutChart
+                data={researchRankSlices(publications)}
+                hideSliceLabels
+                centerLabel={{ primary: formatNumber(fyResearch?.publications ?? 0) }}
+              />
             </ChartPanel>
             <ChartPanel
               title="Utilization"
-              period={`FY ${PERFORMANCE_FOCUS_YEAR} · Year-to-date as of ${FY2026_AS_OF_LABEL}`}
+              period={`FY ${PERFORMANCE_FOCUS_YEAR} · Percent contribution by academic rank`}
               action={{ href: "/research/utilization", label: "Details" }}
             >
-              <p className="font-display text-4xl font-bold tabular-nums tracking-tight text-navy-900">
-                {formatNumber(fyResearch?.utilized ?? 0)}
+              <p className="sr-only">
+                Colors in this donut are the percent contribution of each academic rank to utilization.
               </p>
-              <p className="mt-3 text-sm text-navy-800">{RESEARCH_TITLES_UPDATE_NOTE}</p>
+              <LazyDonutChart
+                data={researchRankSlices(utilizations)}
+                hideSliceLabels
+                centerLabel={{ primary: formatNumber(fyResearch?.utilized ?? 0) }}
+              />
             </ChartPanel>
           </div>
+          <p className="mt-4 text-sm text-navy-800">{RESEARCH_TITLES_UPDATE_NOTE}</p>
         </section>
 
         <section id="extension" className="mb-10 scroll-mt-24">

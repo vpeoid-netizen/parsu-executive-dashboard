@@ -1,8 +1,7 @@
 import { parseFraction } from "@/lib/metrics";
 
-/** Titles stay on the previous list until Quarter 3 accomplishments are submitted. */
-export const RESEARCH_TITLES_UPDATE_NOTE =
-  "To be updated after submission of accomplishments for Quarter 3.";
+/** Rank distribution stays on the current published records until Quarter 3. */
+export const RESEARCH_TITLES_UPDATE_NOTE = "To be updated for Quarter 3.";
 
 export type ResearchCountKind = "completed" | "publications" | "utilized";
 
